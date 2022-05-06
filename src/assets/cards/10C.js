@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import Draggable from "react-draggable";
 import { ReactDOM } from "react";
 
-function TEN_C() {
+function TEN_C({positionCallback, colliding, stack}) {
 
     const nodeRef = useRef(null)
 
@@ -28,23 +28,30 @@ function TEN_C() {
                 y: y + ui.deltaY
             }
         )
-        console.log(`x: ${x} -- y: ${y}`)
-        console.log(getViewportPosition())
+        // console.log(`x: ${x} -- y: ${y}`)
+        // console.log(getViewportPosition())
+        positionCallback(nodeRef)
     }
     const handleStop = (e) => {
-    
+        if(colliding) {
+            const stackPosition = stack.current.getBoundingClientRect()
+            console.log()
+            setControlledPosition({x: stackPosition.left + stackPosition.width / 2 - nodeRef.current.clientWidth / 2, y: stackPosition.top + stackPosition.height / 2 - nodeRef.current.clientHeight / 2})
+            console.log(stackPosition.left + stackPosition.width / 2)
+        }
     }
+
   return (
     <Draggable
     nodeRef={nodeRef}
     defaultPosition={{x: 0, y: 0}}
-    position={null}
+    position={controlledPosition}
     // grid={[25, 25]}
     scale={1}
     onStart={handleStart}
     onDrag={handleDrag}
     onStop={handleStop}>
-    <div ref={nodeRef}>
+    <div ref={nodeRef} style={{position: 'absolute', top: 0, left: 0}}>
         <svg
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
