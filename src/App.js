@@ -1,19 +1,63 @@
 import React, { useRef, useState } from "react";
-import logo from './logo.svg';
 import './App.css';
 
-import Draggable from 'react-draggable'; // The default
-import TEN_C from './assets/cards/10C';
+import Card from "./assets/components/Card";
+
+// https://www.npmjs.com/package/use-dynamic-refs
+// import useDynamicRefs from "./assets/helpers/use-dynamic-refs";
 
 function App() {
 
   const stackRef = useRef(null);
-  const [isColliding, setIsColliding] = useState(false)
+  const handRef = useRef(null);
+  const [stackCardAmount, setStackCardAmount] = useState(0);
+  const [handCardAmount, setHandCardAmount] = useState(2);
+  const [isColliding, setIsColliding] = useState(true)
+  const [nearestStack, setNearestStack] = useState(handRef)
+
+  // const [cardsInStack, setCardsInStack] = useDynamicRefs()
+
+
+  const getStackBoundingClientRect = (stack) => {
+    if (stack.current) {
+      return stack.current.getBoundingClientRect();
+    }
+    return null;
+  }
 
   const handleCardDrag = (data) => {
-    const collision = checkCollision(stackRef.current, data.current)
-    console.log(collision)
-    setIsColliding(collision)
+    const collisionWithStack = checkCollision(stackRef.current, data.current)
+    const collisionWithHand = checkCollision(handRef.current, data.current)
+
+    if (collisionWithStack) {
+      console.log("colliding with stack")
+
+
+
+      setIsColliding(true)
+
+      setNearestStack({
+        stack: getStackBoundingClientRect(stackRef),
+        stackType: "stack",
+        stackCardAmount
+      })
+      // setStackCardAmount(stackCardAmount + 1)
+
+    } else if (collisionWithHand) {
+      console.log("colliding with hand", handCardAmount);
+
+      setIsColliding(true)
+
+      setNearestStack({
+        stack: handRef.current.getBoundingClientRect(),
+        stackType: "hand",
+        stackCardAmount: handCardAmount
+      })
+
+      // setHandCardAmount(handCardAmount + 1)
+    } else {
+      setIsColliding(false)
+    }
     
   }
 
@@ -31,10 +75,13 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <div className='dragArea' style={{width: '500px', height: '500px', border: isColliding ? '1px solid green' : '1px solid red',}} ref={stackRef}></div>
-        <TEN_C positionCallback={handleCardDrag} colliding={isColliding} stack={stackRef}/>
-      </header>
+      <div className='cardStack' style={{border: isColliding ? '1px solid green' : '1px solid red',}} ref={stackRef}></div>
+      <div className='hand' style={{border: isColliding ? '1px solid green' : '1px solid red',}} ref={handRef}></div>
+      <div className="hand">
+        <Card positionCallback={handleCardDrag} colliding={isColliding} stack={nearestStack} card={"TEN_C"} hand={{handRef, i: 0, handCardAmount: 2}}/>
+        <Card positionCallback={handleCardDrag} colliding={isColliding} stack={nearestStack} card={"TEN_D"} hand={{handRef, i: 1, handCardAmount: 2}}/>
+        <Card positionCallback={handleCardDrag} colliding={isColliding} stack={nearestStack} card={"TEN_H"} hand={{handRef, i: 2, handCardAmount: 2}}/>
+      </div>
     </div>
   );
 }
