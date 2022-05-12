@@ -68,11 +68,7 @@ export const Stack = ({stack, updateCardPosition, stackRef}) => {
 
     return (
         <div className='cardStack' style={{border: colliding ? '4px solid green' : '4px dashed grey', width, height, opacity}} ref={stackRef}>
-            {
-                cards.map((card, index) => {
-                    return (card)
-                })
-            }
+            {JSON.stringify(cards)}
         </div>
     )
 }

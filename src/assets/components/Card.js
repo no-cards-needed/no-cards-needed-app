@@ -69,9 +69,15 @@ function Card({handleCardDrag, handleCardDrop, controlledPosition, zIndex, id, s
 	
 	const getRandomCard = () => {
 		const rand = Math.floor(Math.random() * cards.length)
-		return (cards[2].icon)
+		return (cards[rand].icon)
 	}
-	const cardToDisplay = getRandomCard()
+
+	const [cardToDisplay, setCardToDisplay] = useState(getRandomCard());
+	// useEffect(() => {
+	// 	// Card gets loaded
+	// 	cardToDisplay = getRandomCard()
+	// }, [])
+
 
 	const {springyX, springyY} = useSpring(() => ({springyX: controlledPosition, springyY: controlledPosition}))
 
