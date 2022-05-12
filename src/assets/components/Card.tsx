@@ -1,18 +1,15 @@
 import React, { useRef, useState, useEffect } from "react";
 import Draggable from "react-draggable";
 
-import { useSpring, animated } from 'react-spring'
-
 import { cards } from "../helpers/Cards";
 
 
 function Card({handleCardDrag, handleCardDrop, controlledPosition, zIndex, id, symbol, setRef}) {
 
 	const nodeRef = useRef(null)
+	const [transition, setTransition] = useState(false)
 
-	// const [activeDrags, setActiceDrags] = useState(0)
 	const [deltaPosition, setDeltaPosition] = useState({x: 0, y: 0})
-	// const [controlledPosition, setControlledPosition] = useState({x: 0, y: 0})
 	
 	const handleStart = () => {
 		setRef(id, nodeRef)
@@ -32,54 +29,29 @@ function Card({handleCardDrag, handleCardDrop, controlledPosition, zIndex, id, s
 	
 	const handleStop = (e) => {
 
+		setDroppedTimer()
 		handleCardDrop(nodeRef, id)
-		// if(colliding) {
 
-		// 	const stackPosition = stack.stack
-		// 	console.log(handOffset(stack.stackCardAmount, stack.stackCardAmount))
-		// 	const offset = stack.stackType === "stack" ? 0 : handOffset(stack.stackCardAmount, 1)
+	}	
 
-		// 	setControlledPosition(
-		// 		{
-		// 			x: stackPosition.left + stackPosition.width / 2 - nodeRef.current.clientWidth / 2 + offset, 
-		// 			y: stackPosition.top + stackPosition.height / 2 - nodeRef.current.clientHeight / 2
-		// 		}
-		// 	)
-		// }
+	const timerRef = useRef(null)
+	const transitionTime = 500
+
+	const setDroppedTimer = () => {
+		setTransition(true)
+	  	timerRef.current = setTimeout(() => setTransition(false), transitionTime)
 	}
-
-	const handCardDistance = 50
-	const handOffset = (amount, i) => (handCardDistance * amount) * -1 + handCardDistance * i
-
 	
-	// useEffect(() => {
-	// 	// Card gets loaded
-	// 	const handPosition = hand.handRef.current.getBoundingClientRect()
+	useEffect(() => {
+	  return () => clearTimeout(timerRef.current);
+	}, [])
 
-	// 	console.log(handOffset(hand.handCardAmount, hand.i))
-	// 	const cardX = handPosition.left + handPosition.width / 2 - nodeRef.current.clientWidth / 2 + handOffset(hand.handCardAmount, hand.i)
-	// 	const cardY = handPosition.top + handPosition.height / 2 - nodeRef.current.clientHeight / 2
-
-	// 	setControlledPosition({x: cardX, y: cardY})
-	
-	//   return () => {
-	// 	// Card gets unloaded
-	//   }
-	// }, [])
-	
 	const getRandomCard = () => {
 		const rand = Math.floor(Math.random() * cards.length)
 		return (cards[rand].icon)
 	}
 
 	const [cardToDisplay, setCardToDisplay] = useState(getRandomCard());
-	// useEffect(() => {
-	// 	// Card gets loaded
-	// 	cardToDisplay = getRandomCard()
-	// }, [])
-
-
-	// const {springyX, springyY} = useSpring(() => ({springyX: controlledPosition, springyY: controlledPosition}))
 
 	return (
 		<Draggable
@@ -93,7 +65,7 @@ function Card({handleCardDrag, handleCardDrop, controlledPosition, zIndex, id, s
 			onDrag={handleDrag}
 			onStop={handleStop}>
 
-			<div ref={nodeRef} style={{position: 'absolute', top: 0, left: 0, zIndex}}>
+			<div ref={nodeRef} style={{position: 'absolute', top: 0, left: 0, zIndex}} className={transition ? "animation" : null}>
 				{cardToDisplay}
 			</div>
 		</Draggable>
