@@ -151,10 +151,6 @@ function App() {
 			stacks[nearestStack.index].colliding = true;
 
 			setIsColliding(true)
-
-
-			// setStackCardAmount(stackCardAmount + 1)
-
 		} else {
 			if(nearestStack && nearestStack.nearestStack) {
 				// Set Nearest Stack to Colliding
@@ -218,12 +214,14 @@ function App() {
 			const {x: stackX, y: stackY} = getPositionAtCenter(nearestStack.nearestStack);
 
 			switch (stacks[nearestStack.index].stackType) {
+				// "normal"/closed stack: Cards lie on top of each other
 				case "stack":
 					updateCardPosition(id, {
 						x: stackX - data.current.getBoundingClientRect().width / 2, 
 						y: stackY - data.current.getBoundingClientRect().height / 2
 					})
 					break;
+				// Open Stack: Cards lie next to each other
 				case "openStack":
 					updateCardPosition(id, {
 						x: calculateCardPosition(data.current, nearestStack.nearestStack, stacks[nearestStack.index], id), 
@@ -234,13 +232,11 @@ function App() {
 				default:
 					break;
 			}
+
 			// Updating all cards in all stacks
 			// This is probably not the pest performing variant to do this, but for now its the only I know of
-
 			stacks.map((stack, i) => {
-				console.log(`Mapping Stack ${i}`)
 				stack.cards.map((card, i) => {
-					console.log(`Mapping Card ${card}`)
 					if(stack.stackType === "openStack") {
 						// Get Card by ID
 						const currentCard = usedCards.find(thisCard => thisCard.id === card)
@@ -253,7 +249,6 @@ function App() {
 
 						// Get Stack Ref
 						const currentStackRef = stackRef[currentStackIndex]
-						console.log(stackRef[currentStackIndex])
 
 						const newCardPosition = calculateCardPosition(currentCard.ref.current, currentStackRef, currentStack, card)
 						updateCardPosition(card, {
@@ -277,12 +272,6 @@ function App() {
 
 
 	const updateCardPosition = (cardId, {x, y}) => {
-		// console.log(`cardId: ${cardId}`)
-		// console.log(`x: ${x}`)
-		// console.log(`y: ${y}`)
-
-		// const [springyX] = useSpring(() => ({ springyX: 0, y: 0 }));
-		// Update Card Position
 		setUsedCards(usedCards.map((card, i) => {
 			if (i === cardId) {
 				card.controlledPosition = {
