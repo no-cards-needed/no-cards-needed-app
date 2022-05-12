@@ -28,11 +28,16 @@ function Card({handleCardDrag, handleCardDrop, controlledPosition, zIndex, id, s
 	}
 	
 	const handleStop = (e) => {
-
 		setDroppedTimer()
 		handleCardDrop(nodeRef, id)
+	}
 
-	}	
+	const [newControlledPosition, setNewControlledPosition] = useState({x: 0, y: 0})
+	useEffect(() => {
+		console.log("controlled position changed", controlledPosition)
+		setDroppedTimer()
+		setNewControlledPosition(controlledPosition)
+	}, [controlledPosition])
 
 	const timerRef = useRef(null)
 	const transitionTime = 500
@@ -57,7 +62,7 @@ function Card({handleCardDrag, handleCardDrop, controlledPosition, zIndex, id, s
 		<Draggable
 			nodeRef={nodeRef}
 			defaultPosition={{x: 0, y: 0}}
-			position={controlledPosition}
+			position={newControlledPosition}
 			// position={{x: springyX, y: springyY}}
 			// grid={[25, 25]}
 			scale={1}
