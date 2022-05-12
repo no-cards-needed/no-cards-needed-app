@@ -6,7 +6,7 @@ import { useSpring, animated } from 'react-spring'
 import { cards } from "../helpers/Cards";
 
 
-function Card({handleCardDrag, handleCardDrop, controlledPosition, zIndex, id, symbol}) {
+function Card({handleCardDrag, handleCardDrop, controlledPosition, zIndex, id, symbol, setRef}) {
 
 	const nodeRef = useRef(null)
 
@@ -15,7 +15,7 @@ function Card({handleCardDrag, handleCardDrop, controlledPosition, zIndex, id, s
 	// const [controlledPosition, setControlledPosition] = useState({x: 0, y: 0})
 	
 	const handleStart = () => {
-	
+		setRef(id, nodeRef)
 	}
 
 	const handleDrag = (e, ui) => {
@@ -79,7 +79,7 @@ function Card({handleCardDrag, handleCardDrop, controlledPosition, zIndex, id, s
 	// }, [])
 
 
-	const {springyX, springyY} = useSpring(() => ({springyX: controlledPosition, springyY: controlledPosition}))
+	// const {springyX, springyY} = useSpring(() => ({springyX: controlledPosition, springyY: controlledPosition}))
 
 	return (
 		<Draggable

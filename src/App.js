@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useSpring } from "react-spring";
 import './App.css';
 
-import Card from "./assets/components/Card";
+import Card from "./assets/components/Card.tsx";
 import { Stack } from "./assets/components/Stack.tsx";
 
 // https://www.npmjs.com/package/use-dynamic-refs
@@ -11,6 +11,7 @@ import { Stack } from "./assets/components/Stack.tsx";
 function App() {
 
 	const stackRef = useRef([]);
+	const cardRef = useRef([]);
 	const [isColliding, setIsColliding] = useState(false);
 
 	const [stacks, setStacks] = useState([
@@ -44,10 +45,8 @@ function App() {
 		},
 	])
 
-
 	const [nearestStack, setNearestStack] = useState(null);
 	
-
 	const [usedCards, setUsedCards] = useState([
 		{
 			id: 0,
@@ -170,52 +169,29 @@ function App() {
 		let cardPositionInStack;
 		for (let i = 0; i < stack.cards.length; i++) {
 			const cardInStack = stack.cards[i];
-			console.log("cardInStack", cardInStack)
-			console.log("card", card)
-			console.log(cardInStack, i)
 			if (cardInStack === card) {
 				cardPositionInStack = i
 			}
 		}
-		console.log(`Card Position in Stack: ${cardPositionInStack}`)
-		console.log(`Stack: ${stack}`)
-		console.log(`Card: ${card}`)
 		return cardPositionInStack
 	}
 
-	const calculateCardPosition = (card, nearestStack, i, length, id) => {
-		const stack = nearestStack.nearestStack
-		const stacksObject = stacks[nearestStack.index]
-
-		// Get Card Position in stack from index
-		// const cardPositionInStack = stacksObject.cards.map((cardInStack) => {
-		// 	console.log(cardInStack)
-		// 	if (cardInStack === i) {
-		// 		return cardInStack;
-		// 	}
-		// 	return null;
-		// })[0];
-		
+	const calculateCardPosition = (card, stackRef, stacksObject, id) => {	
 		// Get Card Position in stack from id
 		const cardPositionInStack = getCardPositionInStack(id, stacksObject)
 
-		// console.log(`Calculating Card ${i} in Stack Position ${cardPositionInStack} with ${stacksObject.cards.length} Cards`)
-
-		// console.log(`CardID: ${i} is being calculated`)
-
-		const { x: stackX, y: stackY } = getPositionAtCenter(stack);
+		const stackCenter = getPositionAtCenter(stackRef);
 		const { width: cardWidth, height: cardHeight } = card.getBoundingClientRect();
-		const { width: stackWidth, height: stackHeight } = stack.getBoundingClientRect();
-		const stackCenter = {
-			x: stackX,
-			y: stackY
-		}
+		const offset = 2
 
-		const offset = 1.2
+		const overallStackSpread = stackCenter.x - cardWidth * stacksObject.cards.length / offset*.75
+		const cardPosition = overallStackSpread + cardWidth * cardPositionInStack / offset;
 
-		const overallStackSpread = stackCenter.x - cardWidth * length / 2
-		const cardPosition = overallStackSpread + cardWidth * cardPositionInStack / offset - cardWidth / 2;
-
+		// console.log(`stackCenter.x - cardWidth * length / 2 = ${overallStackSpread}`)
+		// console.log(`${stackCenter.x} - ${cardWidth} * ${stacksObject.cards.length} / 2 = ${overallStackSpread}`)
+		// console.log(`overallStackSpread + cardWidth * cardPositionInStack / offset - cardWidth / 2: ${cardPosition}`)
+		// console.log(`${overallStackSpread} + ${cardWidth} * ${cardPositionInStack} / ${offset} - ${cardWidth} / 2: ${cardPosition}`)
+		// console.log(`CardWidth: ${cardWidth}`)
 		return cardPosition;
 	}
 
@@ -230,7 +206,6 @@ function App() {
 				return stack;
 			}))
 
-
 			// Adding Card-ID into the Stack Object
 			setStacks(stacks.map((stack, i) => {
 				if (i === nearestStack.index) {
@@ -239,72 +214,63 @@ function App() {
 				return stack;
 			}))
 
-			// Setting Controlled Position of dropped card to the position of the nearest stack
-			setUsedCards(usedCards.map((card, i) => {
-				// Stack Position
-				const {x: stackX, y: stackY} = getPositionAtCenter(nearestStack.nearestStack);
-	
-				if (i === id) {
-					switch (stacks[nearestStack.index].stackType) {
-						case "stack":
-							updateCardPosition(card.id, {
-								x: stackX - data.current.getBoundingClientRect().width / 2, 
-								y: stackY - data.current.getBoundingClientRect().height / 2
-							})
-							break;
-						case "openStack":
-							const xCenter = stackX - data.current.getBoundingClientRect().width / 2
+			// Stack Position
+			const {x: stackX, y: stackY} = getPositionAtCenter(nearestStack.nearestStack);
 
-							// Mitte - Kartenbreite * Anzahl an Karten + Anzahl der Karten * (Kartenbreite / 2)
-							
-							const newPosition = (
-								xCenter -											// Center of the stack
-								
-								(data.current.getBoundingClientRect().width * 		// Card width
-								(stacks[nearestStack.index].cards.length)) / 2) + 	// Number of cards in the stack
-								
-								stacks[nearestStack.index].cards.length * 			// Number of cards in the stack
-								data.current.getBoundingClientRect().width / 		// Card width
-								1.2													// Offset
+			switch (stacks[nearestStack.index].stackType) {
+				case "stack":
+					updateCardPosition(id, {
+						x: stackX - data.current.getBoundingClientRect().width / 2, 
+						y: stackY - data.current.getBoundingClientRect().height / 2
+					})
+					break;
+				case "openStack":
+					updateCardPosition(id, {
+						x: calculateCardPosition(data.current, nearestStack.nearestStack, stacks[nearestStack.index], id), 
+						// x: newPosition, 
+						y: stackY - data.current.getBoundingClientRect().height / 2
+					})
+					break;
+				default:
+					break;
+			}
+			// Updating all cards in all stacks
+			// This is probably not the pest performing variant to do this, but for now its the only I know of
 
-							// Update Positions of all cards in the stack based on position in array
-							stacks[nearestStack.index].cards.map((cardInStack, i) => {
-								updateCardPosition(cardInStack.id, {
-									x: newPosition + i * data.current.getBoundingClientRect().width / 1.2,
-									y: stackY - data.current.getBoundingClientRect().height / 2
-								})
-								return null;
-							})
+			stacks.map((stack, i) => {
+				console.log(`Mapping Stack ${i}`)
+				stack.cards.map((card, i) => {
+					console.log(`Mapping Card ${card}`)
+					if(stack.stackType === "openStack") {
+						// Get Card by ID
+						const currentCard = usedCards.find(thisCard => thisCard.id === card)
+						
+						// Get Stack in which the Card is
+						const currentStack = stacks.find(thisStack => thisStack.cards.includes(card))
 
+						// Get Stack Index
+						const currentStackIndex = stacks.findIndex(thisStack => thisStack.cards.includes(card))
 
+						// Get Stack Ref
+						const currentStackRef = stackRef[currentStackIndex]
+						console.log(stackRef[currentStackIndex])
 
-							// stacks[nearestStack.index].cards.forEach((card) => {
-							// 	console.log(data.current)
-							// 	console.log(stacks)
-							// 	const newCardPosition = calculateCardPosition(data.current, nearestStack, card, stacks[nearestStack.index].cards.length)
-							// 	updateCardPosition(card.id, {
-							// 		x: newCardPosition,
-							// 		y: stackY - data.current.getBoundingClientRect().height / 2
-							// 	})
-							// })
-
-							// Get Card ID
-
-
-							updateCardPosition(card.id, {
-								x: calculateCardPosition(data.current, nearestStack, stacks[nearestStack.index].cards.length, stacks[nearestStack.index].cards.length, id), 
-								// x: newPosition, 
-								y: stackY - data.current.getBoundingClientRect().height / 2
-							})
-
-							break;
-						default:
-							break;
+						const newCardPosition = calculateCardPosition(currentCard.ref.current, currentStackRef, currentStack, card)
+						updateCardPosition(card, {
+							x: newCardPosition,
+							y: getPositionAtCenter(currentStackRef).y - data.current.getBoundingClientRect().height / 2
+						})
 					}
 
-				}
-				return card;
-			}))
+					// Settting Card zIndex in usedCards based on position in stack
+					setUsedCards(usedCards.map((cardInUsedCards) => {
+						if (cardInUsedCards.id === card) {
+							cardInUsedCards.zIndex = i
+						}
+						return cardInUsedCards
+					}))
+				})
+			})
 		}
 	}
 
@@ -328,6 +294,17 @@ function App() {
 		}))
 	}
 
+	// Setting Card Ref in usedCards State
+	const setCardRef = (cardId, ref) => {
+		setUsedCards(usedCards.map((card, i) => {
+			if (i === cardId) {
+				card.ref = ref;
+			}
+			return card;
+		}))
+	}
+
+
 	return (
 		<div className="App">
 			{/* <div className='cardStack' style={{border: isColliding ? '1px solid green' : '1px solid red',}} ref={stackRef}></div> */}
@@ -346,8 +323,8 @@ function App() {
 			{/* <div className='hand' style={{border: isColliding ? '1px solid green' : '1px solid red',}}></div> */}
 			<div className="hand">
 				{
-					usedCards.map(card => {
-						return <Card key={card.id} id={card.id} symbol={card.symbol} zIndex={card.zIndex} handleCardDrag={handleCardDrag} handleCardDrop={handleCardDrop} controlledPosition={card.controlledPosition}/>
+					usedCards.map((card, index) => {
+						return <Card setRef={setCardRef} key={card.id} id={card.id} symbol={card.symbol} zIndex={card.zIndex} handleCardDrag={handleCardDrag} handleCardDrop={handleCardDrop} controlledPosition={card.controlledPosition}/>
 					})
 				}
 			</div>
