@@ -34,7 +34,6 @@ function Card({handleCardDrag, handleCardDrop, controlledPosition, zIndex, id, s
 
 	const [newControlledPosition, setNewControlledPosition] = useState({x: 0, y: 0})
 	useEffect(() => {
-		console.log("controlled position changed", controlledPosition)
 		setDroppedTimer()
 		setNewControlledPosition(controlledPosition)
 	}, [controlledPosition])

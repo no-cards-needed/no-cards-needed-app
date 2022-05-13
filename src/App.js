@@ -75,6 +75,33 @@ function App() {
 			},
 			zIndex: 0,
 		},
+		{
+			id: 3,
+			symbol: "TEN_C",
+			controlledPosition: {
+				x: 0,
+				y: 0
+			},
+			zIndex: 0,
+		},
+		{
+			id: 4,
+			symbol: "TEN_D",
+			controlledPosition: {
+				x: 0,
+				y: 0
+			},
+			zIndex: 0,
+		},
+		{
+			id: 5,
+			symbol: "TEN_H",
+			controlledPosition: {
+				x: 0,
+				y: 0
+			},
+			zIndex: 0,
+		},
 	]);
 
 
@@ -176,19 +203,24 @@ function App() {
 		// Get Card Position in stack from id
 		const cardPositionInStack = getCardPositionInStack(id, stacksObject)
 
+		const cardCount = stacksObject.cards.length
+
 		const stackCenter = getPositionAtCenter(stackRef);
 		const { width: cardWidth, height: cardHeight } = card.getBoundingClientRect();
-		const offset = 2
 
-		const overallStackSpread = stackCenter.x - cardWidth * stacksObject.cards.length / offset*.75
-		const cardPosition = overallStackSpread + cardWidth * cardPositionInStack / offset;
-
-		// console.log(`stackCenter.x - cardWidth * length / 2 = ${overallStackSpread}`)
-		// console.log(`${stackCenter.x} - ${cardWidth} * ${stacksObject.cards.length} / 2 = ${overallStackSpread}`)
-		// console.log(`overallStackSpread + cardWidth * cardPositionInStack / offset - cardWidth / 2: ${cardPosition}`)
-		// console.log(`${overallStackSpread} + ${cardWidth} * ${cardPositionInStack} / ${offset} - ${cardWidth} / 2: ${cardPosition}`)
-		// console.log(`CardWidth: ${cardWidth}`)
-		return cardPosition;
+		const overlap = cardWidth / 2
+		
+        //X - position of first card (most left, bottom of stack)
+		let firstCardX = 0 - cardWidth / 2
+		
+		//odd cards -> one is centered, even number -> no card centered
+		if(cardCount%2 === 1){
+			firstCardX += -1 * (cardCount - 1) / 2 * overlap;
+		}
+		else{
+			firstCardX += -1 * cardCount / 2 * overlap + overlap / 2;
+		}
+		return firstCardX + cardPositionInStack * overlap + stackCenter.x
 	}
 
 	const handleCardDrop = (data, id) => {
