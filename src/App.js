@@ -178,12 +178,58 @@ function App() {
 			stacks[nearestStack.index].colliding = true;
 
 			setIsColliding(true)
+
+			//Getting Stack Type of the Nearest Stack
+			const nearestStackType = stacks[nearestStack.index].stackType;
+			if (nearestStackType === "openStack") {
+				// Moving the Cards in the open Stack aside
+				stacks.map((stack, i) => {
+
+					if (i === nearestStack.index) {
+						stack.cards.map((loopedCard, i) => {
+							if (loopedCard !== id) {
+								// Get Position of currently dragged card
+								const { x: cardX, y: cardY } = data.current.getBoundingClientRect();
+
+								// Get Card by ID
+								const card = usedCards.find(card => card.id === loopedCard);
+
+								const cardWidth = card.ref.current.getBoundingClientRect().width
+
+								const isLeft = cardX < card.ref.current.getBoundingClientRect().left
+								let moveAmount = card.controlledPosition.x
+								moveAmount += isLeft ? cardWidth / 2 : -cardWidth / 2;
+
+								if (!card.movedAside){
+									console.log(card)
+									updateCardPosition(loopedCard, {
+										x: moveAmount,
+										y: card.controlledPosition.y
+									})
+									card.movedAside = true;
+								}
+							}
+						})
+					}
+					return stack;
+				})
+
+			}
+
 		} else {
 			if(nearestStack && nearestStack.nearestStack) {
 				// Set Nearest Stack to Colliding
 				stacks[nearestStack.index].colliding = false;
 				setIsColliding(false)
+
+				// TODO: Get this to work
+				// Set movedAside in all cards to false
+				setUsedCards(usedCards.map((card, i) => {
+					card.movedAside = false;
+					return card;
+				}))
 			}
+
 		}
 		
 	}
