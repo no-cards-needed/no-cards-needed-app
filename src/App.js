@@ -22,8 +22,8 @@ function App() {
 			currentlyNearest: false,
 			colliding: false,
 			distance: 0,
-			height: 400,
-			width: 200,
+			height: 200,
+			width: 125,
 			position: {
 				x: 0,
 				y: 0
@@ -36,8 +36,8 @@ function App() {
 			currentlyNearest: false,
 			colliding: false,
 			distance: 0,
-			height: 400,
-			width: 200,
+			height: 200,
+			width: 125,
 			position: {
 				x: 0,
 				y: 0
@@ -56,6 +56,8 @@ function App() {
 				y: 0
 			},
 			zIndex: 0,
+			movedAside: "false",
+			onStackType: "none"
 		},
 		{
 			id: 1,
@@ -65,6 +67,8 @@ function App() {
 				y: 0
 			},
 			zIndex: 0,
+			movedAside: "false",
+			onStackType: "none"
 		},
 		{
 			id: 2,
@@ -74,33 +78,8 @@ function App() {
 				y: 0
 			},
 			zIndex: 0,
-		},
-		{
-			id: 3,
-			symbol: "TEN_C",
-			controlledPosition: {
-				x: 0,
-				y: 0
-			},
-			zIndex: 0,
-		},
-		{
-			id: 4,
-			symbol: "TEN_D",
-			controlledPosition: {
-				x: 0,
-				y: 0
-			},
-			zIndex: 0,
-		},
-		{
-			id: 5,
-			symbol: "TEN_H",
-			controlledPosition: {
-				x: 0,
-				y: 0
-			},
-			zIndex: 0,
+			movedAside: "false",
+			onStackType: "none"
 		},
 	]);
 
@@ -200,13 +179,22 @@ function App() {
 								let moveAmount = card.controlledPosition.x
 								moveAmount += isLeft ? cardWidth / 2 : -cardWidth / 2;
 
-								if (!card.movedAside){
+								console.log(card)
+
+								if (card.movedAside === "false"){
 									console.log(card)
 									updateCardPosition(loopedCard, {
 										x: moveAmount,
 										y: card.controlledPosition.y
 									})
-									card.movedAside = true;
+
+									// Set Card to Moved Aside
+									setUsedCards(usedCards.map((card, i) => {
+										if (card.id === loopedCard) {
+											card.movedAside =  isLeft ? "left" : "right";
+										}
+										return card;
+									}))
 								}
 							}
 						})
@@ -298,6 +286,15 @@ function App() {
 						x: stackX - data.current.getBoundingClientRect().width / 2, 
 						y: stackY - data.current.getBoundingClientRect().height / 2
 					})
+
+					// Set On Stack Type of Card
+					setUsedCards(usedCards.map((card, i) => {
+						if (card.id === id) {
+							card.onStackType = "stack";
+						}
+						return card;
+					}))
+
 					break;
 				// Open Stack: Cards lie next to each other
 				case "openStack":
@@ -391,7 +388,7 @@ function App() {
 			<div className="hand">
 				{
 					usedCards.map((card, index) => {
-						return <Card setRef={setCardRef} key={card.id} id={card.id} symbol={card.symbol} zIndex={card.zIndex} handleCardDrag={handleCardDrag} handleCardDrop={handleCardDrop} controlledPosition={card.controlledPosition}/>
+						return <Card setRef={setCardRef} card={card} key={card.id} handleCardDrag={handleCardDrag} handleCardDrop={handleCardDrop} />
 					})
 				}
 			</div>

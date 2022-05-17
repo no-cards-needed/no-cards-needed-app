@@ -4,7 +4,10 @@ import Draggable from "react-draggable";
 import { cards } from "../helpers/Cards";
 
 
-function Card({handleCardDrag, handleCardDrop, controlledPosition, zIndex, id, symbol, setRef}) {
+function Card({handleCardDrag, handleCardDrop, card, setRef}) {
+
+	const {id, symbol, zIndex, controlledPosition, onStackType} = card;
+	console.log(card)
 
 	const nodeRef = useRef(null)
 	const [transition, setTransition] = useState(false)
@@ -57,6 +60,13 @@ function Card({handleCardDrag, handleCardDrop, controlledPosition, zIndex, id, s
 
 	const [cardToDisplay, setCardToDisplay] = useState(getRandomCard());
 
+	const [touched, setTouched] = useState(false);
+
+	const touchStart = () => {
+		console.log("touched")
+		setTouched(true)
+	}
+
 	return (
 		<Draggable
 			nodeRef={nodeRef}
@@ -67,10 +77,17 @@ function Card({handleCardDrag, handleCardDrop, controlledPosition, zIndex, id, s
 			scale={1}
 			onStart={handleStart}
 			onDrag={handleDrag}
-			onStop={handleStop}>
-
-			<div ref={nodeRef} style={{position: 'absolute', top: 0, left: 0, zIndex}} className={transition ? "animation" : null}>
+			onStop={handleStop}
+			>
+			<div 
+				ref={nodeRef} 
+				style={{position: 'absolute', top: 0, left: 0, zIndex, height: 150, transform: onStackType === "stack" ? "rotate(5deg)" : "scale(5)"}} 
+				className={transition ? "animation" : null}
+				onTouchStart={touchStart}
+				// onClick={touchStart}
+				>
 				{cardToDisplay}
+				{/* {onStackType} */}
 			</div>
 		</Draggable>
 
