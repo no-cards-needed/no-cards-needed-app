@@ -43,11 +43,6 @@ import { ReactComponent as TEN_D } from "../cards/10D.svg";
 import { ReactComponent as TEN_H } from "../cards/10H.svg";
 import { ReactComponent as TEN_S } from "../cards/10S.svg";
 
-import { ReactComponent as ELEVEN_C } from "../cards/11C.svg";
-import { ReactComponent as ELEVEN_D } from "../cards/11D.svg";
-import { ReactComponent as ELEVEN_H } from "../cards/11H.svg";
-import { ReactComponent as ELEVEN_S } from "../cards/11S.svg";
-
 // import {ReactComponent as JACK_C} from "../cards/JC.svg"
 // import {ReactComponent as JACK_D} from "../cards/JD.svg"
 // import {ReactComponent as JACK_H} from "../cards/JH.svg"
@@ -286,30 +281,6 @@ export const cards = [
     value: 10,
     suit: "S",
     icon: <TEN_S />,
-  },
-  {
-    name: "11C",
-    value: 11,
-    suit: "C",
-    icon: <ELEVEN_C />,
-  },
-  {
-    name: "11D",
-    value: 11,
-    suit: "D",
-    icon: <ELEVEN_D />,
-  },
-  {
-    name: "11H",
-    value: 11,
-    suit: "H",
-    icon: <ELEVEN_H />,
-  },
-  {
-    name: "11S",
-    value: 11,
-    suit: "S",
-    icon: <ELEVEN_S />,
   },
 //   {
 //     name: "JC",

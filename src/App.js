@@ -179,14 +179,11 @@ function App() {
 								let moveAmount = card.controlledPosition.x
 								moveAmount += isLeft ? cardWidth / 2 : -cardWidth / 2;
 
-								console.log(card)
 
-								if (card.movedAside === "false"){
-									console.log(card)
-									updateCardPosition(loopedCard, {
-										x: moveAmount,
-										y: card.controlledPosition.y
-									})
+								if (card.movedAside === "false" || card.movedAside === false){
+									console.log("card is currently not moved aside")
+									console.log(`moveAmount: ${moveAmount}`)
+
 
 									// Set Card to Moved Aside
 									setUsedCards(usedCards.map((card, i) => {
@@ -210,14 +207,14 @@ function App() {
 				stacks[nearestStack.index].colliding = false;
 				setIsColliding(false)
 
-				// TODO: Get this to work
-				// Set movedAside in all cards to false
-				setUsedCards(usedCards.map((card, i) => {
-					card.movedAside = false;
-					return card;
-				}))
 			}
-
+			console.log("code block executing")
+			// TODO: Get this to work
+			// Set movedAside in all cards to false
+			setUsedCards(usedCards.map((card, i) => {
+				card.movedAside = "false";
+				return card;
+			}))
 		}
 		
 	}
@@ -258,6 +255,12 @@ function App() {
 	}
 
 	const handleCardDrop = (data, id) => {
+		// Set movedAside in all cards to false
+		setUsedCards(usedCards.map((card, i) => {
+			card.movedAside = "false";
+			return card;
+		}))
+
 		// updateCardPosition(1, { x: 90, y: 110 })
 		// Check if Card and Nearest Stack are colliding
 		if (isColliding) {
