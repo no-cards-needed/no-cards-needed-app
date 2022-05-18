@@ -23,7 +23,7 @@ function App() {
 			colliding: false,
 			distance: 0,
 			height: 200,
-			width: 125,
+			width: 300,
 			position: {
 				x: 0,
 				y: 0
@@ -37,7 +37,7 @@ function App() {
 			colliding: false,
 			distance: 0,
 			height: 200,
-			width: 125,
+			width: 300,
 			position: {
 				x: 0,
 				y: 0
@@ -179,6 +179,7 @@ function App() {
 								let moveAmount = card.controlledPosition.x
 								moveAmount += isLeft ? cardWidth / 2 : -cardWidth / 2;
 
+								// TODO: When in "Selection" mode, the collidion shouldnt toggle the stack width and while in collision the order should be checked again
 
 								if (card.movedAside === "false" || card.movedAside === false){
 									console.log("card is currently not moved aside")
@@ -272,12 +273,15 @@ function App() {
 			}))
 
 			// Adding Card-ID into the Stack Object
-			setStacks(stacks.map((stack, i) => {
-				if (i === nearestStack.index) {
-					stack.cards.push(id);
-				}
-				return stack;
-			}))
+			const addCardIntoStack = (index, cardId) => {
+				//Adding Card ID into the Stack Object at a specific index
+				setStacks(stacks.map((stack, i) => {
+					if (i === nearestStack.index) {
+						stack.cards.splice(index, 0, cardId);
+					}
+					return stack;
+				}))
+			}
 
 			// Stack Position
 			const {x: stackX, y: stackY} = getPositionAtCenter(nearestStack.nearestStack);
@@ -285,6 +289,7 @@ function App() {
 			switch (stacks[nearestStack.index].stackType) {
 				// "normal"/closed stack: Cards lie on top of each other
 				case "stack":
+					addCardIntoStack(stacks[nearestStack.index].cards.length, id)
 					updateCardPosition(id, {
 						x: stackX - data.current.getBoundingClientRect().width / 2, 
 						y: stackY - data.current.getBoundingClientRect().height / 2
@@ -301,6 +306,31 @@ function App() {
 					break;
 				// Open Stack: Cards lie next to each other
 				case "openStack":
+					const currentCardPos = data.current.getBoundingClientRect().left
+					let closestCard = {left: 0, cardIndex: 0}
+
+					// Cycle through all cards in stack
+					for (let i = 0; i < stacks[nearestStack.index].cards.length; i++) {
+						const cardIndex = stacks[nearestStack.index].cards[i];
+						const card = usedCards.find(card => card.id === cardIndex);
+						const cardPosition = card.ref.current.getBoundingClientRect().left;
+						console.log(`cardPosition: ${cardPosition}`)
+						console.log(`currentCardPos: ${currentCardPos}`)
+						console.log(`cardPosition < currentCardPos: ${cardPosition < currentCardPos}`)
+						console.log(`cardPosition > closestCard.left: ${cardPosition > closestCard.left}`)
+						if (cardPosition < currentCardPos && cardPosition > closestCard.left) {
+							closestCard.left = cardPosition;
+							closestCard.cardIndex = i;
+						}
+					}
+
+					// No card is further to the left
+					if (closestCard.left === 0) {
+						addCardIntoStack(0, id)
+					} else {
+						addCardIntoStack(closestCard.cardIndex + 1, id)
+					}
+
 					updateCardPosition(id, {
 						x: calculateCardPosition(data.current, nearestStack.nearestStack, stacks[nearestStack.index], id), 
 						// x: newPosition, 
