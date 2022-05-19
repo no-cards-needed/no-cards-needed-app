@@ -1,9 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import { React, useEffect, useRef, useState } from "react";
 import { useSpring } from "react-spring";
 import './App.css';
 
 import Card from "./assets/components/Card.tsx";
 import { Stack } from "./assets/components/Stack.tsx";
+import { calculateCardPosition } from "./assets/helpers/calculate-card-position.ts";
+import { getPositionAtCenter } from "./assets/helpers/get-position-at-center.ts";
+import { moveCardsAside } from "./assets/helpers/move-cards-aside.ts";
 
 // https://www.npmjs.com/package/use-dynamic-refs
 // import useDynamicRefs from "./assets/helpers/use-dynamic-refs";
@@ -81,6 +84,28 @@ function App() {
 			movedAside: "false",
 			onStackType: "none"
 		},
+		{
+			id: 3,
+			symbol: "TEN_H",
+			controlledPosition: {
+				x: 0,
+				y: 0
+			},
+			zIndex: 0,
+			movedAside: "false",
+			onStackType: "none"
+		},
+		{
+			id: 4,
+			symbol: "TEN_H",
+			controlledPosition: {
+				x: 0,
+				y: 0
+			},
+			zIndex: 0,
+			movedAside: "false",
+			onStackType: "none"
+		},
 	]);
 
 
@@ -91,13 +116,13 @@ function App() {
 		return null;
 	}
 
-	const getPositionAtCenter = (element) => {
-		const { top, left, width, height } = element.getBoundingClientRect();
-		return {
-			x: left + width / 2,
-			y: top + height / 2
-		};
-	}
+	// const getPositionAtCenter = (element) => {
+	// 	const { top, left, width, height } = element.getBoundingClientRect();
+	// 	return {
+	// 		x: left + width / 2,
+	// 		y: top + height / 2
+	// 	};
+	// }
 
 	const getDistanceBetweenTwoElements = (element1, element2) => {
 
@@ -152,6 +177,7 @@ function App() {
 		const card = data.current
 		setNearestStack(getNearestStack(card))
 
+		// Collision
 		if (nearestStack && nearestStack.nearestStack && checkCollision(nearestStack.nearestStack, card)) {
 			// Set Nearest Stack to Colliding
 			stacks[nearestStack.index].colliding = true;
@@ -161,45 +187,7 @@ function App() {
 			//Getting Stack Type of the Nearest Stack
 			const nearestStackType = stacks[nearestStack.index].stackType;
 			if (nearestStackType === "openStack") {
-				// Moving the Cards in the open Stack aside
-				stacks.map((stack, i) => {
-
-					if (i === nearestStack.index) {
-						stack.cards.map((loopedCard, i) => {
-							if (loopedCard !== id) {
-								// Get Position of currently dragged card
-								const { x: cardX, y: cardY } = data.current.getBoundingClientRect();
-
-								// Get Card by ID
-								const card = usedCards.find(card => card.id === loopedCard);
-
-								const cardWidth = card.ref.current.getBoundingClientRect().width
-
-								const isLeft = cardX < card.ref.current.getBoundingClientRect().left
-								let moveAmount = card.controlledPosition.x
-								moveAmount += isLeft ? cardWidth / 2 : -cardWidth / 2;
-
-								// TODO: When in "Selection" mode, the collidion shouldnt toggle the stack width and while in collision the order should be checked again
-
-								if (card.movedAside === "false" || card.movedAside === false){
-									console.log("card is currently not moved aside")
-									console.log(`moveAmount: ${moveAmount}`)
-
-
-									// Set Card to Moved Aside
-									setUsedCards(usedCards.map((card, i) => {
-										if (card.id === loopedCard) {
-											card.movedAside =  isLeft ? "left" : "right";
-										}
-										return card;
-									}))
-								}
-							}
-						})
-					}
-					return stack;
-				})
-
+				moveCardsAside(stacks, nearestStack, data.current, usedCards, setUsedCards, id)
 			}
 
 		} else {
@@ -210,8 +198,7 @@ function App() {
 
 			}
 			console.log("code block executing")
-			// TODO: Get this to work
-			// Set movedAside in all cards to false
+
 			setUsedCards(usedCards.map((card, i) => {
 				card.movedAside = "false";
 				return card;
@@ -220,40 +207,29 @@ function App() {
 		
 	}
 
-	const getCardPositionInStack = (card, stack) => {
-		let cardPositionInStack;
-		for (let i = 0; i < stack.cards.length; i++) {
-			const cardInStack = stack.cards[i];
-			if (cardInStack === card) {
-				cardPositionInStack = i
-			}
-		}
-		return cardPositionInStack
-	}
+	// const calculateCardPosition = (card, stackRef, stacksObject, id) => {	
+	// 	// Get Card Position in stack from id
+	// 	const cardPositionInStack = getCardPositionInStack(id, stacksObject)
 
-	const calculateCardPosition = (card, stackRef, stacksObject, id) => {	
-		// Get Card Position in stack from id
-		const cardPositionInStack = getCardPositionInStack(id, stacksObject)
+	// 	const cardCount = stacksObject.cards.length
 
-		const cardCount = stacksObject.cards.length
+	// 	const stackCenter = getPositionAtCenter(stackRef);
+	// 	const { width: cardWidth, height: cardHeight } = card.getBoundingClientRect();
 
-		const stackCenter = getPositionAtCenter(stackRef);
-		const { width: cardWidth, height: cardHeight } = card.getBoundingClientRect();
-
-		const overlap = cardWidth / 2
+	// 	const overlap = cardWidth / 2
 		
-        //X - position of first card (most left, bottom of stack)
-		let firstCardX = 0 - cardWidth / 2
+    //     //X - position of first card (most left, bottom of stack)
+	// 	let firstCardX = 0 - cardWidth / 2
 		
-		//odd cards -> one is centered, even number -> no card centered
-		if(cardCount%2 === 1){
-			firstCardX += -1 * (cardCount - 1) / 2 * overlap;
-		}
-		else{
-			firstCardX += -1 * cardCount / 2 * overlap + overlap / 2;
-		}
-		return firstCardX + cardPositionInStack * overlap + stackCenter.x
-	}
+	// 	//odd cards -> one is centered, even number -> no card centered
+	// 	if(cardCount%2 === 1){
+	// 		firstCardX += -1 * (cardCount - 1) / 2 * overlap;
+	// 	}
+	// 	else{
+	// 		firstCardX += -1 * cardCount / 2 * overlap + overlap / 2;
+	// 	}
+	// 	return firstCardX + cardPositionInStack * overlap + stackCenter.x
+	// }
 
 	const handleCardDrop = (data, id) => {
 		// Set movedAside in all cards to false

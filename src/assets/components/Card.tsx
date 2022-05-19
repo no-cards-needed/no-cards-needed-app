@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import Draggable from "react-draggable";
 
 import { cards } from "../helpers/Cards";
@@ -119,8 +119,7 @@ function Card({handleCardDrag, handleCardDrop, card, setRef}) {
 				>
 				{/* {cardToDisplay} */}
 				{card.movedAside}
-				{temporalPosition.x}
-				{temporalPosition.y}
+
 			</div>
 		</Draggable>
 

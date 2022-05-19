@@ -1,4 +1,4 @@
-import React, {useState, useRef} from "react"
+import {useState, useRef} from "react"
 
 export const Stack = ({stack, updateCardPosition, stackRef}) => {
     // export const Stack = ({height, width, position, updateCardPosition, isColliding, stackRef}) => {
