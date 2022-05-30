@@ -1,7 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
+
+// Comment out the thing you are currently not working on
+
+// Game Development
+// import App from './Game';
+// Menu Development
 import App from './App';
+
+
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
