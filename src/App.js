@@ -325,11 +325,12 @@ function App() {
 						// Get Card by ID
 						const currentCard = usedCards.find(thisCard => thisCard.id === card)
 						
-						// Get Stack in which the Card is
-						const currentStack = stacks.find(thisStack => thisStack.cards.includes(card))
-
 						// Get Stack Index
 						const currentStackIndex = stacks.findIndex(thisStack => thisStack.cards.includes(card))
+						
+						// Get Stack in which the Card is
+						// const currentStack = stacks.find(thisStack => thisStack.cards.includes(card))
+						const currentStack = stacks[currentStackIndex]
 
 						// Get Stack Ref
 						const currentStackRef = stackRef[currentStackIndex]

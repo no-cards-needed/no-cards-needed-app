@@ -112,13 +112,13 @@ function Card({handleCardDrag, handleCardDrop, card, setRef}) {
 			<div 
 				ref={nodeRef} 
 				// TODO: When moving on from debug, delete absolute dimensions
-				style={{position: 'absolute', top: 0, left: 0, zIndex, height: 150, width: 107, transform: onStackType === "stack" ? "rotate(5deg)" : "scale(5)", background: `rgb(${color}, ${color}, ${color})`}} 
+				style={{position: 'absolute', top: 0, left: 0, zIndex, height: 150, width: 107, transform: onStackType === "stack" ? "rotate(5deg)" : "scale(5)"}} 
 				className={transition ? "animation" : null}
 				onTouchStart={touchStart}
 				// onClick={touchStart}
 				>
-				{/* {cardToDisplay} */}
-				{card.movedAside}
+				{cardToDisplay}
+				{/* {card.movedAside} */}
 
 			</div>
 		</Draggable>
