@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import Draggable from "react-draggable";
 
 import { cards } from "../helpers/Cards";
+import useLongPress from "../helpers/use-long-press";
 
 
 function Card({handleCardDrag, handleCardDrop, card, setRef}) {
@@ -35,7 +36,6 @@ function Card({handleCardDrag, handleCardDrop, card, setRef}) {
 	}, [card.movedAside])
 
 	const handleStart = () => {
-		setRef(id, nodeRef)
 	}
 
 	const handleDrag = (e, ui) => {
@@ -77,7 +77,8 @@ function Card({handleCardDrag, handleCardDrop, card, setRef}) {
 	}
 	
 	useEffect(() => {
-	  return () => clearTimeout(timerRef.current);
+		setRef(id, nodeRef)
+	  	return () => clearTimeout(timerRef.current);
 	}, [])
 
 
@@ -97,6 +98,25 @@ function Card({handleCardDrag, handleCardDrop, card, setRef}) {
 		setTouched(true)
 	}
 
+	const onLongPress = () => {
+        console.log('longpress is triggered');
+    };
+
+    const onClick = () => {
+        console.log('click is triggered')
+    }
+
+    const defaultOptions = {
+        shouldPreventDefault: true,
+        delay: 500,
+    };
+    const longPressEvent = useLongPress(onLongPress, onClick, defaultOptions);
+
+	const maxRotationInDegrees = 10;
+	const [rotation, setRotation] = useState(Math.random() * maxRotationInDegrees * 2 - maxRotationInDegrees);
+	console.log(onStackType)
+	const transform = onStackType === "stack" ? `rotate(${rotation}deg)` : "rotate(0deg)";
+
 	return (
 		<Draggable
 			nodeRef={nodeRef}
@@ -112,12 +132,15 @@ function Card({handleCardDrag, handleCardDrop, card, setRef}) {
 			<div 
 				ref={nodeRef} 
 				// TODO: When moving on from debug, delete absolute dimensions
-				style={{position: 'absolute', top: 0, left: 0, zIndex, height: 150, width: 107, transform: onStackType === "stack" ? "rotate(5deg)" : "scale(5)"}} 
+				style={{position: 'absolute', top: 0, left: 0, zIndex, height: 150, width: 107}} 
 				className={transition ? "animation" : null}
-				onTouchStart={touchStart}
+				// onTouchStart={touchStart}
+				{...longPressEvent}
 				// onClick={touchStart}
 				>
-				{cardToDisplay}
+					<div style={{transform}} className="card">
+						{cardToDisplay}
+					</div>
 				{/* {card.movedAside} */}
 
 			</div>

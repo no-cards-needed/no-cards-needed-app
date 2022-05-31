@@ -1,6 +1,6 @@
 export const moveCardsAside = (
 	stacks: {cards: number[]}[], 
-	nearestStack: {nearestRef, distance: number, index: number}, 
+	nearestStack: {nearestStack, distance: number, index: number}, 
 	currentCard, 
 	usedCards: {id: number, symbol: string, controlledPosition: {x: number, y: number}, zIndex: number, movedAside: string, onStackType: string, ref}[], 
 	setUsedCards: (usedCards) => void,
