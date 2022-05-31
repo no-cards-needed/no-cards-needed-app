@@ -1,1 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 750 1050"><defs><style>.cls-1,.cls-3{fill:none;}.cls-2{fill:#fff;}.cls-3{stroke:#282c44;}.cls-4{fill:#a4203a;}.cls-5{clip-path:url(#clip-path);}</style><clipPath id="clip-path"><rect class="cls-1" x="-36" y="-36" width="822" height="1122"/></clipPath></defs><g id="Ebene_2" data-name="Ebene 2"><rect class="cls-2" width="750" height="1049.95" rx="44.82"/></g><g id="Ebene_1_Kopie_2" data-name="Ebene 1 Kopie 2"><line class="cls-3" x1="36" y1="525" x2="714" y2="525"/><polygon class="cls-4" points="92.42 95.09 92.42 53.1 76.98 53.1 76.98 99.23 92.42 95.09"/><path class="cls-4" d="M77,109.59v17.77c0,3.5-1.52,5.24-4.55,5.24s-4.59-1.74-4.59-5.24v-6.31H52.39v6.31q0,20,20,20.09t20-20.09V105.45Z"/><path class="cls-4" d="M673,940.41V922.64c0-3.5,1.52-5.24,4.55-5.24s4.59,1.74,4.59,5.24V929h15.45v-6.31q0-20-20-20.09t-20,20.09v21.91Z"/><polygon class="cls-4" points="657.58 954.91 657.58 996.9 673.02 996.9 673.02 950.77 657.58 954.91"/><polygon class="cls-4" points="77.32 163.13 55.2 194.63 77.32 226.13 99.44 194.63 77.32 163.13"/><polygon class="cls-4" points="672.68 886.87 694.8 855.37 672.68 823.87 650.56 855.37 672.68 886.87"/><rect class="cls-4" x="227.5" y="456" width="295" height="27.5"/><rect class="cls-4" x="227.5" y="566.5" width="295" height="27.5"/><rect class="cls-4" x="227.5" y="400" width="295" height="36"/><rect class="cls-4" x="227.5" y="614" width="295" height="36"/><g class="cls-5"><path class="cls-4" d="M522.73,650a10.77,10.77,0,0,0,0-21.54H227.27a10.77,10.77,0,0,0,0,21.54Z"/><path class="cls-4" d="M522.73,400h-.23c0-87.81-66-159-147.5-159S227.5,312.19,227.5,400h-.23a10.77,10.77,0,1,0,0,21.54H522.73a10.77,10.77,0,0,0,0-21.54Z"/><path class="cls-4" d="M522.5,650h-295c0,87.81,66,159,147.5,159s147.5-71.19,147.5-159"/></g><polygon class="cls-2" points="375 303.25 352.87 334.75 375 366.25 397.13 334.75 375 303.25"/><polygon class="cls-2" points="375 746.75 397.13 715.25 375 683.75 352.87 715.25 375 746.75"/><rect class="cls-2" x="345.37" y="129.69" width="15" height="404.45" transform="translate(-54.56 594) rotate(-76)"/><rect class="cls-2" x="389.63" y="515.86" width="15" height="404.45" transform="translate(-395.7 929.68) rotate(-76)"/></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 1050">
+  <defs>
+    <clipPath id="clip-path">
+      <path style="fill:none" d="M-36-36h822v1122H-36z"/>
+    </clipPath>
+    <style>
+      .cls-2{fill:#fff}.cls-4{fill:#a4203a}
+    </style>
+  </defs>
+  <rect class="cls-2" width="750" height="1049.95" rx="44.82" id="Ebene_2" data-name="Ebene 2"/>
+  <g id="Ebene_1_Kopie_2" data-name="Ebene 1 Kopie 2">
+    <path style="stroke:#282c44;fill:none" d="M36 525h678"/>
+    <path class="cls-4" d="M92.42 95.09V53.1H76.98v46.13l15.44-4.14zM77 109.59v17.77c0 3.5-1.52 5.24-4.55 5.24s-4.59-1.74-4.59-5.24v-6.31H52.39v6.31q0 20 20 20.09t20-20.09v-21.91Zm596 830.82v-17.77c0-3.5 1.52-5.24 4.55-5.24s4.59 1.74 4.59 5.24V929h15.45v-6.31q0-20-20-20.09t-20 20.09v21.91Zm-15.42 14.5v41.99h15.44v-46.13l-15.44 4.14zM77.32 163.13l-22.12 31.5 22.12 31.5 22.12-31.5-22.12-31.5zm595.36 723.74 22.12-31.5-22.12-31.5-22.12 31.5 22.12 31.5zM227.5 456h295v27.5h-295zm0 110.5h295V594h-295zm0-166.5h295v36h-295zm0 214h295v36h-295z"/>
+    <path class="cls-4" d="M522.73 650a10.77 10.77 0 0 0 0-21.54H227.27a10.77 10.77 0 0 0 0 21.54Zm0-250h-.23c0-87.81-66-159-147.5-159s-147.5 71.19-147.5 159h-.23a10.77 10.77 0 1 0 0 21.54h295.46a10.77 10.77 0 0 0 0-21.54Zm-.23 250h-295c0 87.81 66 159 147.5 159s147.5-71.19 147.5-159" style="clip-path:url(#clip-path)"/>
+    <path class="cls-2" d="m375 303.25-22.13 31.5 22.13 31.5 22.13-31.5-22.13-31.5zm0 443.5 22.13-31.5-22.13-31.5-22.13 31.5 22.13 31.5z"/>
+    <path class="cls-2" transform="rotate(-76 352.86266476 331.91680773)" d="M345.37 129.69h15v404.45h-15z"/>
+    <path class="cls-2" transform="rotate(-76 397.1180683 718.07645193)" d="M389.63 515.86h15v404.45h-15z"/>
+  </g>
+</svg>
