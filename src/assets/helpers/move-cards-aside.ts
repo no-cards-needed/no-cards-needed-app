@@ -23,7 +23,7 @@ export const moveCardsAside = (
 
 			const isLeft = cardLeft + cardWidth / 2 < currentCardCenter
 			const isRight = cardRight - cardWidth / 2 > currentCardCenter
-			console.log(isLeft, isRight)
+			// console.log(isLeft, isRight)
 			
 			// Set Card to Moved Aside
 			setUsedCards(usedCards.map((card, i) => {

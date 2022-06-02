@@ -5,11 +5,13 @@ import './App.css';
 import Card from "./assets/components/Card";
 import { Stack } from "./assets/components/Stack";
 import { calculateCardPosition } from "./assets/helpers/calculate-card-position";
+import { getDistanceBetweenTwoElements } from "./assets/helpers/get-distance-between-two-elements";
 import { getPositionAtCenter } from "./assets/helpers/get-position-at-center";
 import { handleCardDrag } from "./assets/helpers/handle-card-drag";	
 import { handleCardDrop } from "./assets/helpers/handle-card-drop";
 import { moveCardsAside } from "./assets/helpers/move-cards-aside";
 import { moveCardsToHand } from "./assets/helpers/move-cards-to-hand";
+import { shuffleCards } from "./assets/helpers/shuffle-cards";
 
 // https://www.npmjs.com/package/use-dynamic-refs
 // import useDynamicRefs from "./assets/helpers/use-dynamic-refs";
@@ -20,9 +22,11 @@ function Game() {
 	const cardRef = useRef([]);
 	const [isColliding, setIsColliding] = useState(false);
 	const [cardStartPosition, setCardStartPosition] = useState({x: 0, y: 0});
+	const [currentlyMovingStack, setCurrentlyMovingStack] = useState(false);
 
 	const [stacks, setStacks] = useState([
 		{
+			id: 0,
 			stackType: "hand",
 			orientation: "front",
 			cards: [],
@@ -37,6 +41,7 @@ function Game() {
 			}
 		},
 		{
+			id: 1,
 			stackType: "stack",
 			orientation: "front",
 			cards: [],
@@ -51,6 +56,22 @@ function Game() {
 			}
 		},
 		{
+			id: 2,
+			stackType: "stack",
+			orientation: "front",
+			cards: [],
+			currentlyNearest: false,
+			colliding: false,
+			distance: 0,
+			height: 200,
+			width: 300,
+			position: {
+				x: 0,
+				y: 0
+			}
+		},
+		{
+			id: 3,
 			stackType: "openStack",
 			orientation: "front",
 			cards: [],
@@ -79,7 +100,8 @@ function Game() {
 			zIndex: 0,
 			movedAside: "false",
 			onStackType: "none",
-			ref: null
+			ref: null,
+			animation: "none"
 		},
 		{
 			id: 1,
@@ -91,7 +113,8 @@ function Game() {
 			zIndex: 0,
 			movedAside: "false",
 			onStackType: "none",
-			ref: null
+			ref: null,
+			animation: "none"
 		},
 		{
 			id: 2,
@@ -103,7 +126,8 @@ function Game() {
 			zIndex: 0,
 			movedAside: "false",
 			onStackType: "none",
-			ref: null
+			ref: null,
+			animation: "none"
 		},
 		{
 			id: 3,
@@ -115,7 +139,8 @@ function Game() {
 			zIndex: 0,
 			movedAside: "false",
 			onStackType: "none",
-			ref: null
+			ref: null,
+			animation: "none"
 		},
 		{
 			id: 4,
@@ -127,31 +152,10 @@ function Game() {
 			zIndex: 0,
 			movedAside: "false",
 			onStackType: "none",
-			ref: null
+			ref: null,
+			animation: "none"
 		},
 	]);
-
-	const getStackBoundingClientRect = (stack) => {
-		if (stack.current) {
-			return stack.current.getBoundingClientRect();
-		}
-		return null;
-	}
-
-	// const getPositionAtCenter = (element) => {
-	// 	const { top, left, width, height } = element.getBoundingClientRect();
-	// 	return {
-	// 		x: left + width / 2,
-	// 		y: top + height / 2
-	// 	};
-	// }
-
-	const getDistanceBetweenTwoElements = (element1, element2) => {
-
-		const { x: x1, y: y1 } = getPositionAtCenter(element1);
-		const { x: x2, y: y2 } = getPositionAtCenter(element2);
-		return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
-	}
 
 	const getNearestStack = (card) => {
 		const distances = stacks.map((stack, index) => {
@@ -194,12 +198,88 @@ function Game() {
 		}))
 	}
 
+	// Shuffle cards by cardId
+	const shuffleCardsById = (cardId: number) => {
+		// Find stack of card
+		const stack = stacks.find((stack, index) => {
+			if (stack.cards.includes(cardId)) {
+				return stack;
+			}
+		})
+		console.log(stack)
+		const tempCards = stack.cards
+		const shuffledCards = shuffleCards(tempCards)
+
+		setStacks(stacks.map((updatedStack, index) => {
+			if (index === stack.id) {
+				console.log(index, stack.id)
+				updatedStack.cards = shuffledCards;
+			}
+			return updatedStack;
+		}))
+		console.log(shuffledCards)
+		
+		// Re-Set zIndex of the shuffled cards
+		setUsedCards(usedCards.map((card, i) => {
+			if (shuffledCards.includes(card.id)) {
+				card.zIndex = shuffledCards.indexOf(card.id)
+				card.animation = "shuffle"
+				const timeout = setTimeout(() => {
+					// card.animation = "none"
+					setUsedCards(usedCards.map((card, i) => {
+						if (i === i) {
+							card.animation = "none"
+						}
+						return card;
+					}))
+					clearTimeout(timeout)
+				}, 300)
+			}
+			return card;
+		}))
+
+	}
+
+	// Check if LongPress is in proximity of card start position, if so: move stack not single card
+	const handleLongPress = (cardId: number, cardStartPosition: {x: number, y: number}, cardCurrentPosition: {x: number, y: number}) => {
+		// Check if cardPosition is in specific radius of cardStartPosition
+
+		const distance = Math.sqrt(Math.pow(cardStartPosition.x - cardCurrentPosition.x, 2) + Math.pow(cardStartPosition.y - cardCurrentPosition.y, 2))
+
+		if (distance < 50) {
+			console.log("STACK IS BEEING MOVED")
+			setCurrentlyMovingStack(true)
+
+			// Set Animation of current card to "stack" the it's obvious the user is moving a stack
+			setUsedCards(usedCards.map((card, i) => {
+				if (i === cardId) {
+					card.animation = "stack"
+				}
+				return card;
+			}))
+
+			// Get All Cards in current Stack
+			const {cards} = stacks.find((stack, index) => {
+				if (stack.cards.includes(cardId)) {
+					return stack;
+				}
+			})
+
+			// Set All cards in stack of the moved card expect the one beeing moved to animation "hidden"
+			setUsedCards(usedCards.map((card, i) => {
+				if (cards.includes(card.id) && card.id !== cardId) {
+					card.animation = "hidden"
+				}
+				return card;
+			}))
+		}
+	}
+
 	// Move Cards to Hand on Start
 	useEffect(() => {
 
 		moveCardsToHand(usedCards, updateCardPosition, stacks, setStacks, stackRef)
-		setTimeout(() => {
-		}, 1000)
+
 	}, [])
 
 	return (
@@ -221,9 +301,14 @@ function Game() {
 			<div className="hand">
 				{
 					usedCards.map((card, index) => {
-						return <Card setRef={setCardRef} card={card} key={card.id} 
-						handleCardDrag={(data, id) => handleCardDrag(data, id, usedCards, setUsedCards, getNearestStack, nearestStack, setNearestStack, stacks, setIsColliding, cardStartPosition, setCardStartPosition)} 
-						handleCardDrop={(data, id) => handleCardDrop(data, id, usedCards, setUsedCards, isColliding, stacks, setStacks, nearestStack, updateCardPosition, stackRef)} />
+						return <Card 
+								setRef={setCardRef} 
+								card={card} 
+								key={card.id}
+								shuffle={shuffleCardsById}
+								handleLongPress={handleLongPress}
+								handleCardDrag={(data, id) => handleCardDrag(data, id, usedCards, setUsedCards, getNearestStack, nearestStack, setNearestStack, stacks, setIsColliding)} 
+								handleCardDrop={(data, id) => handleCardDrop(data, id, usedCards, setUsedCards, isColliding, setIsColliding, stacks, setStacks, nearestStack, updateCardPosition, stackRef, currentlyMovingStack, setCurrentlyMovingStack)} />
 					})
 				}
 			</div>

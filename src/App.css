@@ -44,6 +44,15 @@
   box-shadow: var(--shadow-elevation-medium);
   transition: .3s ease transform;
 }
+.card .shuffle{
+  animation: shuffle .5s linear;
+}
+.card.stack {
+  transform: scale(1.3) !important
+}
+.card.hidden {
+  transform: scale(0) !important
+}
 
 .hand {
   width: 100%;
@@ -59,4 +68,14 @@
   bottom: 0;
   width: calc(100% - 8px - 4em) !important;
   margin: 2em;
+}
+
+/* Card Rotation Animation */
+@keyframes shuffle {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

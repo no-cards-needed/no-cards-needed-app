@@ -2,8 +2,8 @@
     "compilerOptions": {
       "outDir": "build/dist",
       "module": "commonjs",
-      "target": "es5",
-      "lib": ["es6", "dom"],
+      "target": "es6",
+      "lib": ["es6", "dom", "es2017", "es2016", "DOM.Iterable"],
       "sourceMap": true,
       "allowJs": true,
       "jsx": "react-jsx",
