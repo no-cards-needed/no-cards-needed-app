@@ -206,18 +206,16 @@ function Game() {
 				return stack;
 			}
 		})
-		console.log(stack)
+
 		const tempCards = stack.cards
 		const shuffledCards = shuffleCards(tempCards)
 
 		setStacks(stacks.map((updatedStack, index) => {
 			if (index === stack.id) {
-				console.log(index, stack.id)
 				updatedStack.cards = shuffledCards;
 			}
 			return updatedStack;
 		}))
-		console.log(shuffledCards)
 		
 		// Re-Set zIndex of the shuffled cards
 		setUsedCards(usedCards.map((card, i) => {
@@ -247,7 +245,6 @@ function Game() {
 		const distance = Math.sqrt(Math.pow(cardStartPosition.x - cardCurrentPosition.x, 2) + Math.pow(cardStartPosition.y - cardCurrentPosition.y, 2))
 
 		if (distance < 50) {
-			console.log("STACK IS BEEING MOVED")
 			setCurrentlyMovingStack(true)
 
 			// Set Animation of current card to "stack" the it's obvious the user is moving a stack
@@ -274,6 +271,20 @@ function Game() {
 			}))
 		}
 	}
+
+	useEffect(() => {
+		if (currentlyMovingStack) {
+			// get all hidden cards to move to the closest stack
+			usedCards.map((card, i) => {
+				if (card.animation === "hidden") {
+					const stackPosition = getPositionAtCenter(nearestStack.nearestStack)
+					const {width, height} = card.ref.current.getBoundingClientRect()
+					updateCardPosition(card.id, {x: stackPosition.x - width / 2, y: stackPosition.y - height / 2})
+				}
+			})
+			
+		}
+	}, [isColliding])
 
 	// Move Cards to Hand on Start
 	useEffect(() => {

@@ -47,7 +47,6 @@ export const handleCardDrag = (
             setIsColliding(false)
 
         }
-        console.log("code block executing")
 
         setUsedCards(usedCards.map((card, i) => {
             card.movedAside = "false";

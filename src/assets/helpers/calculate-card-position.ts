@@ -5,9 +5,9 @@ export const calculateCardPosition = (
     card: React.MutableRefObject<HTMLElement>, 
     stackRef: React.MutableRefObject<HTMLElement>, 
     stacksObject: {stackType: string, orientation: string, cards: number[], currentlyNearest: boolean, colliding: boolean, distance: number, height: number, width: number, position: {x: number, y: number}}, 
-    id: number) => {	
+    cardId: number) => {	
     // Get Card Position in stack from id
-    const cardPositionInStack = getCardPositionInStack(id, stacksObject)
+    const cardPositionInStack = getCardPositionInStack(cardId, stacksObject)
 
     const cardCount = stacksObject.cards.length
 

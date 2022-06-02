@@ -47,6 +47,10 @@
 .card .shuffle{
   animation: shuffle .5s linear;
 }
+.card.regular {
+  transition: transform .3s ease;
+  transform: scale(1)
+}
 .card.stack {
   transform: scale(1.3) !important
 }

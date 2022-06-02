@@ -107,9 +107,7 @@ function Card({
 	let cardStartPosition = {x: 0, y: 0}
 
 	const onLongPress = () => {
-        console.log('longpress is triggered');
 		if(onStackType === "stack") {
-			console.log(cardStartPosition, deltaPosition)
 			handleLongPress(id, cardStartPosition, deltaPosition)
 		}
     };
@@ -117,9 +115,6 @@ function Card({
 	const [lastTouchTimestamp, setLastTouchTimestamp] = useState(0);
 
     const onClick = (e) => {
-		console.log('click is triggered', lastTouchTimestamp - e.timeStamp);
-		console.log(e)
-
 		if (e.type === "touchend") {
 			setLastTouchTimestamp(e.timeStamp);
 		}
@@ -136,8 +131,6 @@ function Card({
     }
 
 	const onMouseDown = (e) => {
-		console.log('mouse down is triggered')
-
 		// Setting cardStartPosition to current position of the card
 		cardStartPosition = deltaPosition
 	}
@@ -160,7 +153,7 @@ function Card({
 		} else if(card.animation === "hidden") {
 			setClassList("hidden")	
 		} else {
-			setClassList("")
+			setClassList("regular")
 		}
 	}, [card.animation])
 
