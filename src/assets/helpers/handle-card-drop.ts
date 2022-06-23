@@ -48,7 +48,10 @@ export const handleCardDrop = (
 			// Adding all Cards from temp array into the new stack
 			setStacks(stacks.map((stack, i) => {
 				if (i === nearestStack.index) {
-					stack.cards = tempCards
+					// Check if the cards are already in the stack
+					if (!stack.cards.includes(tempCards[0])) {
+						stack.cards = [...stack.cards, ...tempCards]
+					}
 				}
 				return stack
 			}))

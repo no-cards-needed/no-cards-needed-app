@@ -43,7 +43,7 @@ function Game() {
 		{
 			id: 1,
 			stackType: "stack",
-			orientation: "front",
+			orientation: "back",
 			cards: [],
 			currentlyNearest: false,
 			colliding: false,
