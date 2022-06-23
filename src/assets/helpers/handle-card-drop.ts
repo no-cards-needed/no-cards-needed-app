@@ -30,9 +30,11 @@ export const handleCardDrop = (
 	}) => void,
 	stackRef: React.MutableRefObject<any[]>,
 	currentlyMovingStack: boolean,
-	setCurrentlyMovingStack: (currentlyMovingStack: boolean) => void) => {
+	setCurrentlyMovingStack: (currentlyMovingStack: boolean) => void,
+	connection: React.MutableRefObject<any>) => {
 
-		
+		connection.current.send(`Moved card ${id} to Stack ${nearestStack.index}`)
+
 		const moveAllCardsToNewStack = (previousStackIndex, stackPosition) => {
 			// Getting all Cards from previous stack in temp array
 			const tempCards = stacks[previousStackIndex].cards
@@ -69,8 +71,8 @@ export const handleCardDrop = (
 				return card;
 			}))
 
-			setCurrentlyMovingStack(false)
-		}
+				setCurrentlyMovingStack(false)
+			}
 
 
 			// Set movedAside in all cards to false
@@ -112,8 +114,6 @@ export const handleCardDrop = (
 
 						if (currentlyMovingStack) {
 							moveAllCardsToNewStack(previousStackIndex, {x: stackX, y: stackY})
-
-							
 						}
 
 						addCardIntoStack(stacks[nearestStack.index].cards.length, id)
@@ -134,41 +134,51 @@ export const handleCardDrop = (
 					// Open Stack: Cards lie next to each other
 					case "openStack":
 					case "hand":
-						const currentCardPos = data.current.getBoundingClientRect().left
-						let closestCard = {left: 0, cardIndex: 0}
+						
+						// Workaround for moving closed stacks to open stacks
+						if (!currentlyMovingStack) {
+							const currentCardPos = data.current.getBoundingClientRect().left
+							let closestCard = {left: 0, cardIndex: 0}
 
-						// Cycle through all cards in stack
-						for (let i = 0; i < stacks[nearestStack.index].cards.length; i++) {
-							const cardIndex = stacks[nearestStack.index].cards[i];
-							const card = usedCards.find(card => card.id === cardIndex);
-							const cardPosition = card.ref.current.getBoundingClientRect().left;
+							// Cycle through all cards in stack
+							for (let i = 0; i < stacks[nearestStack.index].cards.length; i++) {
+								const cardIndex = stacks[nearestStack.index].cards[i];
+								const card = usedCards.find(card => card.id === cardIndex);
+								const cardPosition = card.ref.current.getBoundingClientRect().left;
 
-							if (cardPosition < currentCardPos && cardPosition > closestCard.left) {
-								closestCard.left = cardPosition;
-								closestCard.cardIndex = i;
+								if (cardPosition < currentCardPos && cardPosition > closestCard.left) {
+									closestCard.left = cardPosition;
+									closestCard.cardIndex = i;
+								}
 							}
-						}
 
-						// No card is further to the left
-						if (closestCard.left === 0) {
-							addCardIntoStack(0, id)
+							// No card is further to the left
+							if (closestCard.left === 0) {
+								addCardIntoStack(0, id)
+							} else {
+								addCardIntoStack(closestCard.cardIndex + 1, id)
+							}
+							updateCardPosition(id, {
+								
+								x: calculateCardPosition(data, nearestStack.nearestStack, stacks[nearestStack.index], id), 
+								// x: newPosition, 
+								y: stackY - data.current.getBoundingClientRect().height / 2
+							})
+
+							// Set On Stack Type of Card
+							setUsedCards(usedCards.map((card, i) => {
+								if (card.id === id) {
+									card.onStackType = "openStack";
+								}
+								return card;
+							}))
 						} else {
-							addCardIntoStack(closestCard.cardIndex + 1, id)
+							// Removing Stack Animation from all cards
+							setUsedCards(usedCards.map((card, i) => {
+								card.animation = "";
+								return card;
+							}))
 						}
-						updateCardPosition(id, {
-							
-							x: calculateCardPosition(data, nearestStack.nearestStack, stacks[nearestStack.index], id), 
-							// x: newPosition, 
-							y: stackY - data.current.getBoundingClientRect().height / 2
-						})
-
-						// Set On Stack Type of Card
-						setUsedCards(usedCards.map((card, i) => {
-							if (card.id === id) {
-								card.onStackType = "openStack";
-							}
-							return card;
-						}))
 
 						break;
 					default:

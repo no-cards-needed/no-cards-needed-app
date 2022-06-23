@@ -101,9 +101,24 @@ function Card({
 		const rand = Math.floor(Math.random() * cards.length)
 		return (cards[rand].icon)
 	}
+	// console.log(cards)
 
-	const [cardToDisplay, setCardToDisplay] = useState(getRandomCard());
 	const backSide = back
+
+	const getCardBySymbol = () => {
+		try {
+			if (cards.filter((card) => card.name === symbol)[0].icon) {
+				return cards.filter((card) => card.name === symbol)[0].icon
+			} else {
+				return null
+			}
+		} catch(e) {
+			console.log(e)
+		}
+	}
+
+	const [cardToDisplay, setCardToDisplay] = useState(getCardBySymbol());
+
 
 	let cardStartPosition = {x: 0, y: 0}
 
