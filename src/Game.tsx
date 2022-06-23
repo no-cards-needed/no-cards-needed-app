@@ -11,12 +11,25 @@ import { handleCardDrag } from "./assets/helpers/handle-card-drag";
 import { handleCardDrop } from "./assets/helpers/handle-card-drop";
 import { moveCardsAside } from "./assets/helpers/move-cards-aside";
 import { moveCardsToHand } from "./assets/helpers/move-cards-to-hand";
+import { connectToGame, createPeer } from "./assets/helpers/multiplayer";
 import { shuffleCards } from "./assets/helpers/shuffle-cards";
 
 // https://www.npmjs.com/package/use-dynamic-refs
 // import useDynamicRefs from "./assets/helpers/use-dynamic-refs";
 
 function Game() {
+
+	const peerInstance = useRef(null)
+	const connection = useRef(null)
+	const [peerId, setPeerid] = useState("")
+	const [connectionId, setConnectionId] = useState("")
+
+	const connect = () => {
+		connection.current = connectToGame(peerInstance.current, connectionId)
+		connection.current.on("open", () => {
+			connection.current.send("hi!");
+		});
+	}
 
 	const stackRef = useRef([]);
 	const cardRef = useRef([]);
@@ -92,7 +105,7 @@ function Game() {
 	const [usedCards, setUsedCards] = useState([
 		{
 			id: 0,
-			symbol: "TEN_C",
+			symbol: "10C",
 			controlledPosition: {
 				x: 0,
 				y: 0
@@ -105,7 +118,7 @@ function Game() {
 		},
 		{
 			id: 1,
-			symbol: "TEN_D",
+			symbol: "10D",
 			controlledPosition: {
 				x: 0,
 				y: 0
@@ -118,7 +131,7 @@ function Game() {
 		},
 		{
 			id: 2,
-			symbol: "TEN_H",
+			symbol: "10H",
 			controlledPosition: {
 				x: 0,
 				y: 0
@@ -131,7 +144,7 @@ function Game() {
 		},
 		{
 			id: 3,
-			symbol: "TEN_H",
+			symbol: "10H",
 			controlledPosition: {
 				x: 0,
 				y: 0
@@ -144,7 +157,7 @@ function Game() {
 		},
 		{
 			id: 4,
-			symbol: "TEN_H",
+			symbol: "9H",
 			controlledPosition: {
 				x: 0,
 				y: 0
@@ -291,14 +304,49 @@ function Game() {
 
 		moveCardsToHand(usedCards, updateCardPosition, stacks, setStacks, stackRef)
 
+		peerInstance.current = createPeer()
+
+		// handle peer errors
+		const FATAL_ERRORS = ['invalid-id', 'invalid-key', 'network', 'ssl-unavailable', 'server-error', 'socket-error', 'socket-closed', 'unavailable-id', 'webrtc'];
+		peerInstance.current.on('error', (e) => {
+			if (FATAL_ERRORS.includes(e.type)) {
+				console.log(e)
+				peerInstance.current.reconnect(e); // this function waits then tries the entire connection over again
+			} else {
+				console.log('Non fatal error: ',  e.type);
+			}
+		})
+
+		peerInstance.current.on("open", (id) => {
+			console.log("Peer created with id: "+id)
+			setPeerid(id)
+		})
+
+		peerInstance.current.on("connection", (conn) => {
+			conn.on("data", (data) => {
+				// Will print 'hi!'
+				console.log(data);
+			});
+			conn.on("open", (id) => {
+				conn.send("hi!");
+				console.log("my id is" + id)
+			});
+		})
+
 	}, [])
+
+	
 
 	return (
 		<div className="App">
 			{/* <div className='cardStack' style={{border: isColliding ? '1px solid green' : '1px solid red',}} ref={stackRef}></div> */}
 			<p style={{width: 500, margin: "0 auto"}}>{
-				JSON.stringify(stacks[1], ["cards"], "\t")
+				peerId
 			}</p>
+			<div>
+				<input value={connectionId} onChange={(e) => setConnectionId(e.target.value)}/>
+				<button onClick={() => connect()}>Connect</button>
+			</div>
 			{
 				stacks.map((stack, index) => {
 					return (
@@ -319,7 +367,7 @@ function Game() {
 								shuffle={shuffleCardsById}
 								handleLongPress={handleLongPress}
 								handleCardDrag={(data, id) => handleCardDrag(data, id, usedCards, setUsedCards, getNearestStack, nearestStack, setNearestStack, stacks, setIsColliding)} 
-								handleCardDrop={(data, id) => handleCardDrop(data, id, usedCards, setUsedCards, isColliding, setIsColliding, stacks, setStacks, nearestStack, updateCardPosition, stackRef, currentlyMovingStack, setCurrentlyMovingStack)} />
+								handleCardDrop={(data, id) => handleCardDrop(data, id, usedCards, setUsedCards, isColliding, setIsColliding, stacks, setStacks, nearestStack, updateCardPosition, stackRef, currentlyMovingStack, setCurrentlyMovingStack, connection)} />
 					})
 				}
 			</div>
