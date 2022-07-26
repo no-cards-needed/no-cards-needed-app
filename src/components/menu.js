@@ -5,9 +5,9 @@ import Dropdown from "./Dropdown.js";
 import Toggle from "./Toggle.js";
 import PlayerCards from "./PlayerCards.js";
 
-import chevronDown from './iconsBlack/chevron/down.svg';
-import chevronUp from './iconsBlack/chevron/up.svg';
-import share from './iconsWhite/share.svg';
+import chevronDown from '../assets/iconsBlack/chevron/down.svg';
+import chevronUp from '../assets/iconsBlack/chevron/up.svg';
+import share from '../assets/iconsWhite/share.svg';
 
 function Menu() {
   

@@ -1,9 +1,9 @@
-import hamburger from './iconsWhite/hamburger.svg';
-import close from './iconsWhite/close.svg';
-import settings from './iconsWhite/settings.svg';
-import showRemovedCards from './iconsWhite/showRemovedCards.svg';
-import foldAllCards from './iconsWhite/foldAllCards.svg';
-import leave from './iconsWhite/leave.svg';
+import hamburger from '../assets/iconsWhite/hamburger.svg';
+import close from '../assets/iconsWhite/close.svg';
+import settings from '../assets/iconsWhite/settings.svg';
+import showRemovedCards from '../assets/iconsWhite/showRemovedCards.svg';
+import foldAllCards from '../assets/iconsWhite/foldAllCards.svg';
+import leave from '../assets/iconsWhite/leave.svg';
 
 import { useState } from 'react';
 

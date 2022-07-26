@@ -1,5 +1,5 @@
-import plus from './iconsWhite/plus.svg';
-import minus from './iconsWhite/minus.svg';
+import plus from '../assets/iconsWhite/plus.svg';
+import minus from '../assets/iconsWhite/minus.svg';
 import React, { useState } from 'react';
 
 function Counter( props ) {

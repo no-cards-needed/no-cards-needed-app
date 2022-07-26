@@ -1,4 +1,4 @@
-import close from './iconsBlack/close.svg';
+import close from '../assets/iconsBlack/close.svg';
 import { Link } from "react-router-dom";
 
 function MenuHeader() {

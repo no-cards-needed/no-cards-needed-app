@@ -1,8 +1,8 @@
-import chevronRight from './iconsBlack/chevron/right.svg';
-import chevronLeft from './iconsBlack/chevron/left.svg';
-import chevronUp from './iconsWhite/chevron/up.svg';
-import chevronDown from './iconsWhite/chevron/down.svg';
-import showRemovedCards from './iconsWhite/showRemovedCards.svg';
+import chevronRight from '../assets/iconsBlack/chevron/right.svg';
+import chevronLeft from '../assets/iconsBlack/chevron/left.svg';
+import chevronUp from '../assets/iconsWhite/chevron/up.svg';
+import chevronDown from '../assets/iconsWhite/chevron/down.svg';
+import showRemovedCards from '../assets/iconsWhite/showRemovedCards.svg';
 import React, { useState } from 'react';
 
 import GameHeader from "./GameHeader.js"

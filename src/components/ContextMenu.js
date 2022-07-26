@@ -1,11 +1,8 @@
-import pickUp from './iconsBlack/pickUp.svg';
-import removePile from './iconsBlack/removePile.svg';
-import takeATrick from './iconsBlack/takeATrick.svg';
-import shufflePile from './iconsBlack/shufflePile.svg';
-import dealAgain from './iconsBlack/dealAgain.svg';
-import { useState } from 'react';
-
-
+import pickUp from '../assets/iconsBlack/pickUp.svg';
+import removePile from '../assets/iconsBlack/removePile.svg';
+import takeATrick from '../assets/iconsBlack/takeATrick.svg';
+import shufflePile from '../assets/iconsBlack/shufflePile.svg';
+import dealAgain from '../assets/iconsBlack/dealAgain.svg';
 
 
 function ContextMenu() {

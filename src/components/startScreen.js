@@ -1,4 +1,4 @@
-import Image from '../no_cards_needed.svg';
+import Image from '../assets/no_cards_needed.svg';
 import { useState } from 'react';
 
 
