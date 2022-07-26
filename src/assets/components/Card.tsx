@@ -122,7 +122,9 @@ function Card({
 
 	const onLongPress = () => {
 		if(onStackType === "stack") {
-			handleLongPress(id, cardStartPosition, deltaPosition)
+			// MOving Whole stack, not working for now
+
+			//handleLongPress(id, cardStartPosition, deltaPosition)
 		}
     };
 

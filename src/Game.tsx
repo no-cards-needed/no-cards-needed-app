@@ -11,8 +11,9 @@ import { handleCardDrag } from "./assets/helpers/handle-card-drag";
 import { handleCardDrop } from "./assets/helpers/handle-card-drop";
 import { moveCardsAside } from "./assets/helpers/move-cards-aside";
 import { moveCardsToHand } from "./assets/helpers/move-cards-to-hand";
-import { connectToGame, createPeer } from "./assets/helpers/multiplayer";
+import {connectToGame, createPeer, setDefaultStacks, setDefaultUsedCards} from "./assets/helpers/multiplayer";
 import { shuffleCards } from "./assets/helpers/shuffle-cards";
+import {moveCardToPosition} from "./assets/helpers/move-card-to-position";
 
 // https://www.npmjs.com/package/use-dynamic-refs
 // import useDynamicRefs from "./assets/helpers/use-dynamic-refs";
@@ -20,16 +21,10 @@ import { shuffleCards } from "./assets/helpers/shuffle-cards";
 function Game() {
 
 	const peerInstance = useRef(null)
+	const serverInstance = useRef(null)
 	const connection = useRef(null)
 	const [peerId, setPeerid] = useState("")
 	const [connectionId, setConnectionId] = useState("")
-
-	const connect = () => {
-		connection.current = connectToGame(peerInstance.current, connectionId)
-		connection.current.on("open", () => {
-			connection.current.send("hi!");
-		});
-	}
 
 	const stackRef = useRef([]);
 	const cardRef = useRef([]);
@@ -37,138 +32,11 @@ function Game() {
 	const [cardStartPosition, setCardStartPosition] = useState({x: 0, y: 0});
 	const [currentlyMovingStack, setCurrentlyMovingStack] = useState(false);
 
-	const [stacks, setStacks] = useState([
-		{
-			id: 0,
-			stackType: "hand",
-			orientation: "front",
-			cards: [],
-			currentlyNearest: false,
-			colliding: false,
-			distance: 0,
-			height: 200,
-			width: 300,
-			position: {
-				x: 0,
-				y: 0
-			}
-		},
-		{
-			id: 1,
-			stackType: "stack",
-			orientation: "front",
-			cards: [],
-			currentlyNearest: false,
-			colliding: false,
-			distance: 0,
-			height: 200,
-			width: 300,
-			position: {
-				x: 0,
-				y: 0
-			}
-		},
-		{
-			id: 2,
-			stackType: "stack",
-			orientation: "front",
-			cards: [],
-			currentlyNearest: false,
-			colliding: false,
-			distance: 0,
-			height: 200,
-			width: 300,
-			position: {
-				x: 0,
-				y: 0
-			}
-		},
-		{
-			id: 3,
-			stackType: "openStack",
-			orientation: "front",
-			cards: [],
-			currentlyNearest: false,
-			colliding: false,
-			distance: 0,
-			height: 200,
-			width: 300,
-			position: {
-				x: 0,
-				y: 0
-			}
-		},
-	])
+	const [stacks, setStacks] = useState([])
 
 	const [nearestStack, setNearestStack] = useState(null);
 	
-	const [usedCards, setUsedCards] = useState([
-		{
-			id: 0,
-			symbol: "10C",
-			controlledPosition: {
-				x: 0,
-				y: 0
-			},
-			zIndex: 0,
-			movedAside: "false",
-			onStackType: "none",
-			ref: null,
-			animation: "none"
-		},
-		{
-			id: 1,
-			symbol: "10D",
-			controlledPosition: {
-				x: 0,
-				y: 0
-			},
-			zIndex: 0,
-			movedAside: "false",
-			onStackType: "none",
-			ref: null,
-			animation: "none"
-		},
-		{
-			id: 2,
-			symbol: "10H",
-			controlledPosition: {
-				x: 0,
-				y: 0
-			},
-			zIndex: 0,
-			movedAside: "false",
-			onStackType: "none",
-			ref: null,
-			animation: "none"
-		},
-		{
-			id: 3,
-			symbol: "10H",
-			controlledPosition: {
-				x: 0,
-				y: 0
-			},
-			zIndex: 0,
-			movedAside: "false",
-			onStackType: "none",
-			ref: null,
-			animation: "none"
-		},
-		{
-			id: 4,
-			symbol: "9H",
-			controlledPosition: {
-				x: 0,
-				y: 0
-			},
-			zIndex: 0,
-			movedAside: "false",
-			onStackType: "none",
-			ref: null,
-			animation: "none"
-		},
-	]);
+	const [usedCards, setUsedCards] = useState([]);
 
 	const getNearestStack = (card) => {
 		const distances = stacks.map((stack, index) => {
@@ -301,6 +169,10 @@ function Game() {
 
 	// Move Cards to Hand on Start
 	useEffect(() => {
+		const defaultCards = setDefaultUsedCards()
+		const defaultStacks = setDefaultStacks()
+
+
 
 		moveCardsToHand(usedCards, updateCardPosition, stacks, setStacks, stackRef)
 
@@ -326,16 +198,80 @@ function Game() {
 			conn.on("data", (data) => {
 				// Will print 'hi!'
 				console.log(data);
+				if(data.type === "cardMove_stack") {
+					moveCards_stack(data)
+				}
 			});
 			conn.on("open", (id) => {
 				conn.send("hi!");
 				console.log("my id is" + id)
+
+				// New Client connects to the server
+
+				setUsedCards(defaultCards)
+				setStacks(defaultStacks)
+
+				//Sending Cards and Stacks
+				conn.send({
+					type: "cards",
+					data: defaultCards
+				})
+				conn.send({
+					type: "stacks",
+					data: defaultStacks
+				})
 			});
 		})
 
 	}, [])
 
-	
+	const moveCards_stack = (data) => {
+		console.log("Moving Card to Stack")
+		const {stackIndex, cardId} = data.data
+
+		const stack = stacks.find(stack => stack.id === stackIndex)
+		console.log(stack, stacks, stackIndex)
+		const stackPosition = getPositionAtCenter(stack);
+
+		moveCardToPosition(stacks, setStacks, usedCards, setUsedCards, stackIndex, updateCardPosition, cardId, stackPosition)
+	}
+
+	const connect = () => {
+		connection.current = connectToGame(peerInstance.current, connectionId)
+		connection.current.on("open", () => {
+			connection.current.send("hi!");
+		});
+		connection.current.on("data", (data) => {
+			console.log(data)
+			console.log(data.type)
+			switch (data.type) {
+				case "cards":
+					console.log("Setting Cards")
+					setUsedCards(data.data)
+					break;
+
+				case "stacks":
+					setStacks(data.data)
+					break;
+
+				case "cardMove_stack":
+					console.log("Moving Card to Stack")
+					const {stackIndex, cardId} = data.data
+
+					const getStackById = (id: number) => {
+						return stacks.find((stack, index) => {
+							if (stack.id === id) {
+								return stack;
+							}
+						})
+					}
+
+					const stackPosition = getPositionAtCenter(getStackById(stackIndex));
+
+					moveCardToPosition(stacks, setStacks, usedCards, setUsedCards, stackIndex, updateCardPosition, cardId, stackPosition)
+			}
+		})
+	}
 
 	return (
 		<div className="App">

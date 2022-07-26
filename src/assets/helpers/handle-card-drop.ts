@@ -1,5 +1,6 @@
 import { calculateCardPosition } from "./calculate-card-position";
 import { getPositionAtCenter } from "./get-position-at-center";
+import {addCardIntoStack, moveCardToPosition} from "./move-card-to-position";
 
 export const handleCardDrop = (
 	data, 
@@ -33,11 +34,11 @@ export const handleCardDrop = (
 	setCurrentlyMovingStack: (currentlyMovingStack: boolean) => void,
 	connection: React.MutableRefObject<any>) => {
 
-			connection.current.send(`Moved card ${id} to Stack ${nearestStack.index}`)
+
 			const moveAllCardsToNewStack = (previousStackIndex, stackPosition) => {
 				// Getting all Cards from previous stack in temp array
 				const tempCards = stacks[previousStackIndex].cards
-			
+
 				// Deleting Card from previous stack
 				setStacks(stacks.map((stack, i) => {
 					if (i === previousStackIndex) {
@@ -45,7 +46,7 @@ export const handleCardDrop = (
 					}
 					return stack;
 				}))
-			
+
 				// Adding all Cards from temp array into the new stack
 				setStacks(stacks.map((stack, i) => {
 					if (i === nearestStack.index) {
@@ -53,17 +54,17 @@ export const handleCardDrop = (
 					}
 					return stack
 				}))
-			
+
 				// Removing Stack Animation from all cards
 				setUsedCards(usedCards.map((card, i) => {
 					card.animation = "";
-			
+
 					// Moving Cards to new Stack
 					updateCardPosition(i, {
-						x: stackPosition.x - data.current.getBoundingClientRect().width / 2, 
+						x: stackPosition.x - data.current.getBoundingClientRect().width / 2,
 						y: stackPosition.y - data.current.getBoundingClientRect().height / 2
 					})
-			
+
 					return card;
 				}))
 
@@ -90,16 +91,7 @@ export const handleCardDrop = (
 					return stack;
 				}))
 
-				// Adding Card-ID into the Stack Object
-				const addCardIntoStack = (index, cardId) => {
-					//Adding Card ID into the Stack Object at a specific index
-					setStacks(stacks.map((stack, i) => {
-						if (i === nearestStack.index) {
-							stack.cards.splice(index, 0, cardId);
-						}
-						return stack;
-					}))
-				}
+
 
 				// Stack Position
 				const {x: stackX, y: stackY} = getPositionAtCenter(nearestStack.nearestStack);
@@ -111,20 +103,15 @@ export const handleCardDrop = (
 						if (currentlyMovingStack) {
 							moveAllCardsToNewStack(previousStackIndex, {x: stackX, y: stackY})
 						}
-
-						addCardIntoStack(stacks[nearestStack.index].cards.length, id)
-						updateCardPosition(id, {
-							x: stackX - data.current.getBoundingClientRect().width / 2, 
-							y: stackY - data.current.getBoundingClientRect().height / 2
-						})
-
-						// Set On Stack Type of Card
-						setUsedCards(usedCards.map((card, i) => {
-							if (card.id === id) {
-								card.onStackType = "stack";
+						console.log(data.current.getBoundingClientRect())
+						connection.current.send({
+							type: "cardMove_stack",
+							data: {
+								stackIndex: nearestStack.index,
+								cardId: id
 							}
-							return card;
-						}))
+						})
+						moveCardToPosition(stacks, setStacks, usedCards, setUsedCards, nearestStack.index, updateCardPosition, id, {x: stackX, y: stackY})
 
 						break;
 					// Open Stack: Cards lie next to each other
@@ -150,9 +137,10 @@ export const handleCardDrop = (
 
 							// No card is further to the left
 							if (closestCard.left === 0) {
-								addCardIntoStack(0, id)
+								addCardIntoStack(stacks, setStacks, nearestStack.index, 0, id)
+
 							} else {
-								addCardIntoStack(closestCard.cardIndex + 1, id)
+								addCardIntoStack(stacks, setStacks, nearestStack.index,closestCard.cardIndex + 1, id)
 							}
 							updateCardPosition(id, {
 								
