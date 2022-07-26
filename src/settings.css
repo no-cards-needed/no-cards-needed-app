@@ -1,0 +1,84 @@
+.labelItemGroup {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+
+    flex: none;
+    flex-grow: 1;
+  }
+ 
+  .settingsContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 32px 16px;
+    gap: 16px;
+
+    position: relative;
+    margin: 0px 12.5px;
+    min-height: 88px;
+
+    background: #DEDBE5;
+    border-radius: 24px;
+  } 
+
+  .settingsContent {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    
+    flex: content;
+    order: 1;
+    flex-grow: 0;
+  } 
+
+  .settingsLabel {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between; 
+    align-items: center;
+    padding: 0px 8px 0px 0px;
+    gap: 8px;
+
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+  }
+
+  .hairline {
+    position: relative;
+    width:  100%;
+    border: 1px solid #CAC7D1;
+    border-radius: 2px;
+    align-self: stretch;
+  }
+
+  .player {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    align-items: flex-start;
+
+    max-width: min-content;
+    padding: 4px 12px 4px 4px;
+    gap: 8px;
+
+    align-self: stretch;
+    flex-grow: 1;
+
+    background: #CAC7D1;
+    border-radius: 8px;
+  }
+
+  .playerContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 8px;
+
+    width: 100%;
+    flex-wrap: wrap;
+  }

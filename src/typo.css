@@ -1,0 +1,30 @@
+/* Headline / H1 */
+headline {
+    font-family: 'Heebo';
+    font-style: normal;
+    font-weight: 745;
+    font-size: 20px;
+    line-height: 120%;
+    letter-spacing: 0.05em;
+}
+/* Body */
+text {
+    font-family: 'Heebo';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0.02em;
+}
+
+/* Label */
+label {
+    font-family: 'Heebo';
+    font-style: normal;
+    font-weight: 450;
+    font-size: 12px;
+    line-height: 18px;
+    text-transform: uppercase;
+
+    padding: 0px 2px;
+}

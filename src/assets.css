@@ -1,0 +1,99 @@
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
+.startScreen {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: center;
+  background-color: #fff;
+  padding: 0px 16px;
+}
+
+.infoTag {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 8px;
+
+    position: relative;
+    width: fit-content;
+    height: 40px;
+    /* violet grey/20 */
+
+    background: #CAC7D1;
+    border-radius: 8px;
+}
+
+.counter {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 4px;
+    gap: 8px;
+
+    position: relative;
+    width: fit-content;
+    height: 48px;
+
+    /* violet grey/30 */
+
+    background: #B6B3BD;
+    border-radius: 16px;
+}   
+  
+  .noselect {
+  
+    -webkit-touch-callout: none;
+      -webkit-user-select: none;
+       -khtml-user-select: none;
+         -moz-user-select: none;
+          -ms-user-select: none;
+              user-select: none;
+  
+  }
+
+
+  .avatarContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    background: #fff;
+  }
+
+
+  .iconContainer {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    /* background: #fff; */
+  }
+
+  .iconContainerBig {
+    width: 24px;
+    height: 24px;
+    /* background: #fff; */
+  }
+
+  .hitbox {
+    position: inherit;
+    height: 40px;
+    width: 40px;
+    background: #fff;
+  }
+
+  .cardContainer {
+    width: 80px;
+    height: 111.86px;
+    border-radius: 5px;
+
+    background: #fff;
+  }

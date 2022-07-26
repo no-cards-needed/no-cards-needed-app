@@ -1,0 +1,81 @@
+
+.btnBig { 
+  stroke: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 0px;
+  gap: 8px;
+  border-radius: 24px;
+
+  position: relative;
+  width: auto;
+  height: 80px;
+  margin: 0px 12.5px 16px 12.5px;
+  border: 0.75px solid rgba(0, 0, 0, 0.2);
+
+  text-transform: uppercase;  
+
+  cursor: pointer;
+}
+
+  .Primary {
+    color: #fff;
+    background: #7741EA;
+  }
+  
+  .Primary:active {
+    background: #6528C9;
+  }
+
+
+  .Secondary {
+    color: #2C2833;
+    background: #CAC7D1;
+  }
+  
+  .Secondary:active {
+    background: #B6B3BD;
+  }
+
+
+  .btn {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+
+    position: relative;
+    min-width: max-content;
+    border: 0.75px solid rgba(0, 0, 0, 0.2);
+
+    cursor: pointer;
+  }
+
+  .medium {
+    border-radius: 12px;
+    padding: 12.5px 16px 11.5px;
+    min-height: 48px;
+  }
+
+  .small {
+    border-radius: 12px;
+    padding: 9px 16px 8px;
+    min-height: 40px;
+  }
+
+  .quadBtnSmall {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+
+    position: relative;
+    width: 40px;
+    border: 0.75px solid rgba(0, 0, 0, 0.2);
+
+    cursor: pointer;
+  }
