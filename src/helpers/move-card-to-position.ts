@@ -38,7 +38,7 @@ stackPosition: {x: number, y: number}
 
     console.log("moveCardToPosition");
     const cardDimensions = {width: 107, height: 150}
-
+    console.log(cardId, stackPosition);
     addCardIntoStack(stacks, setStacks, stackIndex, stacks[stackIndex].cards.length, cardId)
     updateCardPosition(cardId, {
         x: stackPosition.x - cardDimensions.width / 2,

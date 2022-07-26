@@ -45,6 +45,7 @@ root.render(
 				<Route path="/" element={<StartScreen />} />
 				<Route path="game/:gameId" element={<Game />} />
 				<Route path="game/new" element={<Menu />} />
+				<Route path="debug" element={<App />} />
 			</Routes>
 		</BrowserRouter>
 	</React.StrictMode>

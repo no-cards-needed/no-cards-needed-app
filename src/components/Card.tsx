@@ -181,7 +181,6 @@ function Card({
 
 	const [menuProps, toggleMenu] = useMenuState();
     const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
-	console.log(card)
 
 	return (
 		<>
@@ -214,7 +213,7 @@ function Card({
 									cardToDisplay
 									: card.orientation === "back" ?
 									backSide
-									: <p>Hi </p>
+									: <p>Rip </p>
 							}
 							
 						</div>

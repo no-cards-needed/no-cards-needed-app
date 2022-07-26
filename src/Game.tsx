@@ -33,10 +33,14 @@ function Game() {
 	const [currentlyMovingStack, setCurrentlyMovingStack] = useState(false);
 
 	const [stacks, setStacks] = useState([])
+	const stacksReference = useRef([])
+	stacksReference.current = stacks
 
 	const [nearestStack, setNearestStack] = useState(null);
 	
 	const [usedCards, setUsedCards] = useState([]);
+	const usedCardsReference = useRef([])
+	usedCardsReference.current = usedCards
 
 	const getNearestStack = (card) => {
 		const distances = stacks.map((stack, index) => {
@@ -58,7 +62,8 @@ function Game() {
 	}
 
 	const updateCardPosition = (cardId, {x, y}) => {
-		setUsedCards(usedCards.map((card, i) => {
+		console.log("updateCardPosition", cardId, {x, y})
+		setUsedCards(usedCardsReference.current.map((card, i) => {
 			if (i === cardId) {
 				card.controlledPosition = {
 					x,
@@ -67,6 +72,7 @@ function Game() {
 			}
 			return card;
 		}))
+		console.log(usedCardsReference.current)
 	}
 
 	// Setting Card Ref in usedCards State
@@ -153,6 +159,48 @@ function Game() {
 		}
 	}
 
+
+
+	const moveCards_stack = async (data) => {
+		const {stackIndex, cardId} = data.data
+
+		let stackPosition = getPositionAtCenter(stackRef[stackIndex]);
+
+		moveCardToPosition(stacksReference.current, setStacks, usedCardsReference.current, setUsedCards, stackIndex, updateCardPosition, cardId, stackPosition)
+	}
+
+	const connect = async () => {
+		connection.current = connectToGame(peerInstance.current, connectionId)
+		connection.current.on("open", () => {
+			connection.current.send("hi!");
+		});
+		connection.current.on("data", async (data) => {
+			console.log(data)
+			console.log(data.type)
+			switch (data.type) {
+				case "cards":
+					console.log("Setting Cards")
+					setUsedCards(data.data)
+					break;
+
+				case "stacks":
+					setStacks(data.data)
+					break;
+
+				case "cardMove_stack":
+					console.log("Moving gvh to Stack")
+					const {stackIndex, cardId} = data.data
+
+					const stack = stacks.find(stack => stack.id === stackIndex)
+					console.log(stack, stacks, stackIndex)
+					const stackPosition = getPositionAtCenter(stackRef[stackIndex]);
+					console.log(stackPosition)
+
+					await moveCardToPosition(stacks, setStacks, usedCards, setUsedCards, stackIndex, updateCardPosition, cardId, stackPosition)
+			}
+		})
+	}
+
 	useEffect(() => {
 		if (currentlyMovingStack) {
 			// get all hidden cards to move to the closest stack
@@ -225,54 +273,6 @@ function Game() {
 
 	}, [])
 
-	const moveCards_stack = (data) => {
-		console.log("Moving Card to Stack")
-		const {stackIndex, cardId} = data.data
-
-		const stack = stacks.find(stack => stack.id === stackIndex)
-		console.log(stack, stacks, stackIndex)
-		const stackPosition = getPositionAtCenter(stack);
-
-		moveCardToPosition(stacks, setStacks, usedCards, setUsedCards, stackIndex, updateCardPosition, cardId, stackPosition)
-	}
-
-	const connect = () => {
-		connection.current = connectToGame(peerInstance.current, connectionId)
-		connection.current.on("open", () => {
-			connection.current.send("hi!");
-		});
-		connection.current.on("data", (data) => {
-			console.log(data)
-			console.log(data.type)
-			switch (data.type) {
-				case "cards":
-					console.log("Setting Cards")
-					setUsedCards(data.data)
-					break;
-
-				case "stacks":
-					setStacks(data.data)
-					break;
-
-				case "cardMove_stack":
-					console.log("Moving Card to Stack")
-					const {stackIndex, cardId} = data.data
-
-					const getStackById = (id: number) => {
-						return stacks.find((stack, index) => {
-							if (stack.id === id) {
-								return stack;
-							}
-						})
-					}
-
-					const stackPosition = getPositionAtCenter(getStackById(stackIndex));
-
-					moveCardToPosition(stacks, setStacks, usedCards, setUsedCards, stackIndex, updateCardPosition, cardId, stackPosition)
-			}
-		})
-	}
-
 	return (
 		<div className="App">
 			{/* <div className='cardStack' style={{border: isColliding ? '1px solid green' : '1px solid red',}} ref={stackRef}></div> */}
@@ -293,7 +293,7 @@ function Game() {
 			{/* <Stack height={500} width={500} position={{x: 0, y: 0}} updateCardPosition={updateCardPosition} isColliding={isColliding} stackRef={stackRef}/> */}
 
 			{/* <div className='hand' style={{border: isColliding ? '1px solid green' : '1px solid red',}}></div> */}
-			<div className="hand">
+			<div className="cards">
 				{
 					usedCards.map((card, index) => {
 						return <Card 

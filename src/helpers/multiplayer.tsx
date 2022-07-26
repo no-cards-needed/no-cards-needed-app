@@ -44,7 +44,8 @@ export const setDefaultStacks = () => {
             position: {
                 x: 0,
                 y: 0
-            }
+            },
+            ref: null
         },
         {
             id: 1,
@@ -59,7 +60,8 @@ export const setDefaultStacks = () => {
             position: {
                 x: 0,
                 y: 0
-            }
+            },
+            ref: null
         },
         {
             id: 2,
@@ -74,7 +76,8 @@ export const setDefaultStacks = () => {
             position: {
                 x: 0,
                 y: 0
-            }
+            },
+            ref: null
         },
         {
             id: 3,
@@ -89,7 +92,8 @@ export const setDefaultStacks = () => {
             position: {
                 x: 0,
                 y: 0
-            }
+            },
+            ref: null
         },
     ]
 }
@@ -107,7 +111,8 @@ export const setDefaultUsedCards = () => {
             movedAside: "false",
             onStackType: "none",
             ref: null,
-            animation: "none"
+            animation: "none",
+            orientation: "front"
         },
         {
             id: 1,
@@ -120,7 +125,8 @@ export const setDefaultUsedCards = () => {
             movedAside: "false",
             onStackType: "none",
             ref: null,
-            animation: "none"
+            animation: "none",
+            orientation: "front"
         },
         {
             id: 2,
@@ -133,7 +139,8 @@ export const setDefaultUsedCards = () => {
             movedAside: "false",
             onStackType: "none",
             ref: null,
-            animation: "none"
+            animation: "none",
+            orientation: "front"
         },
         {
             id: 3,
@@ -146,7 +153,8 @@ export const setDefaultUsedCards = () => {
             movedAside: "false",
             onStackType: "none",
             ref: null,
-            animation: "none"
+            animation: "none",
+            orientation: "front"
         },
         {
             id: 4,
@@ -159,7 +167,8 @@ export const setDefaultUsedCards = () => {
             movedAside: "false",
             onStackType: "none",
             ref: null,
-            animation: "none"
+            animation: "none",
+            orientation: "front"
         },
     ]
 }
