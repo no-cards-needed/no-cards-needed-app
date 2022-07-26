@@ -1,0 +1,16 @@
+#basicDrop {
+    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+#dropSmall {
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+#transpBlur {
+    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(4px);
+}
+
+#hardlineDrop {
+    box-shadow: 0px 0px 6px 4px rgba(119, 65, 234, 0.5);
+}

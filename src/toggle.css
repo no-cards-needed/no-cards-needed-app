@@ -1,0 +1,53 @@
+.toggleOff {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 2px;
+    
+    position: relative;
+    width: 52px;
+    height: 32px;
+    
+    border-radius: 24px; 
+
+    background: #B6B3BD;
+
+    transition: background-color 50ms ease-in 50ms;
+    cursor: pointer;
+}
+
+.toggleOn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 2px;
+    
+    position: relative;
+    width: 52px;
+    height: 32px;
+    
+    border-radius: 24px; 
+
+    background: #7741EA;
+
+    transition: background-color 50ms ease-in 50ms;
+    cursor: pointer;
+}
+
+.toggleCircleOff {
+    transform: translateX(0px);
+    transition: transform 150ms ease-out;
+    width: 28px;
+    height: 28px;
+    border-radius: 24px;
+    background: #FFFFFF;
+}
+
+.toggleCircleOn {
+    transform: translateX(20px);
+    transition: transform 150ms ease-out ;
+    width: 28px;
+    height: 28px;
+    border-radius: 24px;
+    background: #FFFFFF;
+}
