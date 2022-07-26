@@ -5,20 +5,20 @@ import {
   Route,
 } from "react-router-dom";
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import './App.css';
-import './btn.css';
-import './shdws.css';
-import './typo.css';
-import './assets.css';
-import './header.css';
-import './dropdown.css';
-import './context.css';
-import './hamburger.css';
-import './toggle.css';
-import './settings.css';
-import './hand.css';
-import './modal.css';
+import './css/index.css';
+import './css/App.css';
+import './css/btn.css';
+import './css/shdws.css';
+import './css/typo.css';
+import './css/assets.css';
+import './css/header.css';
+import './css/dropdown.css';
+import './css/context.css';
+import './css/hamburger.css';
+import './css/toggle.css';
+import './css/settings.css';
+import './css/hand.css';
+import './css/modal.css';
 
 // Comment out the thing you are currently not working on
 

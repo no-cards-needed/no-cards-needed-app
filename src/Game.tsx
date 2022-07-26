@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useSpring } from "react-spring";
-import './App.css';
+import './css/App.css';
 
 import Card from "./components/Card";
 import { Stack } from "./components/Stack";
