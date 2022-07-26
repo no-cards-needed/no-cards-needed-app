@@ -1,7 +1,8 @@
 import { useRef, useState, useEffect } from "react";
 import Draggable from "react-draggable";
 
-import { cards } from "../helpers/Cards";
+import { cards, back } from "../helpers/Cards";
+
 import useLongPress from "../helpers/use-long-press";
 
 import {
@@ -102,6 +103,7 @@ function Card({
 	}
 	// console.log(cards)
 
+	const backSide = back
 
 	const getCardBySymbol = () => {
 		try {
@@ -148,6 +150,7 @@ function Card({
 
 	const onMouseDown = (e) => {
 		// Setting cardStartPosition to current position of the card
+		//console.log("setting delta position")
 		cardStartPosition = deltaPosition
 	}
 
@@ -178,6 +181,7 @@ function Card({
 
 	const [menuProps, toggleMenu] = useMenuState();
     const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
+	console.log(card)
 
 	return (
 		<>
@@ -205,7 +209,14 @@ function Card({
 						className={`card ${classList}`}
 						{...longPressEvent}
 						>
-							{cardToDisplay}
+							{
+								card.orientation === "front" ?
+									cardToDisplay
+									: card.orientation === "back" ?
+									backSide
+									: <p>Hi </p>
+							}
+							
 						</div>
 					{/* {card.movedAside} */}
 

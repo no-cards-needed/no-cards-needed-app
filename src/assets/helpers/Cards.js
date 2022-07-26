@@ -63,6 +63,8 @@ import {ReactComponent as ACE_D} from "../cards/AD.svg"
 import {ReactComponent as ACE_H} from "../cards/AH.svg"
 import {ReactComponent as ACE_S} from "../cards/AS.svg"
 
+import { ReactComponent as BACK } from "../cards/zBack.svg";
+
 export const cards = [
   {
     name: "2C",
@@ -379,3 +381,5 @@ export const cards = [
     icon: <ACE_S />,
   },
 ];
+
+export const back = BACK
