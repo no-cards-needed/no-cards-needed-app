@@ -2,18 +2,18 @@ import { useEffect, useRef, useState } from "react";
 import { useSpring } from "react-spring";
 import './App.css';
 
-import Card from "./assets/components/Card";
-import { Stack } from "./assets/components/Stack";
-import { calculateCardPosition } from "./assets/helpers/calculate-card-position";
-import { getDistanceBetweenTwoElements } from "./assets/helpers/get-distance-between-two-elements";
-import { getPositionAtCenter } from "./assets/helpers/get-position-at-center";
-import { handleCardDrag } from "./assets/helpers/handle-card-drag";	
-import { handleCardDrop } from "./assets/helpers/handle-card-drop";
-import { moveCardsAside } from "./assets/helpers/move-cards-aside";
-import { moveCardsToHand } from "./assets/helpers/move-cards-to-hand";
-import {connectToGame, createPeer, setDefaultStacks, setDefaultUsedCards} from "./assets/helpers/multiplayer";
-import { shuffleCards } from "./assets/helpers/shuffle-cards";
-import {moveCardToPosition} from "./assets/helpers/move-card-to-position";
+import Card from "./components/Card";
+import { Stack } from "./components/Stack";
+import { calculateCardPosition } from "./helpers/calculate-card-position";
+import { getDistanceBetweenTwoElements } from "./helpers/get-distance-between-two-elements";
+import { getPositionAtCenter } from "./helpers/get-position-at-center";
+import { handleCardDrag } from "./helpers/handle-card-drag";
+import { handleCardDrop } from "./helpers/handle-card-drop";
+import { moveCardsAside } from "./helpers/move-cards-aside";
+import { moveCardsToHand } from "./helpers/move-cards-to-hand";
+import {connectToGame, createPeer, setDefaultStacks, setDefaultUsedCards} from "./helpers/multiplayer";
+import { shuffleCards } from "./helpers/shuffle-cards";
+import {moveCardToPosition} from "./helpers/move-card-to-position";
 
 // https://www.npmjs.com/package/use-dynamic-refs
 // import useDynamicRefs from "./assets/helpers/use-dynamic-refs";

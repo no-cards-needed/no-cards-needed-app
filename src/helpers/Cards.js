@@ -1,69 +1,69 @@
-import { ReactComponent as TWO_C } from "../cards/2C.svg";
-import { ReactComponent as TWO_D } from "../cards/2D.svg";
-import { ReactComponent as TWO_H } from "../cards/2H.svg";
-import { ReactComponent as TWO_S } from "../cards/2S.svg";
+import { ReactComponent as TWO_C } from "../assets/cards/2C.svg";
+import { ReactComponent as TWO_D } from "../assets/cards/2D.svg";
+import { ReactComponent as TWO_H } from "../assets/cards/2H.svg";
+import { ReactComponent as TWO_S } from "../assets/cards/2S.svg";
 
-import {ReactComponent as THREE_C} from "../cards/3C.svg"
-import {ReactComponent as THREE_D} from "../cards/3D.svg"
-import {ReactComponent as THREE_H} from "../cards/3H.svg"
-import {ReactComponent as THREE_S} from "../cards/3S.svg"
+import {ReactComponent as THREE_C} from "../assets/cards/3C.svg"
+import {ReactComponent as THREE_D} from "../assets/cards/3D.svg"
+import {ReactComponent as THREE_H} from "../assets/cards/3H.svg"
+import {ReactComponent as THREE_S} from "../assets/cards/3S.svg"
 
-import {ReactComponent as FOUR_C} from "../cards/4C.svg"
-import {ReactComponent as FOUR_D} from "../cards/4D.svg"
-import {ReactComponent as FOUR_H} from "../cards/4H.svg"
-import {ReactComponent as FOUR_S} from "../cards/4S.svg"
+import {ReactComponent as FOUR_C} from "../assets/cards/4C.svg"
+import {ReactComponent as FOUR_D} from "../assets/cards/4D.svg"
+import {ReactComponent as FOUR_H} from "../assets/cards/4H.svg"
+import {ReactComponent as FOUR_S} from "../assets/cards/4S.svg"
 
-import {ReactComponent as FIVE_C} from "../cards/5C.svg"
-import {ReactComponent as FIVE_D} from "../cards/5D.svg"
-import {ReactComponent as FIVE_H} from "../cards/5H.svg"
-import {ReactComponent as FIVE_S} from "../cards/5S.svg"
+import {ReactComponent as FIVE_C} from "../assets/cards/5C.svg"
+import {ReactComponent as FIVE_D} from "../assets/cards/5D.svg"
+import {ReactComponent as FIVE_H} from "../assets/cards/5H.svg"
+import {ReactComponent as FIVE_S} from "../assets/cards/5S.svg"
 
-import {ReactComponent as SIX_C} from "../cards/6C.svg"
-import {ReactComponent as SIX_D} from "../cards/6D.svg"
-import {ReactComponent as SIX_H} from "../cards/6H.svg"
-import {ReactComponent as SIX_S} from "../cards/6S.svg"
+import {ReactComponent as SIX_C} from "../assets/cards/6C.svg"
+import {ReactComponent as SIX_D} from "../assets/cards/6D.svg"
+import {ReactComponent as SIX_H} from "../assets/cards/6H.svg"
+import {ReactComponent as SIX_S} from "../assets/cards/6S.svg"
 
-import {ReactComponent as SEVEN_C} from "../cards/7C.svg"
-import {ReactComponent as SEVEN_D} from "../cards/7D.svg"
-import {ReactComponent as SEVEN_H} from "../cards/7H.svg"
-import {ReactComponent as SEVEN_S} from "../cards/7S.svg"
+import {ReactComponent as SEVEN_C} from "../assets/cards/7C.svg"
+import {ReactComponent as SEVEN_D} from "../assets/cards/7D.svg"
+import {ReactComponent as SEVEN_H} from "../assets/cards/7H.svg"
+import {ReactComponent as SEVEN_S} from "../assets/cards/7S.svg"
 
-import {ReactComponent as EIGHT_C} from "../cards/8C.svg"
-import {ReactComponent as EIGHT_D} from "../cards/8D.svg"
-import {ReactComponent as EIGHT_H} from "../cards/8H.svg"
-import {ReactComponent as EIGHT_S} from "../cards/8S.svg"
+import {ReactComponent as EIGHT_C} from "../assets/cards/8C.svg"
+import {ReactComponent as EIGHT_D} from "../assets/cards/8D.svg"
+import {ReactComponent as EIGHT_H} from "../assets/cards/8H.svg"
+import {ReactComponent as EIGHT_S} from "../assets/cards/8S.svg"
 
-import {ReactComponent as NINE_C} from "../cards/9C.svg"
-import {ReactComponent as NINE_D} from "../cards/9D.svg"
-import {ReactComponent as NINE_H} from "../cards/9H.svg"
-import {ReactComponent as NINE_S} from "../cards/9S.svg"
+import {ReactComponent as NINE_C} from "../assets/cards/9C.svg"
+import {ReactComponent as NINE_D} from "../assets/cards/9D.svg"
+import {ReactComponent as NINE_H} from "../assets/cards/9H.svg"
+import {ReactComponent as NINE_S} from "../assets/cards/9S.svg"
 
-import { ReactComponent as TEN_C } from "../cards/10C.svg";
-import { ReactComponent as TEN_D } from "../cards/10D.svg";
-import { ReactComponent as TEN_H } from "../cards/10H.svg";
-import { ReactComponent as TEN_S } from "../cards/10S.svg";
+import { ReactComponent as TEN_C } from "../assets/cards/10C.svg";
+import { ReactComponent as TEN_D } from "../assets/cards/10D.svg";
+import { ReactComponent as TEN_H } from "../assets/cards/10H.svg";
+import { ReactComponent as TEN_S } from "../assets/cards/10S.svg";
 
-import {ReactComponent as JACK_C} from "../cards/JC.svg"
-import {ReactComponent as JACK_D} from "../cards/JD.svg"
-import {ReactComponent as JACK_H} from "../cards/JH.svg"
-import {ReactComponent as JACK_S} from "../cards/JS.svg"
+import {ReactComponent as JACK_C} from "../assets/cards/JC.svg"
+import {ReactComponent as JACK_D} from "../assets/cards/JD.svg"
+import {ReactComponent as JACK_H} from "../assets/cards/JH.svg"
+import {ReactComponent as JACK_S} from "../assets/cards/JS.svg"
 
-import {ReactComponent as QUEEN_C} from "../cards/QC.svg"
-import {ReactComponent as QUEEN_D} from "../cards/QD.svg"
-import {ReactComponent as QUEEN_H} from "../cards/QH.svg"
-import {ReactComponent as QUEEN_S} from "../cards/QS.svg"
+import {ReactComponent as QUEEN_C} from "../assets/cards/QC.svg"
+import {ReactComponent as QUEEN_D} from "../assets/cards/QD.svg"
+import {ReactComponent as QUEEN_H} from "../assets/cards/QH.svg"
+import {ReactComponent as QUEEN_S} from "../assets/cards/QS.svg"
 
-import {ReactComponent as KING_C} from "../cards/KC.svg"
-import {ReactComponent as KING_D} from "../cards/KD.svg"
-import {ReactComponent as KING_H} from "../cards/KH.svg"
-import {ReactComponent as KING_S} from "../cards/KS.svg"
+import {ReactComponent as KING_C} from "../assets/cards/KC.svg"
+import {ReactComponent as KING_D} from "../assets/cards/KD.svg"
+import {ReactComponent as KING_H} from "../assets/cards/KH.svg"
+import {ReactComponent as KING_S} from "../assets/cards/KS.svg"
 
-import {ReactComponent as ACE_C} from "../cards/AC.svg"
-import {ReactComponent as ACE_D} from "../cards/AD.svg"
-import {ReactComponent as ACE_H} from "../cards/AH.svg"
-import {ReactComponent as ACE_S} from "../cards/AS.svg"
+import {ReactComponent as ACE_C} from "../assets/cards/AC.svg"
+import {ReactComponent as ACE_D} from "../assets/cards/AD.svg"
+import {ReactComponent as ACE_H} from "../assets/cards/AH.svg"
+import {ReactComponent as ACE_S} from "../assets/cards/AS.svg"
 
-import { ReactComponent as BACK } from "../cards/zBack.svg";
+import { ReactComponent as BACK } from "../assets/cards/zBack.svg";
 
 export const cards = [
   {
