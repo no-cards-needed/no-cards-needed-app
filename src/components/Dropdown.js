@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
-import chevronDown from './iconsWhite/chevron/down.svg';
-import chevronUp from './iconsWhite/chevron/up.svg';
+import chevronDown from '../assets/iconsWhite/chevron/down.svg';
+import chevronUp from '../assets/iconsWhite/chevron/up.svg';
 
 
 function Dropdown( props ) {
