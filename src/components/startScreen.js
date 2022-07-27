@@ -62,7 +62,7 @@ function StartScreen() {
   }
   const [name, setName] = useState("")
     return (
-      <div>
+      <div class="maxWidth">
         <div className="startScreen noselect">
           <img style={{marginBottom: "10%", height: "35vh", marginTop: "10vh"}} src={Image} />
           <div class="btnBig Primary" id="basicDrop" onClick={toggleCreate}>

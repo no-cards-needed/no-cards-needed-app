@@ -44,7 +44,7 @@ function Game() {
       } 
     
     return (
-        <div className="Game">
+        <div className="Game" class="maxWidth">
 
             <GameHeader />
             <div class="gameHeaderUnderBox">

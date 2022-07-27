@@ -8,6 +8,15 @@
     flex-grow: 1;
   }
  
+  .labelItemGroupContainer {
+    display: flex; 
+    flex-Direction: row; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 8px 0px; 
+    align-self: stretch;
+  }
+
   .settingsContainer {
     display: flex;
     flex-direction: column;
@@ -29,6 +38,7 @@
     align-items: flex-start;
     gap: 16px;
     
+    width: 100%;
     flex: content;
     order: 1;
     flex-grow: 0;
@@ -51,7 +61,7 @@
   .hairline {
     position: relative;
     width:  100%;
-    border: 1px solid #CAC7D1;
+    border: .5px solid #CAC7D1;
     border-radius: 2px;
     align-self: stretch;
   }

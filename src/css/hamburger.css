@@ -24,6 +24,7 @@
     flex: none;
     order: 1;
     align-self: stretch;
+    cursor: pointer;
 }
 
 .hamburgerItem:active {
@@ -35,7 +36,7 @@
     flex-direction: row;
     justify-content: flex-end;
     align-items: flex-start;
-    padding: 8px 24px 8px 0px;
+    padding: 8px 24px 16px 0px;
     gap: 8px;
 
 }

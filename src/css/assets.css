@@ -2,6 +2,11 @@
   box-sizing: border-box;
 }
 
+.maxWidth {
+  margin: 0px auto;
+  max-width: 726px;
+}
+
 .startScreen {
   display: flex;
   flex-direction: column;

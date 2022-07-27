@@ -14,6 +14,7 @@
 
     transition: background-color 50ms ease-in 50ms;
     cursor: pointer;
+    border: 0.75px solid rgba(0, 0, 0, 0.2);
 }
 
 .toggleOn {
@@ -31,7 +32,8 @@
     background: #7741EA;
 
     transition: background-color 50ms ease-in 50ms;
-    cursor: pointer;
+    cursor: pointer;    
+    border: 0.75px solid rgba(0, 0, 0, 0.2);
 }
 
 .toggleCircleOff {

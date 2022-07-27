@@ -16,7 +16,7 @@ import './css/modal.css';
 import Dropdown from './components/Dropdown.js';
 
 import StartScreen from "./components/startScreen.js"
-import Menu from "./components/menu.js"
+import Menu from "./components/CreateGame.js"
 import Game from "./components/Game.js"
 import MenuHeader from "./components/MenuHeader.js"
 import ContextMenu from "./components/ContextMenu.js"
