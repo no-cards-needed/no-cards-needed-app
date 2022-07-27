@@ -60,7 +60,7 @@ function StartScreen() {
     return (
       <div class="maxWidth">
         <div className="startScreen noselect">
-          <img style={{marginTop: "10%", marginBottom: "10%", height: "35vh", marginTop: "10vh"}} src={Image} />
+          <img style={{marginBottom: "10%", height: "35vh", marginTop: "10vh"}} src={Image} alt=""/>
           <div class="btnBig Primary" id="basicDrop" onClick={toggleCreate}>
             <headline>Create Game</headline>
           </div>
@@ -80,10 +80,10 @@ function StartScreen() {
 
             <div class="buttonContainer">
               <div class="btn medium Secondary noselect" id="basicDrop" style={{width: "100%"}} onClick={discardName}>
-                <text>Discard</text>
+                <p>Discard</p>
               </div>
               <div type="submit" class="btn medium Primary noselect" id="basicDrop" style={{width: "100%"}} onClick={() => name !== "" ? nextName() : null}>
-                <text>Next</text>
+                <p>Next</p>
               </div>
             </div>
           </div>
@@ -95,10 +95,10 @@ function StartScreen() {
 
             <div class="buttonContainer">
               <div class="btn medium Secondary noselect" id="basicDrop" style={{width: "100%"}} onClick={discardKey}>
-                <text>Back</text>
+                <p>Back</p>
               </div>
               <div type="submit" class="btn medium Primary noselect" id="basicDrop" style={{width: "100%"}} onClick={nextKey}>
-                <text>Next</text>
+                <p>Next</p>
               </div>
             </div>
           </div>

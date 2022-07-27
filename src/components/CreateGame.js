@@ -32,23 +32,28 @@ function Menu() {
     }
   } 
 
-  const [deckCards, setDeckCards] = useState(null)
-  const [joker, setJoker] = useState(0)
-  const [decks, setDecks] = useState(1)
-  const [hand, setHand] = useState(5)
+    const [playerCount, setPlayerCount] = useState()
 
-  const [split, setSplit] = useState(false)
-  const [pile, setPile] = useState(false)
+    const [deckCards, setDeckCards] = useState(dropdownContent[0])
+    const [joker, setJoker] = useState(0)
+    const [decks, setDecks] = useState(1)
+    const [hand, setHand] = useState(5)
 
-  const [totalCards, setTotalCards] = useState(null)
-  const [cardsInDrawPile, setCardsInDrawPile] = useState(null)
+    const [split, setSplit] = useState(false)
+    const [pile, setPile] = useState(true)
 
-  const selectedDeckSize = () => {
-    setDeckCards((d) => d );
-  };
+    const [totalCards, setTotalCards] = useState(deckCards)
+    const [cardsInDrawPile, setCardsInDrawPile] = useState(19)
 
+    const [opacity, setOpacity] = useState(1)
 
-
+    function toggleOpacity() {
+      if (split) {   
+        setOpacity(0.7)
+      } else { 
+        setOpacity(1)
+      }
+    } 
 
     return (
      
@@ -87,29 +92,28 @@ function Menu() {
         <div class="settingsContainer noselect" id="basicDrop">
 
           <div class="settingsLabel" onClick={toggleDisplay}>
-            <text>Game Settings</text>
+            <p>Game Settings</p>
             <img src={active ? chevronDown : chevronUp} class="iconContainer" style={{margin: "16px", transform: "translateX(16px)", cursor: "pointer"}} alt=""></img>
           </div>
 
           <div class="settingsContent" style={{display:displaySettings, flexDirection: "column", flexWrap: "wrap"}}>
 
-            
 
             <div style={{display: "flex", flexDirection: "row", alignItems: "flex-start", gap: "16px", flexWrap: "wrap", width: "100%", maxWidth: "668px"}}>
 
               <div class="labelItemGroup" style={{width: "250px"}}>
                 <label>cards per deck</label>
-                <Dropdown options={dropdownContent} selection={selectedDeckSize}/>
+                <Dropdown options={dropdownContent} selection={setDeckCards} deckCards={deckCards}/>
               </div>
 
               <div style={{display: "flex", flexDirection: "row", alignItems: "flex-start", gap: "16px", flexWrap: "wrap", width: "394px"}}>
                 <div class="labelItemGroup" style={{maxWidth: "197px"}}>
                   <label>jokers per deck</label>
-                  <Counter value={joker} />
+                  <Counter value={joker} setValue={setJoker} minValue={0} disabled={false}/>
                 </div>
                 <div class="labelItemGroup" style={{maxWidth: "197px"}}>
                   <label>number of decks</label>
-                  <Counter value={decks} />
+                  <Counter value={decks} setValue={setDecks} minValue={1} disabled={false}/>
                 </div>
               </div>
             </div>
@@ -119,33 +123,35 @@ function Menu() {
             <div style={{display: "flex", flexDirection: "row", alignItems: "flex-end", gap: "16px", flexWrap: "wrap"}}>
               <div class="labelItemGroup">
                 <label>Hand Cards</label>
-                <Counter value={5} />
+                <div style={{opacity: split ? "0.7" : "1" }}>
+                  <Counter value={hand} setValue={setHand} minValue={0} disabled={split ? true : false} />
+                </div>
               </div> 
             </div>
 
             <div class="labelItemGroupContainer">
-              <text>Split All Cards Equally</text>
-              <Toggle />
+              <p>Split All Cards Equally</p>
+              <Toggle toggleOn={split} setToggleOn={setSplit}/>
             </div>
 
             <div class="hairline"></div>
 
             <div class="labelItemGroupContainer">
-              <text>Show Draw Pile</text>
-              <Toggle />
+              <p>Show Draw Pile</p>
+              <Toggle toggleOn={pile} setToggleOn={setPile}/>
             </div>
 
             <div class="hairline"></div>
 
             <div class="playerContainer">
               <div class="infoTag">
-                <label>´cards in total´</label>
+                <label>{totalCards[0]} cards in total</label>
               </div>
               <div class="infoTag">
-                <label>´cards on hand´</label>
+                <label>{hand} cards on hand</label>
               </div>
-              <div class="infoTag">
-                <label>´cards in draw pile´</label>
+              <div class="infoTag" style={{display: pile ? "flex" : "none"}}>
+                <label>{cardsInDrawPile} cards in draw pile</label>
               </div>
             </div>
 

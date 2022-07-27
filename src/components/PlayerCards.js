@@ -10,7 +10,7 @@ function PlayerCards( props ) {
                 {names.map(name => (
                 <div class="player">
                   <div class="avatar"></div>
-                  <text>{name}</text>
+                  <p>{name}</p>
                 </div>
                 ))}
 

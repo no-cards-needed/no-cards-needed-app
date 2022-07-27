@@ -38,7 +38,7 @@ function GameHeader() {
   
 
   function toggleDisplay() {
-      if ( display == 'none' ) {
+      if ( display === 'none' ) {
           setDisplay( 'block' )
       } else {
           setDisplay( 'none' )
@@ -46,7 +46,7 @@ function GameHeader() {
   }
 
   function toggleModal() {
-    if ( displayModal == 'none' ) {
+    if ( displayModal === 'none' ) {
         setDisplayModal( 'flex' )
     } else {
         setDisplayModal( 'none' )
@@ -66,39 +66,39 @@ function GameHeader() {
                 <label>{lastAction}</label>
             </div>
             <div class="btn Primary medium noselect" id="basicDrop" style={{width: "16px"}} onClick={toggleDisplay}>
-              <img src={hamburger}></img>
+              <img src={hamburger} alt=""></img>
             </div>
             <div class="hamburger noselect" id="basicDrop" style={{color: "#fff", display:display}}>
               <div class="hamburgerClose" style={{cursor: "pointer"}} onClick={toggleDisplay}>
-              <img src={close} class="iconContainer"></img>
+              <img src={close} class="iconContainer" alt=""></img>
               </div>
               {/* <div class="hamburgerItem">
                 <img src={settings} class="iconContainer"></img>
-                <text>Settings</text>
+                <p>Settings</p>
               </div> */}
               <div class="hamburgerItem">
-                <img src={showRemovedCards} class="iconContainer"></img>
-                <text>Show Removed <br/> Cards</text>
+                <img src={showRemovedCards} class="iconContainer" alt=""></img>
+                <p>Show Removed <br/> Cards</p>
               </div>
               {/* <div class="hamburgerItem">
                 <img src={foldAllCards} class="iconContainer"></img>
-                <text>Fold all Cards</text>
+                <p>Fold all Cards</p>
               </div> */}
               <div class="hamburgerItem" onClick={toggleModal}>
-                <img src={leave} class="iconContainer"></img>
-                <text>Leave Game</text>
+                <img src={leave} class="iconContainer" alt=""></img>
+                <p>Leave Game</p>
               </div>
             </div>
 
         <div class="modalBackground" style={{display:displayModal, transform: "translateX(-28px)"}}>
           <div class="modal" id="basicDrop">
-            <headline style={{textAlign: "center", letterSpacing: "0.01em"}}>  Do You Really Want to <br/> Leave This Game? </headline>
+            <headline style={{pAlign: "center", letterSpacing: "0.01em"}}>  Do You Really Want to <br/> Leave This Game? </headline>
             <div class="buttonContainer">
               <div class="btn medium Secondary noselect" id="basicDrop" style={{width: "100%"}} onClick={toggleModal}>
-                <text>No</text>
+                <p>No</p>
               </div>
               <div type="submit" class="btn medium Primary noselect" id="basicDrop" style={{width: "100%"}}>
-                <text>Yes</text>
+                <p>Yes</p>
               </div>
             </div>
           </div>

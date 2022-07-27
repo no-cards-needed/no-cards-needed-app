@@ -5,33 +5,33 @@ import shufflePile from '../assets/iconsBlack/shufflePile.svg';
 import dealAgain from '../assets/iconsBlack/dealAgain.svg';
 
 
-function ContextMenu() {
+function ConpMenu() {
 
 
     return (
-      <div className="contextMenu noselect" id="transpBlur">
-          <div class="contextMenuItem">
-                <img src={pickUp} class="iconContainerBig"></img>
-                <text>Pick Up</text>
+      <div className="conpMenu noselect" id="transpBlur">
+          <div class="conpMenuItem">
+                <img src={pickUp} class="iconContainerBig" alt=""></img>
+                <p>Pick Up</p>
           </div>
-          <div class="contextMenuItem">
-                <img src={removePile} class="iconContainerBig"></img>
-                <text>Remove Pile <br/> from Game</text>
+          <div class="conpMenuItem">
+                <img src={removePile} class="iconContainerBig" alt=""></img>
+                <p>Remove Pile <br/> from Game</p>
           </div>
-          <div class="contextMenuItem">
-                <img src={takeATrick} class="iconContainerBig"></img>
-                <text>Take a Trick</text>
+          <div class="conpMenuItem">
+                <img src={takeATrick} class="iconContainerBig" alt=""></img>
+                <p>Take a Trick</p>
           </div>
-          <div class="contextMenuItem">
-                <img src={shufflePile} class="iconContainerBig"></img>
-                <text>Shuffle Pile</text>
+          <div class="conpMenuItem">
+                <img src={shufflePile} class="iconContainerBig" alt=""></img>
+                <p>Shuffle Pile</p>
           </div>
-          <div class="contextMenuItem">
-                <img src={dealAgain} class="iconContainerBig"></img>
-                <text>Deal all Cards <br/> Again</text>
+          <div class="conpMenuItem">
+                <img src={dealAgain} class="iconContainerBig" alt=""></img>
+                <p>Deal all Cards <br/> Again</p>
           </div>
       </div>
     );
   }
 
-export default ContextMenu
+export default ConpMenu

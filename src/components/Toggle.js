@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 
-function Toggle() {
+function Toggle( props ) {
     
-    const [active, setActive] = useState(false)
+    const {toggleOn, setToggleOn} = props
   
     function activate() {
-        if (active) { 
-            setActive(false) 
+        if (toggleOn) { 
+            setToggleOn(false) 
         } else { 
-            setActive(true)
+          setToggleOn(true)
         }
     } 
 
@@ -16,8 +16,8 @@ function Toggle() {
      
   
       <div className="Toggle"> 
-        <div class={active ? "toggleOn" : "toggleOff"} onClick={activate}>
-            <div class={active ? "toggleCircleOn basicDrop" : "toggleCircleOff basicDrop"}></div>
+        <div class={toggleOn ? "toggleOn" : "toggleOff"} onClick={activate}>
+            <div class={toggleOn ? "toggleCircleOn basicDrop" : "toggleCircleOff basicDrop"}></div>
         </div>
       </div>
     );
