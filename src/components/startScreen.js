@@ -1,5 +1,7 @@
 import Image from '../assets/no_cards_needed.svg';
 import { useState } from 'react';
+import {useNavigate} from "react-router-dom";
+import {generateLobbyString} from "../helpers/words";
 
 
 function StartScreen() {
@@ -35,7 +37,9 @@ function StartScreen() {
     }
   } 
 
+  const navigate = useNavigate()
   function nextName() {
+    navigate('/debug/'+generateLobbyString())
     if (processCreate) {
       setProcessCreate(false) 
       setDisplayModal( 'none' )
@@ -60,7 +64,7 @@ function StartScreen() {
     return (
       <div>
         <div className="startScreen noselect">
-          <img style={{marginTop: "10%", marginBottom: "10%", height: "35vh", marginTop: "10vh"}} src={Image} />
+          <img style={{marginBottom: "10%", height: "35vh", marginTop: "10vh"}} src={Image} />
           <div class="btnBig Primary" id="basicDrop" onClick={toggleCreate}>
             <headline>Create Game</headline>
           </div>

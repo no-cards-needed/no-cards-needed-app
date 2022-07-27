@@ -5,7 +5,7 @@ import {addCardIntoStack, moveCardToPosition} from "./move-card-to-position";
 export const handleCardDrop = (
 	data, 
 	id: number, 
-	usedCards: {id: number, symbol: string, controlledPosition: {x: number, y: number}, zIndex: number, movedAside: string, onStackType: string, ref, animation: string}[], 
+	usedCards: {id: number, symbol: string, controlledPosition: {x: number, y: number}, zIndex: number, movedAside: string, onStackType: string, ref, animation: string, orientation: string}[],
 	setUsedCards: (usedCards) => void, 
 	isColliding: boolean,
 	setIsColliding: (isColliding: boolean) => void,
@@ -108,7 +108,8 @@ export const handleCardDrop = (
 							type: "cardMove_stack",
 							data: {
 								stackIndex: nearestStack.index,
-								cardId: id
+								cardId: id,
+								stacks
 							}
 						})
 						moveCardToPosition(stacks, setStacks, usedCards, setUsedCards, nearestStack.index, updateCardPosition, id, {x: stackX, y: stackY})
@@ -120,6 +121,16 @@ export const handleCardDrop = (
 						
 						// Workaround for moving closed stacks to open stacks
 						if (!currentlyMovingStack) {
+
+							connection.current.send({
+								type: "cardMove_hand",
+								data: {
+									stackIndex: 0,
+									cardId: id,
+									stacks
+								}
+							})
+
 							const currentCardPos = data.current.getBoundingClientRect().left
 							let closestCard = {left: 0, cardIndex: 0}
 

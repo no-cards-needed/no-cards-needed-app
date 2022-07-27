@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useSpring } from "react-spring";
+import {useNavigate, useParams} from "react-router-dom";
 import './css/App.css';
 
 import Card from "./components/Card";
@@ -11,14 +11,17 @@ import { handleCardDrag } from "./helpers/handle-card-drag";
 import { handleCardDrop } from "./helpers/handle-card-drop";
 import { moveCardsAside } from "./helpers/move-cards-aside";
 import { moveCardsToHand } from "./helpers/move-cards-to-hand";
-import {connectToGame, createPeer, setDefaultStacks, setDefaultUsedCards} from "./helpers/multiplayer";
+import {connectToGame, createPeer, createServer, setDefaultStacks, setDefaultUsedCards} from "./helpers/multiplayer";
 import { shuffleCards } from "./helpers/shuffle-cards";
 import {moveCardToPosition} from "./helpers/move-card-to-position";
+import {moveCardsToStack} from "./helpers/move-cards-to-stack";
 
 // https://www.npmjs.com/package/use-dynamic-refs
 // import useDynamicRefs from "./assets/helpers/use-dynamic-refs";
 
 function Game() {
+
+	const { gameId } = useParams();
 
 	const peerInstance = useRef(null)
 	const serverInstance = useRef(null)
@@ -72,7 +75,6 @@ function Game() {
 			}
 			return card;
 		}))
-		console.log(usedCardsReference.current)
 	}
 
 	// Setting Card Ref in usedCards State
@@ -161,22 +163,41 @@ function Game() {
 
 
 
-	const moveCards_stack = async (data) => {
-		const {stackIndex, cardId} = data.data
+	const moveCards_stack = (data) => {
+		const {stackIndex, cardId, tempStacks} = data.data
+
+		let stackPosition = getPositionAtCenter(stackRef[stackIndex]);
+
+		moveCardToPosition(stacksReference.current, setStacks, usedCardsReference.current, setUsedCards, stackIndex, updateCardPosition, cardId, stackPosition)
+	}
+	const moveCards_hand = (data) => {
+		const {stackIndex, cardId, tempStacks} = data.data
 
 		let stackPosition = getPositionAtCenter(stackRef[stackIndex]);
 
 		moveCardToPosition(stacksReference.current, setStacks, usedCardsReference.current, setUsedCards, stackIndex, updateCardPosition, cardId, stackPosition)
 	}
 
-	const connect = async () => {
+	const connect = () => {
 		connection.current = connectToGame(peerInstance.current, connectionId)
+
+		// handle peer errors
+		const FATAL_ERRORS = ['invalid-id', 'invalid-key', 'network', 'ssl-unavailable', 'server-error', 'socket-error', 'socket-closed', 'unavailable-id', 'webrtc'];
+		connection.current.on('error', (e) => {
+			if (FATAL_ERRORS.includes(e.type)) {
+				console.log(e)
+				/*peerInstance.current.reconnect(e); // this function waits then tries the entire connection over again*/
+			} else {
+				console.log('Non fatal error: ',  e.type);
+			}
+		})
+
 		connection.current.on("open", () => {
-			connection.current.send("hi!");
+			console.log("connected")
+			console.log(peerInstance.current.connections)
 		});
+
 		connection.current.on("data", async (data) => {
-			console.log(data)
-			console.log(data.type)
 			switch (data.type) {
 				case "cards":
 					console.log("Setting Cards")
@@ -188,15 +209,8 @@ function Game() {
 					break;
 
 				case "cardMove_stack":
-					console.log("Moving gvh to Stack")
-					const {stackIndex, cardId} = data.data
-
-					const stack = stacks.find(stack => stack.id === stackIndex)
-					console.log(stack, stacks, stackIndex)
-					const stackPosition = getPositionAtCenter(stackRef[stackIndex]);
-					console.log(stackPosition)
-
-					await moveCardToPosition(stacks, setStacks, usedCards, setUsedCards, stackIndex, updateCardPosition, cardId, stackPosition)
+					console.log("cardMoveStack")
+					moveCards_stack(data)
 			}
 		})
 	}
@@ -220,18 +234,13 @@ function Game() {
 		const defaultCards = setDefaultUsedCards()
 		const defaultStacks = setDefaultStacks()
 
-
-
-		moveCardsToHand(usedCards, updateCardPosition, stacks, setStacks, stackRef)
-
 		peerInstance.current = createPeer()
 
-		// handle peer errors
 		const FATAL_ERRORS = ['invalid-id', 'invalid-key', 'network', 'ssl-unavailable', 'server-error', 'socket-error', 'socket-closed', 'unavailable-id', 'webrtc'];
 		peerInstance.current.on('error', (e) => {
 			if (FATAL_ERRORS.includes(e.type)) {
 				console.log(e)
-				peerInstance.current.reconnect(e); // this function waits then tries the entire connection over again
+				peerInstance.current.reconnect(); // this function waits then tries the entire connection over again
 			} else {
 				console.log('Non fatal error: ',  e.type);
 			}
@@ -240,6 +249,8 @@ function Game() {
 		peerInstance.current.on("open", (id) => {
 			console.log("Peer created with id: "+id)
 			setPeerid(id)
+			setUsedCards(defaultCards)
+			setStacks(defaultStacks)
 		})
 
 		peerInstance.current.on("connection", (conn) => {
@@ -248,17 +259,15 @@ function Game() {
 				console.log(data);
 				if(data.type === "cardMove_stack") {
 					moveCards_stack(data)
+					console.log("sending data")
+					conn.send({
+						type: "cardMove_stack",
+						data: data.data
+					})
 				}
 			});
 			conn.on("open", (id) => {
-				conn.send("hi!");
-				console.log("my id is" + id)
-
 				// New Client connects to the server
-
-				setUsedCards(defaultCards)
-				setStacks(defaultStacks)
-
 				//Sending Cards and Stacks
 				conn.send({
 					type: "cards",
@@ -276,12 +285,14 @@ function Game() {
 	return (
 		<div className="App">
 			{/* <div className='cardStack' style={{border: isColliding ? '1px solid green' : '1px solid red',}} ref={stackRef}></div> */}
-			<p style={{width: 500, margin: "0 auto"}}>{
-				peerId
-			}</p>
-			<div>
-				<input value={connectionId} onChange={(e) => setConnectionId(e.target.value)}/>
-				<button onClick={() => connect()}>Connect</button>
+			<div style={{margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center"}}>
+				<p style={{textAlign: "center"}}>{
+					peerId
+				}</p>
+				<div>
+					<input value={connectionId} onChange={(e) => setConnectionId(e.target.value)}/>
+					<button onClick={() => connect()}>Connect</button>
+				</div>
 			</div>
 			{
 				stacks.map((stack, index) => {

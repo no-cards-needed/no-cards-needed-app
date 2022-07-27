@@ -23,7 +23,6 @@ function Card({
 
 	const {id, symbol, zIndex, controlledPosition, onStackType} = card;
 
-	// console.log(card)
 
 	const nodeRef = useRef(null)
 	const [transition, setTransition] = useState(false)
