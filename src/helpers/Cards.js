@@ -382,4 +382,4 @@ export const cards = [
   },
 ];
 
-export const back = BACK
+export const back = <BACK />

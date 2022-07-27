@@ -1,5 +1,12 @@
 // Adding Card-ID into the Stack Object
 export const addCardIntoStack = (stacks, setStacks, stackIndex, index, cardId) => {
+
+    // Removing Card from all other stacks
+    setStacks(stacks.map((stack, i) => {
+        stack.cards = stack.cards.filter(card => card !== cardId);
+        return stack;
+    }))
+
     //Adding Card ID into the Stack Object at a specific index
     setStacks(stacks.map((stack, i) => {
         if (i === stackIndex) {
@@ -25,7 +32,7 @@ setStacks: (value: React.SetStateAction<{
         y: number;
     };
 }[]>) => void,
-usedCards: {id: number, symbol: string, controlledPosition: {x: number, y: number}, zIndex: number, movedAside: string, onStackType: string, ref, animation: string}[],
+usedCards: {id: number, symbol: string, controlledPosition: {x: number, y: number}, zIndex: number, movedAside: string, onStackType: string, ref, animation: string, orientation: string}[],
 setUsedCards: (usedCards) => void,
 stackIndex: number,
 updateCardPosition: (cardId: any, { x, y }: {
@@ -36,10 +43,11 @@ cardId,
 stackPosition: {x: number, y: number}
 ) => {
 
-    console.log("moveCardToPosition");
+
     const cardDimensions = {width: 107, height: 150}
-    console.log(cardId, stackPosition);
+
     addCardIntoStack(stacks, setStacks, stackIndex, stacks[stackIndex].cards.length, cardId)
+
     updateCardPosition(cardId, {
         x: stackPosition.x - cardDimensions.width / 2,
         y: stackPosition.y - cardDimensions.height / 2
@@ -49,6 +57,8 @@ stackPosition: {x: number, y: number}
     setUsedCards(usedCards.map((card, i) => {
         if (card.id === cardId) {
             card.onStackType = "stack";
+            card.orientation = stacks[stackIndex].orientation;
+            card.zIndex = stacks[stackIndex].cards.length;
         }
         return card;
     }))

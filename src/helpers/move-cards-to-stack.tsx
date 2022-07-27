@@ -7,30 +7,37 @@ export const moveCardsToStack = (
         x: any;
         y: any;
     }) => void,
-    stacks: {stackType: string, orientation: string, cards: number[], currentlyNearest: boolean, colliding: boolean, distance: number, height: number, width: number, position: {x: number, y: number}}[], 
+    stacks: {id: number, stackType: string, orientation: string, cards: number[], currentlyNearest: boolean, colliding: boolean, distance: number, height: number, width: number, position: {x: number, y: number}}[],
     setStacks,
-    stackRef: React.MutableRefObject<any[]>) => {
+    stackRef: React.MutableRefObject<any[]>,
+    targetStackIndex: number
+) => {
 
-
-        // Get Hand Stack Index
-        const handStackIndex = stacks.findIndex(stack => stack.stackType === "hand");
-        const handStack = stacks[handStackIndex];
+        console.log("moving cards to stack "+targetStackIndex)
+        const targetStack = stacks[targetStackIndex];
         
 
         // Add all cards to stack with stacktype "hand"
-        setStacks(stacks.map((stack, i) => {
-            if (stack.stackType === "hand") {
+        setStacks(stacks.map((stack) => {
+            if (stack.id === targetStackIndex) {
                 stack.cards = cards.map(card => card.id);
             }
             return stack;
         }))
 
-        const currentStackRef: React.MutableRefObject<HTMLElement> = stackRef[handStackIndex]
-        cards.map((card, i) => {
-            const newCardPosition = calculateCardPosition(card.ref, currentStackRef, handStack, card.id)
+        const targetStackRef: React.MutableRefObject<HTMLElement> = stackRef[targetStackIndex]
+
+
+        const cardDimensions = {width: 107, height: 150}
+        console.log(stacks, targetStackIndex, targetStackRef)
+        const stackPosition = getPositionAtCenter(targetStackRef)
+
+        cards.map((card) => {
+            const newCardPosition = calculateCardPosition(card.ref, targetStackRef, targetStack, card.id)
             updateCardPosition(card.id, {
-                x: newCardPosition,
-                y: getPositionAtCenter(currentStackRef).y - card.ref.current.getBoundingClientRect().height / 2
+                x: stackPosition.x - cardDimensions.width / 2,
+                y: stackPosition.y - cardDimensions.height / 2
             })
+            return card
         })
 }

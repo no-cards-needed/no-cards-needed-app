@@ -1,5 +1,7 @@
 import Image from '../assets/no_cards_needed.svg';
 import { useState } from 'react';
+import {useNavigate} from "react-router-dom";
+import {generateLobbyString} from "../helpers/words";
 
 
 function StartScreen() {
@@ -35,7 +37,9 @@ function StartScreen() {
     }
   } 
 
+  const navigate = useNavigate()
   function nextName() {
+    navigate('/debug/'+generateLobbyString())
     if (processCreate) {
       setProcessCreate(false) 
       setDisplayModal( 'none' )

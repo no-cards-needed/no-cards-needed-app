@@ -1,5 +1,6 @@
 import Peer from "peerjs"
-import { generateLobbyString } from "./words";
+
+import {cards} from "./Cards";
 
 const randomString = (length = 5) => {
     var result           = '';
@@ -12,29 +13,28 @@ const randomString = (length = 5) => {
 }
 
 export const createPeer = () => {
-    const peer = new Peer(randomString())
-
-    return peer
+    return new Peer(randomString())
 }
 
-const createServer = () => {
-    const server = new Peer(generateLobbyString())
-
-    return server
+export const createServer = (gameId: string) => {
+    return new Peer(gameId)
 }
 
 export const connectToGame = (peer, sessionId) => {
-    const connection = peer.connect(sessionId)
+    return peer.connect(sessionId)
+}
 
-    return connection
+export const handleConnectionInstance = () => {
+
+
 }
 
 export const setDefaultStacks = () => {
     return [
         {
             id: 0,
-            stackType: "hand",
-            orientation: "front",
+            stackType: "hidden",
+            orientation: "back",
             cards: [],
             currentlyNearest: false,
             colliding: false,
@@ -49,7 +49,7 @@ export const setDefaultStacks = () => {
         },
         {
             id: 1,
-            stackType: "stack",
+            stackType: "hand",
             orientation: "front",
             cards: [],
             currentlyNearest: false,
@@ -66,7 +66,7 @@ export const setDefaultStacks = () => {
         {
             id: 2,
             stackType: "stack",
-            orientation: "front",
+            orientation: "back",
             cards: [],
             currentlyNearest: false,
             colliding: false,
@@ -81,7 +81,7 @@ export const setDefaultStacks = () => {
         },
         {
             id: 3,
-            stackType: "openStack",
+            stackType: "stack",
             orientation: "front",
             cards: [],
             currentlyNearest: false,
@@ -95,11 +95,44 @@ export const setDefaultStacks = () => {
             },
             ref: null
         },
+/*        {
+            id: 3,
+            stackType: "openStack",
+            orientation: "front",
+            cards: [],
+            currentlyNearest: false,
+            colliding: false,
+            distance: 0,
+            height: 200,
+            width: 300,
+            position: {
+                x: 0,
+                y: 0
+            },
+            ref: null
+        },*/
     ]
 }
 
 export const setDefaultUsedCards = () => {
-    return [
+    const defCards = cards.map((card, index) => {
+        return {
+            id: index,
+            symbol: card.name,
+            controlledPosition: {
+                x: 0,
+                y: 0
+            },
+            zIndex: 0,
+            movedAside: "false",
+            onStackType: "none",
+            ref: null,
+            animation: "none",
+            orientation: "front"
+        }
+    })
+    return defCards
+    /*return [
         {
             id: 0,
             symbol: "10C",
@@ -170,5 +203,5 @@ export const setDefaultUsedCards = () => {
             animation: "none",
             orientation: "front"
         },
-    ]
+    ]*/
 }
