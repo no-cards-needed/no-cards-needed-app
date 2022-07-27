@@ -8,7 +8,8 @@ headline {
     letter-spacing: 0.05em;
 }
 /* Body */
-text {
+p {
+    margin: 0;
     font-family: 'Heebo';
     font-style: normal;
     font-weight: 700;

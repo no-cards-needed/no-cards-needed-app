@@ -46,7 +46,7 @@
 }
 
 .toggleCircleOn {
-    transform: translateX(20px);
+    transform: translateX(19px);
     transition: transform 150ms ease-out ;
     width: 28px;
     height: 28px;
