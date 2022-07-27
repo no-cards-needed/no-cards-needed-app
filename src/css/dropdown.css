@@ -43,6 +43,8 @@
     z-index: 1;
 
     cursor: pointer;
+
+    border: 0.75px solid rgba(0, 0, 0, 0.2);
  }
 
  .dropdownHead:active {

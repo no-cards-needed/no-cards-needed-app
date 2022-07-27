@@ -7,10 +7,8 @@ function Toggle() {
     function activate() {
         if (active) { 
             setActive(false) 
-            console.log('off');
         } else { 
             setActive(true)
-            console.log('on');
         }
     } 
 

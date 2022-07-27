@@ -30,7 +30,7 @@ import App from './Game';
 import Dropdown from './components/Dropdown.js';
 
 import StartScreen from "./components/startScreen.js"
-import Menu from "./components/menu.js"
+import CreateGame from "./components/CreateGame.js"
 import Game from "./components/Game.js"
 import MenuHeader from "./components/MenuHeader.js"
 import ContextMenu from "./components/ContextMenu.js"
@@ -44,7 +44,8 @@ root.render(
 			<Routes>
 				<Route path="/" element={<StartScreen />} />
 				<Route path="game/:gameId" element={<Game />} />
-				<Route path="game/new" element={<Menu />} />
+				<Route path="gametest" element={<Game />} />
+				<Route path="game/new" element={<CreateGame />} />
 				<Route path="debug" element={<App />} />
 			</Routes>
 		</BrowserRouter>
