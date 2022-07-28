@@ -59,11 +59,15 @@ export const setupPeerInstance = (
             //Sending Cards and Stacks
             conn.send({
                 type: "cards",
-                data: setDefaultUsedCards()
+                data: {
+                    cards: setDefaultUsedCards()
+                }
             })
             conn.send({
                 type: "stacks",
-                data: setDefaultStacks()
+                data: {
+                    stacks: setDefaultStacks()
+                }
             })
         });
     })

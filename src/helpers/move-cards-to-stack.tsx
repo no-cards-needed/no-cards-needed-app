@@ -1,8 +1,10 @@
 import { calculateCardPosition } from "./calculate-card-position";
 import { getPositionAtCenter } from "./get-position-at-center";
+import { moveCardToPosition } from "./move-card-to-position";
 
 export const moveCardsToStack = (
-    cards: {id: number, symbol: string, controlledPosition: {x: number, y: number}, zIndex: number, movedAside: string, onStackType: string, ref: React.MutableRefObject<HTMLElement>}[], 
+    usedCards: {id: number, symbol: string, controlledPosition: {x: number, y: number}, zIndex: number, movedAside: string, onStackType: string, ref, animation: string, orientation: string}[],
+    setUsedCards: (usedCards) => void,
     updateCardPosition: (cardId: number, { x, y }: {
         x: any;
         y: any;
@@ -20,7 +22,7 @@ export const moveCardsToStack = (
         // Add all cards to stack with stacktype "hand"
         setStacks(stacks.map((stack) => {
             if (stack.id === targetStackIndex) {
-                stack.cards = cards.map(card => card.id);
+                stack.cards = usedCards.map(card => card.id);
             }
             return stack;
         }))
@@ -32,12 +34,8 @@ export const moveCardsToStack = (
         console.log(stacks, targetStackIndex, targetStackRef)
         const stackPosition = getPositionAtCenter(targetStackRef)
 
-        cards.map((card) => {
-            const newCardPosition = calculateCardPosition(card.ref, targetStackRef, targetStack, card.id)
-            updateCardPosition(card.id, {
-                x: stackPosition.x - cardDimensions.width / 2,
-                y: stackPosition.y - cardDimensions.height / 2
-            })
+        usedCards.map((card) => {
+            moveCardToPosition(stacks, setStacks, usedCards, setUsedCards, targetStackIndex, updateCardPosition, card.id, stackPosition)
             return card
         })
 }

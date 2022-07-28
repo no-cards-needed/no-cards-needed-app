@@ -15,6 +15,7 @@ import { handleConnectionInstance, setDefaultStacks, setDefaultUsedCards, setupP
 import { shuffleCards } from "./helpers/shuffle-cards";
 import {moveCardToPosition} from "./helpers/move-card-to-position";
 import {moveCardsToStack} from "./helpers/move-cards-to-stack";
+import useTimeout from "./helpers/hooks/useTimeout";
 
 // https://www.npmjs.com/package/use-dynamic-refs
 // import useDynamicRefs from "./assets/helpers/use-dynamic-refs";
@@ -198,6 +199,17 @@ function Game() {
 	const dataRecievedCallback = (data) => {
 		console.log(data)
 		switch (data.type) {
+			case "cards":
+				setUsedCards(data.data.cards)
+				// Sending Cards to Stack after a time period to make sure the cards are loaded
+				window.setTimeout(() => {
+					moveCardsToStack(usedCardsReference.current, setUsedCards, updateCardPosition, stacksReference.current, setStacks, stackRef, 2)
+				}, 100)
+				break;
+			case "stacks":
+				setStacks(data.data.stacks)
+				break;
+
 			case "cardMove_stack":
 				cardMove_stack(data)
 				break;
@@ -245,12 +257,6 @@ function Game() {
 
 	// Move Cards to Hand on Start
 	useEffect(() => {
-		const defaultCards = setDefaultUsedCards()
-		const defaultStacks = setDefaultStacks()
-
-		setUsedCards(defaultCards)
-		setStacks(defaultStacks)
-
 		peerInstance.current = setupPeerInstance(dataRecievedCallback, connections)
 		setPeerid(peerInstance.current.id)
 	}, [])
