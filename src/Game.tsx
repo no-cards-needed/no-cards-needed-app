@@ -11,7 +11,7 @@ import { handleCardDrag } from "./helpers/handle-card-drag";
 import { handleCardDrop } from "./helpers/handle-card-drop";
 import { moveCardsAside } from "./helpers/move-cards-aside";
 import { moveCardsToHand } from "./helpers/move-cards-to-hand";
-import {connectToGame, createPeer, createServer, setDefaultStacks, setDefaultUsedCards} from "./helpers/multiplayer";
+import { handleConnectionInstance, setDefaultStacks, setDefaultUsedCards, setupPeerInstance} from "./helpers/multiplayer";
 import { shuffleCards } from "./helpers/shuffle-cards";
 import {moveCardToPosition} from "./helpers/move-card-to-position";
 import {moveCardsToStack} from "./helpers/move-cards-to-stack";
@@ -24,8 +24,7 @@ function Game() {
 	const { gameId } = useParams();
 
 	const peerInstance = useRef(null)
-	const serverInstance = useRef(null)
-	const connection = useRef(null)
+	const connections = useRef([])
 	const [peerId, setPeerid] = useState("")
 	const [connectionId, setConnectionId] = useState("")
 
@@ -161,8 +160,6 @@ function Game() {
 		}
 	}
 
-
-
 	const moveCards_stack = (data) => {
 		const {stackIndex, cardId, tempStacks} = data.data
 
@@ -178,41 +175,8 @@ function Game() {
 		moveCardToPosition(stacksReference.current, setStacks, usedCardsReference.current, setUsedCards, stackIndex, updateCardPosition, cardId, stackPosition)
 	}
 
-	const connect = () => {
-		connection.current = connectToGame(peerInstance.current, connectionId)
-
-		// handle peer errors
-		const FATAL_ERRORS = ['invalid-id', 'invalid-key', 'network', 'ssl-unavailable', 'server-error', 'socket-error', 'socket-closed', 'unavailable-id', 'webrtc'];
-		connection.current.on('error', (e) => {
-			if (FATAL_ERRORS.includes(e.type)) {
-				console.log(e)
-				/*peerInstance.current.reconnect(e); // this function waits then tries the entire connection over again*/
-			} else {
-				console.log('Non fatal error: ',  e.type);
-			}
-		})
-
-		connection.current.on("open", () => {
-			console.log("connected")
-			console.log(peerInstance.current.connections)
-		});
-
-		connection.current.on("data", async (data) => {
-			switch (data.type) {
-				case "cards":
-					console.log("Setting Cards")
-					setUsedCards(data.data)
-					break;
-
-				case "stacks":
-					setStacks(data.data)
-					break;
-
-				case "cardMove_stack":
-					console.log("cardMoveStack")
-					moveCards_stack(data)
-			}
-		})
+	const dataRecievedCallback = (data) => {
+		console.log(data)
 	}
 
 	useEffect(() => {
@@ -234,52 +198,7 @@ function Game() {
 		const defaultCards = setDefaultUsedCards()
 		const defaultStacks = setDefaultStacks()
 
-		peerInstance.current = createPeer()
-
-		const FATAL_ERRORS = ['invalid-id', 'invalid-key', 'network', 'ssl-unavailable', 'server-error', 'socket-error', 'socket-closed', 'unavailable-id', 'webrtc'];
-		peerInstance.current.on('error', (e) => {
-			if (FATAL_ERRORS.includes(e.type)) {
-				console.log(e)
-				peerInstance.current.reconnect(); // this function waits then tries the entire connection over again
-			} else {
-				console.log('Non fatal error: ',  e.type);
-			}
-		})
-
-		peerInstance.current.on("open", (id) => {
-			console.log("Peer created with id: "+id)
-			setPeerid(id)
-			setUsedCards(defaultCards)
-			setStacks(defaultStacks)
-		})
-
-		peerInstance.current.on("connection", (conn) => {
-			conn.on("data", (data) => {
-				// Will print 'hi!'
-				console.log(data);
-				if(data.type === "cardMove_stack") {
-					moveCards_stack(data)
-					console.log("sending data")
-					conn.send({
-						type: "cardMove_stack",
-						data: data.data
-					})
-				}
-			});
-			conn.on("open", (id) => {
-				// New Client connects to the server
-				//Sending Cards and Stacks
-				conn.send({
-					type: "cards",
-					data: defaultCards
-				})
-				conn.send({
-					type: "stacks",
-					data: defaultStacks
-				})
-			});
-		})
-
+		peerInstance.current = setupPeerInstance(dataRecievedCallback, connections)
 	}, [])
 
 	return (
@@ -291,7 +210,7 @@ function Game() {
 				}</p>
 				<div>
 					<input value={connectionId} onChange={(e) => setConnectionId(e.target.value)}/>
-					<button onClick={() => connect()}>Connect</button>
+					<button onClick={() => handleConnectionInstance(peerInstance.current, connections, connectionId, dataRecievedCallback)}>Connect</button>
 				</div>
 			</div>
 			{
@@ -314,7 +233,7 @@ function Game() {
 								shuffle={shuffleCardsById}
 								handleLongPress={handleLongPress}
 								handleCardDrag={(data, id) => handleCardDrag(data, id, usedCards, setUsedCards, getNearestStack, nearestStack, setNearestStack, stacks, setIsColliding)} 
-								handleCardDrop={(data, id) => handleCardDrop(data, id, usedCards, setUsedCards, isColliding, setIsColliding, stacks, setStacks, nearestStack, updateCardPosition, stackRef, currentlyMovingStack, setCurrentlyMovingStack, connection)} />
+								handleCardDrop={(data, id) => handleCardDrop(data, id, usedCards, setUsedCards, isColliding, setIsColliding, stacks, setStacks, nearestStack, updateCardPosition, stackRef, currentlyMovingStack, setCurrentlyMovingStack, connections)} />
 					})
 				}
 			</div>

@@ -32,7 +32,7 @@ export const handleCardDrop = (
 	stackRef: React.MutableRefObject<any[]>,
 	currentlyMovingStack: boolean,
 	setCurrentlyMovingStack: (currentlyMovingStack: boolean) => void,
-	connection: React.MutableRefObject<any>) => {
+	connections: React.MutableRefObject<any[]>) => {
 
 
 			const moveAllCardsToNewStack = (previousStackIndex, stackPosition) => {
@@ -104,13 +104,15 @@ export const handleCardDrop = (
 							moveAllCardsToNewStack(previousStackIndex, {x: stackX, y: stackY})
 						}
 						console.log(data.current.getBoundingClientRect())
-						connection.current.send({
-							type: "cardMove_stack",
-							data: {
-								stackIndex: nearestStack.index,
-								cardId: id,
-								stacks
-							}
+						connections.current.map((connection, i) => {
+							connection.current.send({
+								type: "cardMove_stack",
+								data: {
+									stackIndex: nearestStack.index,
+									cardId: id,
+									stacks
+								}
+							})
 						})
 						moveCardToPosition(stacks, setStacks, usedCards, setUsedCards, nearestStack.index, updateCardPosition, id, {x: stackX, y: stackY})
 
@@ -122,13 +124,15 @@ export const handleCardDrop = (
 						// Workaround for moving closed stacks to open stacks
 						if (!currentlyMovingStack) {
 
-							connection.current.send({
-								type: "cardMove_hand",
-								data: {
-									stackIndex: 0,
-									cardId: id,
-									stacks
-								}
+							connections.current.map((connection, i) => {
+								connection.current.send({
+									type: "cardMove_hand",
+									data: {
+										stackIndex: 0,
+										cardId: id,
+										stacks
+									}
+								})
 							})
 
 							const currentCardPos = data.current.getBoundingClientRect().left
