@@ -14,8 +14,10 @@ export const Stack = ({stack, updateCardPosition, stackRef}) => {
 
     const opacity = 100000/ distance / 500
 
+
+
     return (
-        <div className={`cardStack ${stackType === "hand" ? "hand" : null}`} style={{border: colliding ? '4px solid green' : '4px dashed grey', width, height, opacity: clamp(opacity, 0, 1)}} ref={stackRef}>
+        <div className={`cardStack ${stackType}`} style={{border: colliding ? '4px solid green' : '4px dashed grey', width, height, opacity: clamp(opacity, 0, 1)}} ref={stackRef}>
             {stackType}
             {JSON.stringify(cards)}
         </div>

@@ -74,6 +74,11 @@
   margin: 2em;
 }
 
+.hidden{
+    position: absolute;
+    top: -100%;
+}
+
 /* Card Rotation Animation */
 @keyframes shuffle {
   from {

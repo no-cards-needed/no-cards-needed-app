@@ -104,15 +104,30 @@ function Game() {
 			}
 			return updatedStack;
 		}))
-		
+
+		resetCardZIndex(shuffledCards)
+
+		connections.current.map((connection) => {
+			connection.connection.send({
+				type: "shuffle",
+				data: {
+					stacks: stacksReference.current,
+					shuffledCards
+				}
+			})
+		})
+	}
+
+	const resetCardZIndex = (shuffledCards) => {
+		console.log("resetCardZIndex", shuffledCards)
 		// Re-Set zIndex of the shuffled cards
-		setUsedCards(usedCards.map((card, i) => {
+		setUsedCards(usedCardsReference.current.map((card, i) => {
 			if (shuffledCards.includes(card.id)) {
 				card.zIndex = shuffledCards.indexOf(card.id)
 				card.animation = "shuffle"
 				const timeout = setTimeout(() => {
 					// card.animation = "none"
-					setUsedCards(usedCards.map((card, i) => {
+					setUsedCards(usedCardsReference.current.map((card, i) => {
 						if (i === i) {
 							card.animation = "none"
 						}
@@ -123,7 +138,6 @@ function Game() {
 			}
 			return card;
 		}))
-
 	}
 
 	// Check if LongPress is in proximity of card start position, if so: move stack not single card
@@ -175,6 +189,11 @@ function Game() {
 
 		moveCardToPosition(stacksReference.current, setStacks, usedCardsReference.current, setUsedCards, stackIndex, updateCardPosition, cardId, stackPosition)
 	}
+	const recieveShuffledCards = (data) => {
+		setStacks(data.data.stacks)
+
+		resetCardZIndex(data.data.shuffledCards)
+	}
 
 	const dataRecievedCallback = (data) => {
 		console.log(data)
@@ -185,10 +204,10 @@ function Game() {
 			case "cardMove_hand":
 				cardMove_hand(data)
 				break;
+			case "shuffle":
+				recieveShuffledCards(data)
+				break;
 			case "newConnection":
-				//console.log("newConnection", data, connections.current)
-				console.log("new connection from "+data.data.id)
-				console.log("connections", connections.current, !connections.current.some((connection) => connection.peerId === data.data.id))
 				if(!connections.current.some((connection) => connection.peerId === data.data.id) && data.data.id !== peerId && data.data.id !== undefined) {
 					console.log("if passed")
 					handleConnectionInstance(peerInstance.current, connections, data.data.id, dataRecievedCallback)
