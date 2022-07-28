@@ -5,7 +5,7 @@ function MenuHeader() {
 
     return (
       <div className="menuHeader maxWidth" id="basicDrop">
-            <Link to="/" class="btn Secondary medium noselect" id="basicDrop" style={{position: "absolute", left: "28px"}}>
+            <Link to="/" class="btn Secondary medium noselect" id="basicDrop" style={{position: "absolute", left: "28px", width: "48px"}}>
                 <img class="iconContainer" src={close} alt=""></img>
             </Link>
             <headline>Create Game</headline>
