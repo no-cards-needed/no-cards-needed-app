@@ -105,7 +105,8 @@ export const handleCardDrop = (
 						}
 						console.log(data.current.getBoundingClientRect())
 						connections.current.map((connection, i) => {
-							connection.current.send({
+							console.log(connection)
+							connection.connection.send({
 								type: "cardMove_stack",
 								data: {
 									stackIndex: nearestStack.index,

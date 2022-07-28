@@ -53,7 +53,7 @@ export const setupPeerInstance = (
         });
           // @ts-ignore: ID maybe not there
         conn.on("open", (id: string) => {
-            console.log(id)
+            console.log("Someone Connected: "+id)
             handleConnectionInstance(tempPeerInstance, connections, id, dataRecievedCallback)
             // New Client connects to the server
             //Sending Cards and Stacks
@@ -77,29 +77,43 @@ export const handleConnectionInstance = (
     peerId: string,
     dataRecieveCallback: (data: any) => void
     ) => {
-    
-    const connectionIndex = connections.current.push(connectToPeer(peerInstance, peerId)) - 1;
-    const connection = connections.current[connectionIndex];
+    if (connections.current.find((connection) => connection.peerId === peerId)) {
+        return
+    }
 
-    // handle peer errors
-    const FATAL_ERRORS = ['invalid-id', 'invalid-key', 'network', 'ssl-unavailable', 'server-error', 'socket-error', 'socket-closed', 'unavailable-id', 'webrtc'];
-    connection.on('error', (e) => {
-        if (FATAL_ERRORS.includes(e.type)) {
-            console.log(e)
-            /*tempPeerInstance.reconnect(e); // this function waits then tries the entire connection over again*/
-        } else {
-            console.log('Non fatal error: ',  e.type);
-        }
-    })
+/*
+    // Filter out previous failed connection attempts where the peerId in the connections array is "undefined"
+    connections.current = connections.current.filter((connection) => connection.peerId !== undefined)
+*/
+    if (peerId && peerInstance.id) {
+        const connectionIndex = connections.current.push({connection: connectToPeer(peerInstance, peerId), peerId}) - 1;
+        const connection = connections.current[connectionIndex].connection;
 
-    connection.on("open", () => {
-        console.log("connected")
-        console.log(peerInstance.connections)
-    });
+        // handle peer errors
+        const FATAL_ERRORS = ['invalid-id', 'invalid-key', 'network', 'ssl-unavailable', 'server-error', 'socket-error', 'socket-closed', 'unavailable-id', 'webrtc'];
+        connection.on('error', (e) => {
+            if (FATAL_ERRORS.includes(e.type)) {
+                console.log(e)
+                /*tempPeerInstance.reconnect(e); // this function waits then tries the entire connection over again*/
+            } else {
+                console.log('Non fatal error: ',  e.type);
+            }
+        })
 
-    connection.on("data", async (data) => {
-        dataRecieveCallback(data)
-    })
+        connection.on("open", () => {
+            console.log("connected")
+            connection.send({
+                type: "newConnection",
+                data: {
+                    id: peerInstance.id
+                }
+            })
+        });
+
+        connection.on("data", async (data) => {
+            dataRecieveCallback(data)
+        })
+    }
 }
 
 export const setDefaultStacks = () => {

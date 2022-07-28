@@ -160,14 +160,15 @@ function Game() {
 		}
 	}
 
-	const moveCards_stack = (data) => {
+	const cardMove_stack = (data) => {
+		console.log("moveCards_stack", data)
 		const {stackIndex, cardId, tempStacks} = data.data
 
 		let stackPosition = getPositionAtCenter(stackRef[stackIndex]);
 
 		moveCardToPosition(stacksReference.current, setStacks, usedCardsReference.current, setUsedCards, stackIndex, updateCardPosition, cardId, stackPosition)
 	}
-	const moveCards_hand = (data) => {
+	const cardMove_hand = (data) => {
 		const {stackIndex, cardId, tempStacks} = data.data
 
 		let stackPosition = getPositionAtCenter(stackRef[stackIndex]);
@@ -177,6 +178,36 @@ function Game() {
 
 	const dataRecievedCallback = (data) => {
 		console.log(data)
+		switch (data.type) {
+			case "cardMove_stack":
+				cardMove_stack(data)
+				break;
+			case "cardMove_hand":
+				cardMove_hand(data)
+				break;
+			case "newConnection":
+				//console.log("newConnection", data, connections.current)
+				console.log("new connection from "+data.data.id)
+				console.log("connections", connections.current, !connections.current.some((connection) => connection.peerId === data.data.id))
+				if(!connections.current.some((connection) => connection.peerId === data.data.id) && data.data.id !== peerId && data.data.id !== undefined) {
+					console.log("if passed")
+					handleConnectionInstance(peerInstance.current, connections, data.data.id, dataRecievedCallback)
+					connections.current.map((connection) => {
+						console.log("mapped connection: ", connection)
+						if (connection.peerId !== undefined) {
+							console.log("connection id defined")
+							connection.connection.send({
+								type: "newConnection",
+								data: {
+									id: data.data.id,
+								}
+							})
+						}
+						return connection
+					})
+				}
+				break;
+		}
 	}
 
 	useEffect(() => {
@@ -198,14 +229,18 @@ function Game() {
 		const defaultCards = setDefaultUsedCards()
 		const defaultStacks = setDefaultStacks()
 
+		setUsedCards(defaultCards)
+		setStacks(defaultStacks)
+
 		peerInstance.current = setupPeerInstance(dataRecievedCallback, connections)
+		setPeerid(peerInstance.current.id)
 	}, [])
 
 	return (
 		<div className="App">
 			{/* <div className='cardStack' style={{border: isColliding ? '1px solid green' : '1px solid red',}} ref={stackRef}></div> */}
 			<div style={{margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center"}}>
-				<p style={{textAlign: "center"}}>{
+				<p style={{textAlign: "center", background: "#ffffff1a", padding: "4px 16px", borderRadius: "7px"}} onClick={() => navigator.clipboard.writeText(peerId)}>{
 					peerId
 				}</p>
 				<div>
