@@ -39,7 +39,7 @@
 
     border-radius: 24px 24px 0px 0px;
     background: #CAC7D1;    
-    z-index: 0;
+    z-index: 1;
 }
 
 .tricks {
@@ -69,7 +69,7 @@
     color: #fff;
 
     border-radius: 16px 16px 0px 0px;
-    z-index: 0;
+    z-index: 1;
 
     transition: transform 200ms ease-in;
     cursor: pointer;

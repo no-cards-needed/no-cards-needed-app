@@ -44,49 +44,65 @@ function Game() {
       } 
     
     return (
-        <div className="Game" class="maxWidth">
-
-            <GameHeader />
-            <div class="gameHeaderUnderBox">
-                <div class={ activeRemoved ? "removedCards" : "removedCards removedCardsUnder"}>
-                    <div class="tricks">
-                        <div class="btn Secondary medium noselect" id="basicDrop" style={{height: "112px"}}>
-                            <img src={chevronLeft} class="iconContainer" alt=""></img>
+            <div style={{background: "#DEDBE5", position: "fixed"}}>
+                <div className='backgroundElement'></div>
+                <div className="playingArea criticalMaxWidth">
+                    <div className="playingAreaColumn">
+                        <div className="playingAreaRow">
+                            <div className="cardDropZone">
+                                <div className="pileSize">55</div>
+                            </div>
+                            <div className="cardDropZone"></div>
                         </div>
-                        <div class="cardContainer"></div>
-                        <div class="btn Secondary medium noselect" id="basicDrop" style={{height: "112px"}}>
-                            <img src={chevronRight} class="iconContainer" alt=""></img>
-                        </div>
-                    </div>
-                </div>
-                <div class="lashHeader" onClick={toggleDisplayRemoved}>
-                    <img src={showRemovedCards} class="iconContainer" alt="" style={{marginBottom: "2px"}}></img>
-                    <label style={{cursor: "pointer"}}>{lashTextRemoved}</label>
-                    <img src={activeRemoved ? chevronUp : chevronDown} class="iconContainer" alt="" style={{marginBottom: "2px"}}></img>
-                </div>
-            </div>
-
-            <div class="underBox">
-                <div class={ activeTricks ? "lashHand noselect" : "lashHand lashHandUnder noselect"} onClick={toggleDisplayTricks}>
-                    <label style={{cursor: "pointer"}}>{lashTextTricks}</label>
-                    <img src={activeTricks ? chevronDown : chevronUp} class="iconContainer" alt=""></img>
-                </div>
-                <div class={ activeTricks ? "handUnderlaying" : "handUnderlaying handUnderlayingUnder"}>
-                    <div class="tricks">
-                        <div class="btn Secondary medium noselect" id="basicDrop" style={{height: "112px"}}>
-                            <img src={chevronLeft} class="iconContainer" alt=""></img>
-                        </div>
-                        <div class="cardContainer"></div>
-                        <div class="btn Secondary medium noselect" id="basicDrop" style={{height: "112px"}}>
-                            <img src={chevronRight} class="iconContainer" alt=""></img>
+                        <div className="playingAreaRow">
+                            <div className="cardDropZone"></div>
+                            <div className="cardDropZone"></div>
                         </div>
                     </div>
                 </div>
-            </div>    
-            <div class="hand" id="basicDrop">
-                <div class="cardContainer"></div>
+
+
+                <GameHeader />
+                <div className="gameHeaderUnderBox criticalMaxWidth">
+                    <div className={ activeRemoved ? "removedCards" : "removedCards removedCardsUnder"}>
+                        <div className="tricks">
+                            <div className="btn Secondary medium noselect" id="basicDrop" style={{height: "112px"}}>
+                                <img src={chevronLeft} className="iconContainer" alt=""></img>
+                            </div>
+                            <div className="cardContainer"></div>
+                            <div className="btn Secondary medium noselect" id="basicDrop" style={{height: "112px"}}>
+                                <img src={chevronRight} className="iconContainer" alt=""></img>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="lashHeader" onClick={toggleDisplayRemoved}>
+                        <img src={showRemovedCards} className="iconContainer" alt="" style={{marginBottom: "2px"}}></img>
+                        <label style={{cursor: "pointer"}}>{lashTextRemoved}</label>
+                        <img src={activeRemoved ? chevronUp : chevronDown} className="iconContainer" alt="" style={{marginBottom: "2px"}}></img>
+                    </div>
+                </div>
+
+                <div className="underBox criticalMaxWidth">
+                    <div className={ activeTricks ? "lashHand noselect" : "lashHand lashHandUnder noselect"} onClick={toggleDisplayTricks}>
+                        <label style={{cursor: "pointer"}}>{lashTextTricks}</label>
+                        <img src={activeTricks ? chevronDown : chevronUp} className="iconContainer" alt=""></img>
+                    </div>
+                    <div className={ activeTricks ? "handUnderlaying" : "handUnderlaying handUnderlayingUnder"}>
+                        <div className="tricks">
+                            <div className="btn Secondary medium noselect" id="basicDrop" style={{height: "112px"}}>
+                                <img src={chevronLeft} className="iconContainer" alt=""></img>
+                            </div>
+                            <div className="cardContainer"></div>
+                            <div className="btn Secondary medium noselect" id="basicDrop" style={{height: "112px"}}>
+                                <img src={chevronRight} className="iconContainer" alt=""></img>
+                            </div>
+                        </div>
+                    </div>
+                </div>    
+                <div className="hand criticalMaxWidth" id="basicDrop">
+                    <div className="cardContainer"></div>
+                </div>
             </div>
-        </div>
     );
   }   
 

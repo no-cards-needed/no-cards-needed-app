@@ -1,0 +1,93 @@
+.backgroundElement {
+  background-color: #DEDBE5;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.cardContainer {
+    width: 80px;
+    height: 111.86px;
+    border-radius: 5px;
+
+    background: #fff;
+  }
+
+  .playingArea {
+    position: fixed;
+    width: 100vw;
+    top: 80px;
+    height: calc(100vh - 224px);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 0;
+    overflow: scroll;
+  }
+
+  .playingAreaColumn {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: fit-content;
+
+    padding: 80px;
+
+    gap: 16px;
+  }
+
+  .playingAreaRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    gap: 32px;
+  }
+
+  .cardDropZone {
+    width: 80px;
+    height: 111.86px;
+    border-radius: 5px;
+
+    opacity: 0.5;
+
+    border: 3px dashed #B6B3BD;
+    background: none;
+  }
+
+  .cardDropZone:hover {
+    width: 80px;
+    height: 111.86px;
+    border-radius: 5px;
+
+    opacity: 0.5;
+
+    border: 3px dashed #986DF2;
+    background: none;
+  }
+
+  .pileSize {
+    position: relative;
+    width: 27px;
+    height: 23px;
+    left: 76px;
+    top: 4px;   
+    padding-left: 8px;
+
+    font-size: 12px;
+    line-height: 18px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+
+    border-radius: 0px 8px 8px 0px;
+
+    background-color: #A09CA7;
+    color: #FFFFFF;
+  }

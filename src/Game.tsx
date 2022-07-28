@@ -1,3 +1,10 @@
+import chevronRight from './assets/iconsBlack/chevron/right.svg';
+import chevronLeft from './assets/iconsBlack/chevron/left.svg';
+import chevronUp from '../assets/iconsWhite/chevron/up.svg';
+import chevronDown from '../assets/iconsWhite/chevron/down.svg';
+import {ReactComponent as showRemovedCards} from './assets/iconsWhite/showRemovedCards.svg';
+
+
 import { useEffect, useRef, useState } from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import './css/App.css';

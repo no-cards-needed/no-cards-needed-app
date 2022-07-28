@@ -19,6 +19,7 @@ import './css/toggle.css';
 import './css/settings.css';
 import './css/hand.css';
 import './css/modal.css';
+import './css/cards.css';
 
 // Comment out the thing you are currently not working on
 

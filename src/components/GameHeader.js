@@ -55,7 +55,7 @@ function GameHeader() {
 
   
     return (
-      <div className="gameHeader" id="basicDrop">
+      <div className="gameHeader criticalMaxWidth" id="basicDrop">
             <div class="gameHeaderContent">
                 <div class="avatarContainer">
                   <div class="avatar"></div>

@@ -3,8 +3,14 @@
 }
 
 .maxWidth {
-  margin: 0px auto;
+  margin: 0 auto;
   max-width: 726px;
+}
+
+.criticalMaxWidth {
+  margin-left: calc(min(726px, 100%) / 2 * -1);
+  left: 50%;
+  max-width: min(726px, 100%);
 }
 
 .startScreen {
@@ -95,10 +101,4 @@
     background: #fff;
   }
 
-  .cardContainer {
-    width: 80px;
-    height: 111.86px;
-    border-radius: 5px;
-
-    background: #fff;
-  }
+ 
