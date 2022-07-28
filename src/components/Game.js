@@ -55,7 +55,10 @@ function Game() {
                             <div className="cardDropZone"></div>
                         </div>
                         <div className="playingAreaRow">
-                            <div className="cardDropZone"></div>
+                            <div className="cardContainer" id="dropSmall">
+                                <div className="stackZone"></div>
+                                <div className="spreadZone"></div>                               
+                            </div>
                             <div className="cardDropZone"></div>
                         </div>
                     </div>

@@ -3,6 +3,7 @@
       "outDir": "build/dist",
       "module": "commonjs",
       "target": "es6",
+      "typeRoots": ["./src/@types", "./node_modules/@types"],
       "lib": ["es6", "dom", "es2017", "es2016", "DOM.Iterable"],
       "sourceMap": true,
       "allowJs": true,

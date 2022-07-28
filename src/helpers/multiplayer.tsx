@@ -146,7 +146,7 @@ export const setDefaultStacks = () => {
             currentlyNearest: false,
             colliding: false,
             distance: 0,
-            height: 200,
+            height: 144,
             width: 300,
             position: {
                 x: 0,
@@ -162,8 +162,8 @@ export const setDefaultStacks = () => {
             currentlyNearest: false,
             colliding: false,
             distance: 0,
-            height: 200,
-            width: 300,
+            height: 112,
+            width: 80,
             position: {
                 x: 0,
                 y: 0
@@ -178,14 +178,46 @@ export const setDefaultStacks = () => {
             currentlyNearest: false,
             colliding: false,
             distance: 0,
-            height: 200,
-            width: 300,
+            height: 112,
+            width: 80,
             position: {
                 x: 0,
                 y: 0
             },
             ref: null
         },
+        // {
+        //     id: 4,
+        //     stackType: "stack",
+        //     orientation: "front",
+        //     cards: [],
+        //     currentlyNearest: false,
+        //     colliding: false,
+        //     distance: 0,
+        //     height: 112,
+        //     width: 80,
+        //     position: {
+        //         x: 0,
+        //         y: 0
+        //     },
+        //     ref: null
+        // },
+        // {
+        //     id: 5,
+        //     stackType: "stack",
+        //     orientation: "front",
+        //     cards: [],
+        //     currentlyNearest: false,
+        //     colliding: false,
+        //     distance: 0,
+        //     height: 112,
+        //     width: 80,
+        //     position: {
+        //         x: 0,
+        //         y: 0
+        //     },
+        //     ref: null
+        // },
 /*        {
             id: 3,
             stackType: "openStack",

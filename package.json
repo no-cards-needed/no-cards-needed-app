@@ -9,7 +9,6 @@
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.5.0",
     "@types/node": "^17.0.31",
-    "@types/react": "^18.0.8",
     "@types/react-dom": "^18.0.3",
     "eslint-plugin-react-hooks": "^4.5.0",
     "peerjs": "^1.4.6",
@@ -46,5 +45,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.15",
+    "i": "^0.3.7"
   }
 }

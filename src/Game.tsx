@@ -1,10 +1,3 @@
-import chevronRight from './assets/iconsBlack/chevron/right.svg';
-import chevronLeft from './assets/iconsBlack/chevron/left.svg';
-import chevronUp from '../assets/iconsWhite/chevron/up.svg';
-import chevronDown from '../assets/iconsWhite/chevron/down.svg';
-import {ReactComponent as showRemovedCards} from './assets/iconsWhite/showRemovedCards.svg';
-
-
 import { useEffect, useRef, useState } from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import './css/App.css';
@@ -23,11 +16,45 @@ import { shuffleCards } from "./helpers/shuffle-cards";
 import {moveCardToPosition} from "./helpers/move-card-to-position";
 import {moveCardsToStack} from "./helpers/move-cards-to-stack";
 import useTimeout from "./helpers/hooks/useTimeout";
+import GameHeader from "./components/GameHeader";
 
 // https://www.npmjs.com/package/use-dynamic-refs
 // import useDynamicRefs from "./assets/helpers/use-dynamic-refs";
 
 function Game() {
+	const [ lashTextTricks, setLashTextTricks ] = useState( 'Show Tricks' )
+    const [ lashTextRemoved, setLashTextRemoved ] = useState( 'Show Removed Cards' )
+
+    const [ activeTricks, setActiveTricks ] = useState( false )
+
+    const [ activeRemoved, setActiveRemoved ] = useState( false )
+
+	function toggleDisplayTricks() {
+        if (activeTricks) {   
+            setActiveTricks(false) 
+            setLashTextTricks('Show Tricks')
+        } else { 
+          setActiveTricks(true) 
+          setLashTextTricks('Hide Tricks')
+
+          setActiveRemoved(false) 
+          setLashTextRemoved('Show Removed Cards')
+        }
+      } 
+
+      function toggleDisplayRemoved() {
+        if (activeRemoved) {   
+            setActiveRemoved(false) 
+            setLashTextRemoved('Show Removed Cards')
+        } else { 
+          setActiveRemoved(true) 
+          setLashTextRemoved('Hide Removed Cards')
+
+          setActiveTricks(false) 
+          setLashTextTricks('Show Tricks')
+        }
+      } 
+
 
 	const { gameId } = useParams();
 
@@ -269,9 +296,9 @@ function Game() {
 	}, [])
 
 	return (
-		<div className="App">
+		<div>
 			{/* <div className='cardStack' style={{border: isColliding ? '1px solid green' : '1px solid red',}} ref={stackRef}></div> */}
-			<div style={{margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center"}}>
+			<div style={{margin: "100px auto", display: "flex", flexDirection: "column", alignItems: "center", position: "fixed", zIndex: 5}}>
 				<p style={{textAlign: "center", background: "#ffffff1a", padding: "4px 16px", borderRadius: "7px"}} onClick={() => navigator.clipboard.writeText(peerId)}>{
 					peerId
 				}</p>
@@ -279,31 +306,76 @@ function Game() {
 					<input value={connectionId} onChange={(e) => setConnectionId(e.target.value)}/>
 					<button onClick={() => handleConnectionInstance(peerInstance.current, connections, connectionId, dataRecievedCallback)}>Connect</button>
 				</div>
-			</div>
-			{
-				stacks.map((stack, index) => {
-					return (
-						<Stack key={index} stack={stack} stackRef={el => stackRef[index] = el} updateCardPosition={updateCardPosition}/>
-					)
-				})
-			}
-			{/* <Stack height={500} width={500} position={{x: 0, y: 0}} updateCardPosition={updateCardPosition} isColliding={isColliding} stackRef={stackRef}/> */}
+			</div>	
+			<div style={{background: "#DEDBE5", position: "fixed"}}>
+                <div className='backgroundElement'></div>
+                <div className="playingArea criticalMaxWidth">
+                    <div className="playingAreaColumn">
+                        <div className="playingAreaRow">
+							{
+								stacks.map((stack, index) => {
+									if(index > 1 && index < 3) {
+										return (
+											<Stack key={index} stack={stack} stackRef={el => stackRef[stack.id] = el} updateCardPosition={updateCardPosition}/>
+										)
+									}
+								})
+							}
+                        </div>
+                        <div className="playingAreaRow">
+							{
+								stacks.map((stack, index) => {
+									if(index > 2) {
+										return (
+											<Stack key={index} stack={stack} stackRef={el => stackRef[stack.id] = el} updateCardPosition={updateCardPosition}/>
+										)
+									}
+								})
+							}
+                        </div>
+                    </div>
+                </div>
 
-			{/* <div className='hand' style={{border: isColliding ? '1px solid green' : '1px solid red',}}></div> */}
-			<div className="cards">
+				<div className="cards">
+					{
+						usedCards.map((card, index) => {
+							return <Card 
+									setRef={setCardRef} 
+									card={card} 
+									key={card.id}
+									shuffle={shuffleCardsById}
+									handleLongPress={handleLongPress}
+									handleCardDrag={(data, id) => handleCardDrag(data, id, usedCards, setUsedCards, getNearestStack, nearestStack, setNearestStack, stacks, setIsColliding)} 
+									handleCardDrop={(data, id) => handleCardDrop(data, id, usedCards, setUsedCards, isColliding, setIsColliding, stacks, setStacks, nearestStack, updateCardPosition, stackRef, currentlyMovingStack, setCurrentlyMovingStack, connections)} />
+						})
+					}
+				</div>
+
+                <GameHeader />
+
+
+  
+                <div className="hand criticalMaxWidth" id="basicDrop">
+					{
+						stacks.map((stack, index) => {
+							if(index === 1) {
+								return (
+									<Stack key={index} stack={stack} stackRef={el => stackRef[stack.id] = el} updateCardPosition={updateCardPosition}/>
+								)
+							}
+						})
+					}
+                </div>
 				{
-					usedCards.map((card, index) => {
-						return <Card 
-								setRef={setCardRef} 
-								card={card} 
-								key={card.id}
-								shuffle={shuffleCardsById}
-								handleLongPress={handleLongPress}
-								handleCardDrag={(data, id) => handleCardDrag(data, id, usedCards, setUsedCards, getNearestStack, nearestStack, setNearestStack, stacks, setIsColliding)} 
-								handleCardDrop={(data, id) => handleCardDrop(data, id, usedCards, setUsedCards, isColliding, setIsColliding, stacks, setStacks, nearestStack, updateCardPosition, stackRef, currentlyMovingStack, setCurrentlyMovingStack, connections)} />
-					})
-				}
-			</div>
+						stacks.map((stack, index) => {
+							if(index === 0) {
+								return (
+									<Stack key={index} stack={stack} stackRef={el => stackRef[stack.id] = el} updateCardPosition={updateCardPosition}/>
+								)
+							}
+						})
+					}
+            </div>
 		</div>
 	);
 }

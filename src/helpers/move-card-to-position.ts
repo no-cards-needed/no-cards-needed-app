@@ -44,7 +44,7 @@ stackPosition: {x: number, y: number}
 ) => {
 
 
-    const cardDimensions = {width: 107, height: 150}
+    const cardDimensions = {width: 80, height: 112}
 
     addCardIntoStack(stacks, setStacks, stackIndex, stacks[stackIndex].cards.length, cardId)
 

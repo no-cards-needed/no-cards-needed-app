@@ -39,9 +39,9 @@
 }
 
 .card {
-  height: 100%;
-  width: auto;
-  box-shadow: var(--shadow-elevation-medium);
+  height: 112px;
+  width: 80px;
+  /*box-shadow: var(--shadow-elevation-medium);*/
   transition: .3s ease transform;
 }
 .card .shuffle{
@@ -75,7 +75,7 @@
 }
 
 .hidden{
-    position: absolute;
+    position: fixed;
     top: -100%;
 }
 

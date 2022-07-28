@@ -197,7 +197,7 @@ function Card({
 				<div 
 					ref={nodeRef} 
 					// TODO: When moving on from debug, delete absolute dimensions
-					style={{position: 'absolute', top: 0, left: 0, zIndex, height: 150, width: 107}} 
+					style={{position: 'absolute', top: 0, left: 0, zIndex, height: 112, width: 80}} 
 					className={transition ? "animation" : null}
 					// onTouchStart={touchStart}
 					// onClick={touchStart}
