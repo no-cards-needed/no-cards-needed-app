@@ -48,7 +48,6 @@
     gap: 4px;
 
     position: relative;
-    min-width: max-content;
     border: 0.75px solid rgba(0, 0, 0, 0.2);
 
     cursor: pointer;
@@ -57,13 +56,13 @@
   .medium {
     border-radius: 12px;
     padding: 12.5px 16px 11.5px;
-    min-height: 48px;
+    height: 48px;
   }
 
   .small {
     border-radius: 12px;
     padding: 9px 16px 8px;
-    min-height: 40px;
+    height: 40px;
   }
 
   .quadBtnSmall {

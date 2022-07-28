@@ -65,7 +65,7 @@ function GameHeader() {
                 </div>
                 <label>{lastAction}</label>
             </div>
-            <div class="btn Primary medium noselect" id="basicDrop" style={{width: "16px"}} onClick={toggleDisplay}>
+            <div class="btn Primary medium noselect" id="basicDrop" style={{width: "48px"}} onClick={toggleDisplay}>
               <img src={hamburger} alt=""></img>
             </div>
             <div class="hamburger noselect" id="basicDrop" style={{color: "#fff", display:display}}>

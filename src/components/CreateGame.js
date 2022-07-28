@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
 import MenuHeader from "./MenuHeader.js"
 import Counter from './Counter.js';
 import Dropdown from "./Dropdown.js";
@@ -32,7 +33,12 @@ function Menu() {
     }
   } 
 
-    const [playerCount, setPlayerCount] = useState()
+    const players = [
+      "Milla", 
+      "Kleo", 
+      "Hannibal", 
+      "Kalle" 
+    ]
 
     const [deckCards, setDeckCards] = useState(dropdownContent[0])
     const [joker, setJoker] = useState(0)
@@ -42,18 +48,19 @@ function Menu() {
     const [split, setSplit] = useState(false)
     const [pile, setPile] = useState(true)
 
-    const [totalCards, setTotalCards] = useState(deckCards)
+    const [totalCards, setTotalCards] = useState(24)
     const [cardsInDrawPile, setCardsInDrawPile] = useState(19)
 
-    const [opacity, setOpacity] = useState(1)
+    useEffect(() => {
+      setTotalCards((deckCards[0] + joker) * decks)
+      console.log(deckCards)
+      console.log(players.length)
 
-    function toggleOpacity() {
-      if (split) {   
-        setOpacity(0.7)
-      } else { 
-        setOpacity(1)
-      }
-    } 
+      setCardsInDrawPile(totalCards - (players.length * hand))
+
+      if (split) setHand(totalCards / players.length)
+
+    }, [deckCards, totalCards, joker, decks, hand, players, split, pile]);
 
     return (
      
@@ -68,7 +75,7 @@ function Menu() {
 
           <div class="labelItemGroup">
             <label>Players</label>
-            <PlayerCards names={[ "Milla", "Kleo", "Klaus", "Kalle" ]} />
+            <PlayerCards names={players} />
           </div>
 
           <div style={{display: "flex", flexDirection: "row", alignItems: "flex-start", gap: "16px", width: "100%", maxWidth: "394px"}}>
@@ -145,7 +152,7 @@ function Menu() {
 
             <div class="playerContainer">
               <div class="infoTag">
-                <label>{totalCards[0]} cards in total</label>
+                <label>{totalCards} cards in total</label>
               </div>
               <div class="infoTag">
                 <label>{hand} cards on hand</label>
