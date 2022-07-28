@@ -103,9 +103,9 @@ export const handleCardDrop = (
 						if (currentlyMovingStack) {
 							moveAllCardsToNewStack(previousStackIndex, {x: stackX, y: stackY})
 						}
-						console.log(data.current.getBoundingClientRect())
+
 						connections.current.map((connection, i) => {
-							connection.current.send({
+							connection.connection.send({
 								type: "cardMove_stack",
 								data: {
 									stackIndex: nearestStack.index,
@@ -113,6 +113,7 @@ export const handleCardDrop = (
 									stacks
 								}
 							})
+							return connection;
 						})
 						moveCardToPosition(stacks, setStacks, usedCards, setUsedCards, nearestStack.index, updateCardPosition, id, {x: stackX, y: stackY})
 
@@ -123,9 +124,8 @@ export const handleCardDrop = (
 						
 						// Workaround for moving closed stacks to open stacks
 						if (!currentlyMovingStack) {
-
-							connections.current.map((connection, i) => {
-								connection.current.send({
+							connections.current.map((connection) => {
+								connection.connection.send({
 									type: "cardMove_hand",
 									data: {
 										stackIndex: 0,
@@ -133,6 +133,7 @@ export const handleCardDrop = (
 										stacks
 									}
 								})
+								return connection
 							})
 
 							const currentCardPos = data.current.getBoundingClientRect().left
@@ -186,7 +187,7 @@ export const handleCardDrop = (
 
 				// Updating all cards in all stacks
 				// This is probably not the pest performing variant to do this, but for now its the only I know of
-				stacks.map((stack, i) => {
+				stacks.map((stack) => {
 					stack.cards.map((card, i) => {
 						if(stack.stackType === "openStack" || stack.stackType === "hand") {
 							// Get Card by ID
@@ -216,7 +217,9 @@ export const handleCardDrop = (
 							}
 							return cardInUsedCards
 						}))
+						return card
 					})
+					return stack
 				})
 
 				setIsColliding(false)
