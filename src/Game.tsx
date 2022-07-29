@@ -311,7 +311,7 @@ function Game() {
 	return (
 		<div>
 			{/* <div className='cardStack' style={{border: isColliding ? '1px solid green' : '1px solid red',}} ref={stackRef}></div> */}
-			<div style={{margin: "100px auto", display: "flex", flexDirection: "column", alignItems: "center", position: "fixed", zIndex: 5}}>
+{/*			<div style={{margin: "100px auto", display: "flex", flexDirection: "column", alignItems: "center", position: "fixed", zIndex: 5}}>
 				<p style={{textAlign: "center", background: "#ffffff1a", padding: "4px 16px", borderRadius: "7px"}} onClick={() => navigator.clipboard.writeText(peerId)}>{
 					peerId
 				}</p>
@@ -319,7 +319,7 @@ function Game() {
 					<input value={connectionId} onChange={(e) => setConnectionId(e.target.value)}/>
 					<button onClick={() => handleConnectionInstance(peerInstance.current, connections, connectionId, dataRecievedCallback)}>Connect</button>
 				</div>
-			</div>	
+			</div>	*/}
 			<div style={{background: "#DEDBE5", position: "fixed"}}>
                 <div className='backgroundElement'></div>
                 <div className="playingArea criticalMaxWidth">
