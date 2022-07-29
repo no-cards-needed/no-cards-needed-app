@@ -56,48 +56,48 @@ function GameHeader() {
   
     return (
       <div className="gameHeader criticalMaxWidth" id="basicDrop">
-            <div class="gameHeaderContent">
-                <div class="avatarContainer">
-                  <div class="avatar"></div>
-                  <div class="avatar"></div>
-                  <div class="avatar"></div>
-                  <div class="avatar"></div>
+            <div className="gameHeaderContent">
+                <div className="avatarContainer">
+                  <div className="avatar"></div>
+                  <div className="avatar"></div>
+                  <div className="avatar"></div>
+                  <div className="avatar"></div>
                 </div>
                 <label>{lastAction}</label>
             </div>
-            <div class="btn Primary medium noselect" id="basicDrop" style={{width: "48px"}} onClick={toggleDisplay}>
+            <div className="btn Primary medium noselect" id="basicDrop" style={{width: "48px"}} onClick={toggleDisplay}>
               <img src={hamburger} alt=""></img>
             </div>
-            <div class="hamburger noselect" id="basicDrop" style={{color: "#fff", display:display}}>
-              <div class="hamburgerClose" style={{cursor: "pointer"}} onClick={toggleDisplay}>
-              <img src={close} class="iconContainer" alt=""></img>
+            <div className="hamburger noselect" id="basicDrop" style={{color: "#fff", display:display}}>
+              <div className="hamburgerClose" style={{cursor: "pointer"}} onClick={toggleDisplay}>
+              <img src={close} className="iconContainer" alt=""></img>
               </div>
-              {/* <div class="hamburgerItem">
-                <img src={settings} class="iconContainer"></img>
+              {/* <div className="hamburgerItem">
+                <img src={settings} className="iconContainer"></img>
                 <p>Settings</p>
               </div> */}
-              <div class="hamburgerItem">
-                <img src={showRemovedCards} class="iconContainer" alt=""></img>
+              <div className="hamburgerItem">
+                <img src={showRemovedCards} className="iconContainer" alt=""></img>
                 <p>Show Removed <br/> Cards</p>
               </div>
-              {/* <div class="hamburgerItem">
-                <img src={foldAllCards} class="iconContainer"></img>
+              {/* <div className="hamburgerItem">
+                <img src={foldAllCards} className="iconContainer"></img>
                 <p>Fold all Cards</p>
               </div> */}
-              <div class="hamburgerItem" onClick={toggleModal}>
-                <img src={leave} class="iconContainer" alt=""></img>
+              <div className="hamburgerItem" onClick={toggleModal}>
+                <img src={leave} className="iconContainer" alt=""></img>
                 <p>Leave Game</p>
               </div>
             </div>
 
-        <div class="modalBackground" style={{display:displayModal, transform: "translateX(-28px)"}}>
-          <div class="modal" id="basicDrop">
-            <headline style={{pAlign: "center", letterSpacing: "0.01em"}}>  Do You Really Want to <br/> Leave This Game? </headline>
-            <div class="buttonContainer">
-              <div class="btn medium Secondary noselect" id="basicDrop" style={{width: "100%"}} onClick={toggleModal}>
+        <div className="modalBackground" style={{display:displayModal, transform: "translateX(-28px)"}}>
+          <div className="modal" id="basicDrop">
+            <p style={{pAlign: "center", letterSpacing: "0.01em"}}>  Do You Really Want to <br/> Leave This Game? </p>
+            <div className="buttonContainer">
+              <div className="btn medium Secondary noselect" id="basicDrop" style={{width: "100%"}} onClick={toggleModal}>
                 <p>No</p>
               </div>
-              <div type="submit" class="btn medium Primary noselect" id="basicDrop" style={{width: "100%"}}>
+              <div type="submit" className="btn medium Primary noselect" id="basicDrop" style={{width: "100%"}}>
                 <p>Yes</p>
               </div>
             </div>

@@ -17,7 +17,7 @@ export const Stack = ({stack, updateCardPosition, stackRef}) => {
 
 
     return (
-        <div className={`cardDropZone ${stackType}`} style={{border: colliding ? '4px solid green' : '4px dashed grey', width, height, opacity: clamp(opacity, 0, 1)}} ref={stackRef}>
+        <div className={`cardDropZone ${stackType}`} ref={stackRef}>
         </div>
     )
 }

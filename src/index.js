@@ -44,9 +44,9 @@ root.render(
 		<BrowserRouter>
 			<Routes>
 				<Route path="/" element={<StartScreen />} />
-				<Route path="game/:gameId" element={<Game />} />
+				<Route path="game/:gameId" element={<App />} />
 				<Route path="gametest" element={<Game />} />
-				<Route path="game/new" element={<CreateGame />} />
+				<Route path="game/lobby" element={<CreateGame />} />
 				<Route path="debug/:gameId" element={<App />} />
 			</Routes>
 		</BrowserRouter>
