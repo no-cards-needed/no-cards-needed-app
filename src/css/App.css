@@ -41,7 +41,7 @@
 .card {
   height: 112px;
   width: 80px;
-  /*box-shadow: var(--shadow-elevation-medium);*/
+  box-shadow: var(--shadow-elevation-medium);
   transition: .3s ease transform;
 }
 .card .shuffle{

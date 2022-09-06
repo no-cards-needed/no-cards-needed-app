@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams, } from "react-router-dom";
 import './css/App.css';
 
 import Card from "./components/Card";
@@ -17,6 +17,7 @@ import {moveCardToPosition} from "./helpers/move-card-to-position";
 import {moveCardsToStack} from "./helpers/move-cards-to-stack";
 import useTimeout from "./helpers/hooks/useTimeout";
 import GameHeader from "./components/GameHeader";
+import toast, {Toaster} from "react-hot-toast";
 
 // https://www.npmjs.com/package/use-dynamic-refs
 // import useDynamicRefs from "./assets/helpers/use-dynamic-refs";
@@ -232,12 +233,14 @@ function Game() {
 		console.log(data)
 		switch (data.type) {
 			case "lobby":
+				toast.success("Created Lobby: " + data.data.lobbyString)
 				window.history.replaceState(null, "No Cards Needed", "/game/"+data.data.lobbyString)
 				break;
 			case "cards":
 				setUsedCards(data.data.cards)
 				// Sending Cards to Stack after a time period to make sure the cards are loaded
 				window.setTimeout(() => {
+					console.log("stackref", stackRef)
 					moveCardsToStack(usedCardsReference.current, setUsedCards, updateCardPosition, stacksReference.current, setStacks, stackRef, 2)
 				}, 100)
 				break;
@@ -294,8 +297,14 @@ function Game() {
 		}
 	}, [isColliding])
 
-	// Move Cards to Hand on Start
-	useEffect(() => {
+	// Using Debounce to delay useEffect, since Router triggered useEffect twice and create two lobbies
+	const useDebounceEffect = (delay, effect, triggerParams: any[]) => {
+		useEffect(() => {
+			const timeout = setTimeout(effect, delay)
+			return () => clearTimeout(timeout)
+		}, [...triggerParams])
+	}
+	useDebounceEffect(100, () => {
 		console.log(gameId)
 		if(gameId === "new") {
 			peerInstance.current = setupPeerInstance(dataRecievedCallback, connections, gameId)
@@ -307,7 +316,7 @@ function Game() {
 		}
 		setPeerid(peerInstance.current.id)
 	}, [])
-
+	
 	return (
 		<div>
 			{/* <div className='cardStack' style={{border: isColliding ? '1px solid green' : '1px solid red',}} ref={stackRef}></div> */}
@@ -321,6 +330,7 @@ function Game() {
 				</div>
 			</div>	*/}
 			<div style={{background: "#DEDBE5", position: "fixed"}}>
+				<div><Toaster /></div>
                 <div className='backgroundElement'></div>
                 <div className="playingArea criticalMaxWidth">
                     <div className="playingAreaColumn">
@@ -329,7 +339,7 @@ function Game() {
 								stacks.map((stack, index) => {
 									if(index > 1 && index < 3) {
 										return (
-											<Stack key={index} stack={stack} stackRef={el => stackRef[stack.id] = el} updateCardPosition={updateCardPosition}/>
+											<Stack key={index} stack={stack} stackRef={el => stackRef.current[stack.id] = el} updateCardPosition={updateCardPosition}/>
 										)
 									}
 								})
@@ -340,7 +350,7 @@ function Game() {
 								stacks.map((stack, index) => {
 									if(index > 2) {
 										return (
-											<Stack key={index} stack={stack} stackRef={el => stackRef[stack.id] = el} updateCardPosition={updateCardPosition}/>
+											<Stack key={index} stack={stack} stackRef={el => stackRef.current[stack.id] = el} updateCardPosition={updateCardPosition}/>
 										)
 									}
 								})

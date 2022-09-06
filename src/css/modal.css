@@ -1,7 +1,8 @@
 .modalBackground {
     position: fixed;
     width: 100vw;
-    top: 0px;
+    top: 0;
+    left: 0;
     height: 100vh;
     background: rgb(44, 40, 51, 0.5);
     padding: 0px 12.5px;

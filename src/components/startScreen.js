@@ -39,7 +39,7 @@ function StartScreen() {
 
   const navigate = useNavigate()
   function nextName() {
-    navigate('/debug/'+generateLobbyString())
+    navigate('/game/new')
     if (processCreate) {
       setProcessCreate(false) 
       setDisplayModal( 'none' )
@@ -63,12 +63,12 @@ function StartScreen() {
   const [name, setName] = useState("")
     return (
       <div className="maxWidth">
-        <div class="startScreen noselect">
+        <div className="startScreen noselect">
           <img style={{marginBottom: "10%", height: "35vh", marginTop: "10vh"}} src={Image} alt=""/>
-          <div class="btnBig Primary" id="basicDrop" onClick={toggleCreate}>
+          <div className="btnBig Primary" id="basicDrop" onClick={toggleCreate}>
             <headline>Create Game</headline>
           </div>
-          <div class="btnBig Secondary" id="basicDrop" onClick={toggleJoin}>
+          <div className="btnBig Secondary" id="basicDrop" onClick={toggleJoin}>
             <headline>Join Game </headline>
           </div>
         </div>
@@ -76,32 +76,32 @@ function StartScreen() {
         
 
 
-        <div class="modalBackground" style={{display:displayModal}}>
-          <div class="modal" id="basicDrop" style={{display:displayName}}>
+        <div className="modalBackground" style={{display:displayModal}}>
+          <div className="modal" id="basicDrop" style={{display:displayName}}>
             <headline style={{textAlign: "center", letterSpacing: "0.01em"}}>  Choose your Nickname! </headline>
 
-            <input type="text" id="name" required minlength="3" maxlength="20" placeholder="Enter Your Name" onChange={(e) => setName(e.value)} value={name}/>
+            <input type="text" id="name" required minLength="3" maxLength="20" placeholder="Enter Your Name" onChange={(e) => setName(e.value)} value={name}/>
 
-            <div class="buttonContainer">
-              <div class="btn medium Secondary noselect" id="basicDrop" style={{width: "100%"}} onClick={discardName}>
+            <div className="buttonContainer">
+              <div className="btn medium Secondary noselect" id="basicDrop" style={{width: "100%"}} onClick={discardName}>
                 <p>Discard</p>
               </div>
-              <div type="submit" class="btn medium Primary noselect" id="basicDrop" style={{width: "100%"}} onClick={() => name !== "" ? nextName() : null}>
+              <div className="btn medium Primary noselect" id="basicDrop" style={{width: "100%"}} onClick={() => name !== "" ? nextName() : null}>
                 <p>Next</p>
               </div>
             </div>
           </div>
 
-          <div class="modal" id="basicDrop" style={{display:displayKey}}>
+          <div className="modal" id="basicDrop" style={{display:displayKey}}>
             <headline style={{textAlign: "center", letterSpacing: "0.01em"}}>  Which Lobby do you <br />want to Join? </headline>
 
-            <input type="text" id="key" required minlength="3" maxlength="20" placeholder="Enter Access Code" />
+            <input type="text" id="key" required minLength="3" maxLength="20" placeholder="Enter Access Code" />
 
-            <div class="buttonContainer">
-              <div class="btn medium Secondary noselect" id="basicDrop" style={{width: "100%"}} onClick={discardKey}>
+            <div className="buttonContainer">
+              <div className="btn medium Secondary noselect" id="basicDrop" style={{width: "100%"}} onClick={discardKey}>
                 <p>Back</p>
               </div>
-              <div type="submit" class="btn medium Primary noselect" id="basicDrop" style={{width: "100%"}} onClick={nextKey}>
+              <div className="btn medium Primary noselect" id="basicDrop" style={{width: "100%"}} onClick={nextKey}>
                 <p>Next</p>
               </div>
             </div>

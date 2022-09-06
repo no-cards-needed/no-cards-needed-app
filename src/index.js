@@ -24,7 +24,7 @@ import './css/cards.css';
 // Comment out the thing you are currently not working on
 
 // Game Development
-import App from './Game';
+import App from './PlayingGame';
 // Menu Development
 // import App from './App';
 
@@ -32,11 +32,11 @@ import Dropdown from './components/Dropdown.js';
 
 import StartScreen from "./components/startScreen.js"
 import CreateGame from "./components/CreateGame.js"
-import Game from "./components/Game.js"
 import MenuHeader from "./components/MenuHeader.js"
 import ContextMenu from "./components/ContextMenu.js"
 
 import reportWebVitals from './reportWebVitals';
+import { GameWrapper } from './GameWrapper';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -44,10 +44,10 @@ root.render(
 		<BrowserRouter>
 			<Routes>
 				<Route path="/" element={<StartScreen />} />
+				<Route path="auth/" element={<GameWrapper />} />
 				<Route path="game/:gameId" element={<App />} />
-				<Route path="gametest" element={<Game />} />
+				{/* <Route path="gametest" element={<Game />} /> */}
 				<Route path="game/lobby" element={<CreateGame />} />
-				<Route path="debug/:gameId" element={<App />} />
 			</Routes>
 		</BrowserRouter>
 	</React.StrictMode>

@@ -2,6 +2,7 @@ import Peer from "peerjs"
 
 import {cards} from "./Cards";
 import {generateLobbyString} from "./words";
+import toast from "react-hot-toast";
 
 const randomString = (length = 5) => {
     var result           = '';
@@ -110,6 +111,7 @@ export const handleConnectionInstance = (
         // handle peer errors
         const FATAL_ERRORS = ['invalid-id', 'invalid-key', 'network', 'ssl-unavailable', 'server-error', 'socket-error', 'socket-closed', 'unavailable-id', 'webrtc'];
         connection.on('error', (e) => {
+            toast.error(e)
             if (FATAL_ERRORS.includes(e.type)) {
                 console.log(e)
                 /*tempPeerInstance.reconnect(e); // this function waits then tries the entire connection over again*/
@@ -119,6 +121,7 @@ export const handleConnectionInstance = (
         })
 
         connection.on("open", () => {
+            toast.success("Connected")
             console.log("connected")
             connection.send({
                 type: "newConnection",
