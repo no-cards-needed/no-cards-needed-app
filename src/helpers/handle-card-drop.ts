@@ -169,6 +169,7 @@ export const handleCardDrop = (
 							setUsedCards(usedCards.map((card, i) => {
 								if (card.id === id) {
 									card.onStackType = "openStack";
+									card.orientation = "front"
 								}
 								return card;
 							}))

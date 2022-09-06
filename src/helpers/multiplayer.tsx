@@ -1,6 +1,7 @@
 import Peer from "peerjs"
 
 import {cards} from "./Cards";
+import {generateLobbyString} from "./words";
 
 const randomString = (length = 5) => {
     var result           = '';
@@ -12,8 +13,9 @@ const randomString = (length = 5) => {
     return result;
 }
 
-export const createPeer = () => {
-    return new Peer(randomString())
+export const createPeer = (peerId) => {
+
+    return new Peer(peerId)
 }
 
 export const createServer = (gameId: string) => {
@@ -27,10 +29,18 @@ export const connectToPeer = (peer, sessionId) => {
 export const setupPeerInstance = (
     dataRecievedCallback: (data: any) => void,
     connections: React.MutableRefObject<any[]>, 
-
+    gameId: string
 ) => {
-    const tempPeerInstance = createPeer()
+
     let peerId
+    if(gameId === "new") {
+        peerId = generateLobbyString()
+        dataRecievedCallback({type: "lobby", data: {lobbyString: peerId}})
+    } else {
+        peerId = randomString()
+    }
+    const tempPeerInstance = createPeer(peerId)
+
 
     const FATAL_ERRORS = ['invalid-id', 'invalid-key', 'network', 'ssl-unavailable', 'server-error', 'socket-error', 'socket-closed', 'unavailable-id', 'webrtc'];
     tempPeerInstance.on('error', (e: any) => {
@@ -81,6 +91,7 @@ export const handleConnectionInstance = (
     peerId: string,
     dataRecieveCallback: (data: any) => void
     ) => {
+    console.log("Handling Connection Instance; Connecting to: "+peerId, peerInstance, connections)
     if (connections.current.find((connection) => connection.peerId === peerId)) {
         return
     }
@@ -89,7 +100,10 @@ export const handleConnectionInstance = (
     // Filter out previous failed connection attempts where the peerId in the connections array is "undefined"
     connections.current = connections.current.filter((connection) => connection.peerId !== undefined)
 */
+    console.log(peerId, peerInstance.id)
     if (peerId && peerInstance.id) {
+        console.log("Connecting to: "+peerId)
+
         const connectionIndex = connections.current.push({connection: connectToPeer(peerInstance, peerId), peerId}) - 1;
         const connection = connections.current[connectionIndex].connection;
 

@@ -99,7 +99,6 @@ function Game() {
 	}
 
 	const updateCardPosition = (cardId, {x, y}) => {
-		console.log("updateCardPosition", cardId, {x, y})
 		setUsedCards(usedCardsReference.current.map((card, i) => {
 			if (i === cardId) {
 				card.controlledPosition = {
@@ -210,7 +209,6 @@ function Game() {
 	}
 
 	const cardMove_stack = (data) => {
-		console.log("moveCards_stack", data)
 		const {stackIndex, cardId, tempStacks} = data.data
 
 		let stackPosition = getPositionAtCenter(stackRef[stackIndex]);
@@ -233,6 +231,9 @@ function Game() {
 	const dataRecievedCallback = (data) => {
 		console.log(data)
 		switch (data.type) {
+			case "lobby":
+				window.history.replaceState(null, "No Cards Needed", "/game/"+data.data.lobbyString)
+				break;
 			case "cards":
 				setUsedCards(data.data.cards)
 				// Sending Cards to Stack after a time period to make sure the cards are loaded
@@ -245,10 +246,14 @@ function Game() {
 				break;
 
 			case "cardMove_stack":
-				cardMove_stack(data)
+				if(data.data.id !== peerId) {
+					cardMove_stack(data)
+				}
 				break;
 			case "cardMove_hand":
-				cardMove_hand(data)
+				if(data.data.id !== peerId) {
+					cardMove_hand(data)
+				}
 				break;
 			case "shuffle":
 				recieveShuffledCards(data)
@@ -291,14 +296,22 @@ function Game() {
 
 	// Move Cards to Hand on Start
 	useEffect(() => {
-		peerInstance.current = setupPeerInstance(dataRecievedCallback, connections)
+		console.log(gameId)
+		if(gameId === "new") {
+			peerInstance.current = setupPeerInstance(dataRecievedCallback, connections, gameId)
+		} else {
+			peerInstance.current = setupPeerInstance(dataRecievedCallback, connections, null)
+			window.setTimeout(() => {
+				handleConnectionInstance(peerInstance.current, connections, gameId, dataRecievedCallback)
+			}, 1000)
+		}
 		setPeerid(peerInstance.current.id)
 	}, [])
 
 	return (
 		<div>
 			{/* <div className='cardStack' style={{border: isColliding ? '1px solid green' : '1px solid red',}} ref={stackRef}></div> */}
-			<div style={{margin: "100px auto", display: "flex", flexDirection: "column", alignItems: "center", position: "fixed", zIndex: 5}}>
+{/*			<div style={{margin: "100px auto", display: "flex", flexDirection: "column", alignItems: "center", position: "fixed", zIndex: 5}}>
 				<p style={{textAlign: "center", background: "#ffffff1a", padding: "4px 16px", borderRadius: "7px"}} onClick={() => navigator.clipboard.writeText(peerId)}>{
 					peerId
 				}</p>
@@ -306,7 +319,7 @@ function Game() {
 					<input value={connectionId} onChange={(e) => setConnectionId(e.target.value)}/>
 					<button onClick={() => handleConnectionInstance(peerInstance.current, connections, connectionId, dataRecievedCallback)}>Connect</button>
 				</div>
-			</div>	
+			</div>	*/}
 			<div style={{background: "#DEDBE5", position: "fixed"}}>
                 <div className='backgroundElement'></div>
                 <div className="playingArea criticalMaxWidth">
