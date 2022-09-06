@@ -17,6 +17,13 @@
     align-self: stretch;
   }
 
+  .labelIconCombo {
+    display: flex; 
+    flex-Direction: row; 
+    justify-content: left; 
+    gap: 6px;
+  }
+
   .settingsContainer {
     display: flex;
     flex-direction: column;

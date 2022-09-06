@@ -68,7 +68,6 @@ function Menu() {
       <div className="Menu" class="maxWidth" style={{display: "flex", flexDirection: "column", gap: "24px"}}>
         <MenuHeader />
 
-
         <div class="settingsContainer" style={{marginTop: "104px", gap: "32px"}} id="basicDrop">
 
           <label>Wating for players ...</label>
@@ -109,7 +108,10 @@ function Menu() {
             <div style={{display: "flex", flexDirection: "row", alignItems: "flex-start", gap: "16px", flexWrap: "wrap", width: "100%", maxWidth: "668px"}}>
 
               <div class="labelItemGroup" style={{width: "250px"}}>
-                <label>cards per deck</label>
+                <div className="labelIconCombo">
+                  <img src={chevronUp} class="iconContainer" alt=""></img>
+                  <label>cards per deck</label>
+                </div>
                 <Dropdown options={dropdownContent} selection={setDeckCards} deckCards={deckCards}/>
               </div>
 
