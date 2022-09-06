@@ -21,7 +21,7 @@
     display: flex; 
     flex-Direction: row; 
     justify-content: left; 
-    gap: 6px;
+    gap: 3px;
   }
 
   .settingsContainer {

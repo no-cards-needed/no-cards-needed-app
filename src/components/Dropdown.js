@@ -6,7 +6,7 @@ import chevronUp from '../assets/iconsWhite/chevron/up.svg';
 
 function Dropdown( props ) {
 
-    const {options, selection, deckCards} = props
+    const {options, setSelection, deckCards} = props
 
     const [ display, setDisplay ] = useState( 'none' )
     const [ active, setActive ] = useState( false )
@@ -32,7 +32,7 @@ function Dropdown( props ) {
 
                 <div class="dropdownUnfolded" style={{display:display}}>
                     {options.map(option => (
-                        <div class="dropdownItem" onClick={ () => { selection(option); toggleDisplay() }}>
+                        <div class="dropdownItem" onClick={ () => { setSelection(option); toggleDisplay() }}>
                             <p>{option}</p>
                         </div>
                     ))}

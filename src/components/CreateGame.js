@@ -8,10 +8,16 @@ import PlayerCards from "./PlayerCards.js";
 
 import chevronDown from '../assets/iconsBlack/chevron/down.svg';
 import chevronUp from '../assets/iconsBlack/chevron/up.svg';
+import jokerIcon from '../assets/iconsBlack/joker.svg';
+import cardIcon from '../assets/iconsBlack/card.svg';
+import deckIcon from '../assets/iconsBlack/deck.svg';
+import handIcon from '../assets/iconsBlack/hand.svg';
 import share from '../assets/iconsWhite/share.svg';
 
-function Menu() {
+function Menu( props ) {
   
+  // const {options, selection, deckCards} = props
+
   const dropdownContent = [
     [24, " Cards, 9–Ace"],
     [32, " Cards, 7–Ace"],
@@ -44,17 +50,15 @@ function Menu() {
     const [joker, setJoker] = useState(0)
     const [decks, setDecks] = useState(1)
     const [hand, setHand] = useState(5)
+    const [pile, setPile] = useState(true)
 
     const [split, setSplit] = useState(false)
-    const [pile, setPile] = useState(true)
 
     const [totalCards, setTotalCards] = useState(24)
     const [cardsInDrawPile, setCardsInDrawPile] = useState(19)
 
     useEffect(() => {
       setTotalCards((deckCards[0] + joker) * decks)
-      console.log(deckCards)
-      console.log(players.length)
 
       setCardsInDrawPile(totalCards - (players.length * hand))
 
@@ -109,19 +113,25 @@ function Menu() {
 
               <div class="labelItemGroup" style={{width: "250px"}}>
                 <div className="labelIconCombo">
-                  <img src={chevronUp} class="iconContainer" alt=""></img>
+                  <img src={cardIcon} class="iconContainer" alt=""></img>
                   <label>cards per deck</label>
                 </div>
-                <Dropdown options={dropdownContent} selection={setDeckCards} deckCards={deckCards}/>
+                <Dropdown options={dropdownContent} setSelection={setDeckCards} deckCards={deckCards}/>
               </div>
 
               <div style={{display: "flex", flexDirection: "row", alignItems: "flex-start", gap: "16px", flexWrap: "wrap", width: "394px"}}>
                 <div class="labelItemGroup" style={{maxWidth: "197px"}}>
-                  <label>jokers per deck</label>
+                  <div className="labelIconCombo">
+                    <img src={jokerIcon} class="iconContainer" alt=""></img>
+                    <label>jokers per deck</label>
+                  </div>
                   <Counter value={joker} setValue={setJoker} minValue={0} disabled={false}/>
                 </div>
                 <div class="labelItemGroup" style={{maxWidth: "197px"}}>
-                  <label>number of decks</label>
+                  <div className="labelIconCombo">
+                    <img src={deckIcon} class="iconContainer" alt=""></img>
+                    <label>number of decks</label>
+                  </div>
                   <Counter value={decks} setValue={setDecks} minValue={1} disabled={false}/>
                 </div>
               </div>
@@ -131,7 +141,10 @@ function Menu() {
 
             <div style={{display: "flex", flexDirection: "row", alignItems: "flex-end", gap: "16px", flexWrap: "wrap"}}>
               <div class="labelItemGroup">
-                <label>Hand Cards</label>
+                  <div className="labelIconCombo">
+                      <img src={handIcon} class="iconContainer" alt=""></img>
+                      <label>Hand Cards</label>
+                  </div>
                 <div style={{opacity: split ? "0.7" : "1" }}>
                   <Counter value={hand} setValue={setHand} minValue={0} disabled={split ? true : false} />
                 </div>
