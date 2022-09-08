@@ -16,14 +16,14 @@ import share from '../assets/iconsWhite/share.svg';
 
 function Menu( props ) {
   
-  // const {options, selection, deckCards} = props
+  const {deckCards, setDeckCards, joker, setJoker, decks, setDecks, hand, setHand, pile, setPile, dropdownContent, players} = props
 
-  const dropdownContent = [
-    [24, " Cards, 9–Ace"],
-    [32, " Cards, 7–Ace"],
-    [36, " Cards, 6-Ace"],
-    [52, " Cards, 2–Ace"],
-  ]
+  // const dropdownContent = [
+  //   [24, " Cards, 9–Ace"],
+  //   [32, " Cards, 7–Ace"],
+  //   [36, " Cards, 6-Ace"],
+  //   [52, " Cards, 2–Ace"],
+  // ]
 
   const [ active, setActive ] = useState(true)
   const [ displaySettings, setDisplaySettings ] = useState( 'none' )
@@ -39,18 +39,18 @@ function Menu( props ) {
     }
   } 
 
-    const players = [
-      "Milla", 
-      "Kleo", 
-      "Hannibal", 
-      "Kalle" 
-    ]
+    // const players = [
+    //   "Milla", 
+    //   "Kleo", 
+    //   "Hannibal", 
+    //   "Kalle" 
+    // ]
 
-    const [deckCards, setDeckCards] = useState(dropdownContent[0])
-    const [joker, setJoker] = useState(0)
-    const [decks, setDecks] = useState(1)
-    const [hand, setHand] = useState(5)
-    const [pile, setPile] = useState(true)
+    // const [deckCards, setDeckCards] = useState(dropdownContent[0])
+    // const [joker, setJoker] = useState(0)
+    // const [decks, setDecks] = useState(1)
+    // const [hand, setHand] = useState(5)
+    // const [pile, setPile] = useState(true)
 
     const [split, setSplit] = useState(false)
 

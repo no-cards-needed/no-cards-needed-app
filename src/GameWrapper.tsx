@@ -11,9 +11,34 @@ import { useLocation } from "react-router-dom";
 import PlayingGame from "./PlayingGame";
 import { setDefaultStacks, setDefaultUsedCards } from "./helpers/mp";
 
-export const GameWrapper = ({app}: {app: any}) => {
 
-	
+import CreateGame from "./components/CreateGame.js"
+
+export const GameWrapper = () => {
+
+	const dropdownContent = [
+		[24, " Cards, 9–Ace"],
+		[32, " Cards, 7–Ace"],
+		[36, " Cards, 6-Ace"],
+		[52, " Cards, 2–Ace"],
+	  ]
+
+	const players = [
+		"Milla", 
+		"Kleo", 
+		"Hannibal", 
+		"Kalle" 
+	]
+
+	const [deckCards, setDeckCards] = useState(dropdownContent[0])
+    const [joker, setJoker] = useState(0)
+    const [decks, setDecks] = useState(1)
+    const [hand, setHand] = useState(5)
+    const [pile, setPile] = useState(true)
+
+
+	// TODO: Add SDKs for Firebase products that you want to use
+	// https://firebase.google.com/docs/web/setup#available-libraries
 
 	const {state} = useLocation();
 	const {name} = state as {name: string};
@@ -142,6 +167,12 @@ export const GameWrapper = ({app}: {app: any}) => {
 			stacks={stacksState}
 			setStacks={setStacks}
 		/>
+			<CreateGame deckCards={deckCards} setDeckCards={setDeckCards} joker={joker} setJoker={setJoker} decks={decks} setDecks={setDecks} hand={hand} setHand={setHand} pile={pile} setPile={setPile} dropdownContent={dropdownContent} players={players}/>
+			{Object.values(allPlayers).map((player: any) => {
+				
+				return <div key={player.id}>{player.name}</div>
+			})
+			}
 		</>
 	)
 }
