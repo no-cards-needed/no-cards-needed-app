@@ -89,7 +89,6 @@ function PlayingGame({usedCardsFirebase, stacks, setStacks}: {usedCardsFirebase:
 	}
 
 	const updateCardPosition = (cardId, {x, y}) => {
-		console.log("Updating Card Position")
 		setUsedCards(usedCardsReference.current.map((card, i) => {
 			if (i === cardId) {
 				card.controlledPosition = {
@@ -263,21 +262,32 @@ function PlayingGame({usedCardsFirebase, stacks, setStacks}: {usedCardsFirebase:
 		setUsedCards(usedCardsFirebase)
 	}, [usedCardsFirebase])
 
+	const cardDimensions = {width: 80, height: 112}
+
 	// Update Card positions when stacks change
 	useEffect(() => {
-		// Get all cards currently in stacks
-		const stacksWithCards = stacks.map((stack, i) => stack.cards ? {cards: stack.cards, stack: i} : []).flat()
-		console.log(stacksWithCards)
+		if(usedCards.length > 0) {
+			// Get all cards currently in stacks
+			const stacksWithCards = stacks.map((stack, i) => stack.cards ? {cards: stack.cards, stack: i} : []).flat()
+			console.log(stacksWithCards)
 
-		// Update all cards in stacks to their new position
-		stacksWithCards.map(stack => {
-			stack.cards.map(cardId => {
-				const card = usedCards[cardId]
-				const stackPosition = getPositionAtCenter(stackRef.current[stack.stack], "useEffect - PlayingGame.tsx 271")
-				const {width, height} = card.ref.current.getBoundingClientRect()
-				updateCardPosition(card.id, {x: stackPosition.x - width / 2, y: stackPosition.y - height / 2})
-			})
-		}) 
+			// Update all cards in stacks to their new position
+			stacksWithCards.map(stack => {
+				stack.cards.map((cardId, z) => {
+					const card = usedCards[cardId]
+					const stackPosition = getPositionAtCenter(stackRef.current[stack.stack], "useEffect - PlayingGame.tsx 271")
+					updateCardPosition(card.id, {x: stackPosition.x - cardDimensions.width / 2, y: stackPosition.y - cardDimensions.height / 2})
+					// Update Card z-Index and orientation
+					setUsedCards(usedCards.map((card, i) => {
+						if (card.id === cardId) {
+							card.zIndex = z
+							card.orientation = stacks[stack.stack].orientation
+						}
+						return card
+					}))
+				})
+			}) 
+		}
 	}, [stacks])
 
 	

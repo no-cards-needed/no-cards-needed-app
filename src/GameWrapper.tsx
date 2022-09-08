@@ -14,7 +14,7 @@ import { setDefaultStacks, setDefaultUsedCards } from "./helpers/mp";
 
 import CreateGame from "./components/CreateGame.js"
 
-export const GameWrapper = () => {
+export const GameWrapper = ({app}: {app:any}) => {
 
 	const dropdownContent = [
 		[24, " Cards, 9–Ace"],
@@ -158,21 +158,17 @@ export const GameWrapper = () => {
 
 	return (
 		<>
-		{Object.values(allPlayers).map((player: any) => {
+		{/* {Object.values(allPlayers).map((player: any) => {
 			return <div key={player.id}>{player.name}-{player.host ? "Host" : ""}</div>
 		})
-		}
+		} */}
 		<PlayingGame 
 			usedCardsFirebase={usedCardsState}
 			stacks={stacksState}
 			setStacks={setStacks}
 		/>
-			<CreateGame deckCards={deckCards} setDeckCards={setDeckCards} joker={joker} setJoker={setJoker} decks={decks} setDecks={setDecks} hand={hand} setHand={setHand} pile={pile} setPile={setPile} dropdownContent={dropdownContent} players={players}/>
-			{Object.values(allPlayers).map((player: any) => {
-				
-				return <div key={player.id}>{player.name}</div>
-			})
-			}
+			{/* <CreateGame deckCards={deckCards} setDeckCards={setDeckCards} joker={joker} setJoker={setJoker} decks={decks} setDecks={setDecks} hand={hand} setHand={setHand} pile={pile} setPile={setPile} dropdownContent={dropdownContent} players={players}/> */}
+
 		</>
 	)
 }
