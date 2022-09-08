@@ -1,6 +1,7 @@
 import { calculateCardPosition } from "./calculate-card-position";
 import { getPositionAtCenter } from "./get-position-at-center";
 import {addCardIntoStack, moveCardToPosition} from "./move-card-to-position";
+import { removeCardFromOtherStacks } from "./remove-card-from-other-stacks";
 
 export const handleCardDrop = (
 	data, 
@@ -31,8 +32,7 @@ export const handleCardDrop = (
 	}) => void,
 	stackRef: React.MutableRefObject<any[]>,
 	currentlyMovingStack: boolean,
-	setCurrentlyMovingStack: (currentlyMovingStack: boolean) => void,
-	connections: React.MutableRefObject<any[]>) => {
+	setCurrentlyMovingStack: (currentlyMovingStack: boolean) => void) => {
 
 
 			const moveAllCardsToNewStack = (previousStackIndex, stackPosition) => {
@@ -82,19 +82,19 @@ export const handleCardDrop = (
 			// Check if Card and Nearest Stack are colliding
 			if (isColliding) {
 				
-				// Getting Previous Stack
-				const previousStackIndex = stacks.findIndex(stack => stack.cards.includes(id));
+				// Getting Previous Stack`
+				
+				const previousStackIndex = stacks.findIndex(stack => {
+					return stack.cards ? stack.cards.includes(id) : false
+				});
 
 				// Removing Card-ID from all other stacks
-				setStacks(stacks.map((stack, i) => {
-					stack.cards = stack.cards.filter(card => card !== id);
-					return stack;
-				}))
+				removeCardFromOtherStacks(setStacks, stacks, id)
 
 
 
 				// Stack Position
-				const {x: stackX, y: stackY} = getPositionAtCenter(nearestStack.nearestStack);
+				const {x: stackX, y: stackY} = getPositionAtCenter(nearestStack.nearestStack, "stackPosition - handle-card-drop.ts 96");
 
 				switch (stacks[nearestStack.index].stackType) {
 					// "normal"/closed stack: Cards lie on top of each other
@@ -104,17 +104,6 @@ export const handleCardDrop = (
 							moveAllCardsToNewStack(previousStackIndex, {x: stackX, y: stackY})
 						}
 
-						connections.current.map((connection, i) => {
-							connection.connection.send({
-								type: "cardMove_stack",
-								data: {
-									stackIndex: nearestStack.index,
-									cardId: id,
-									stacks
-								}
-							})
-							return connection;
-						})
 						moveCardToPosition(stacks, setStacks, usedCards, setUsedCards, nearestStack.index, updateCardPosition, id, {x: stackX, y: stackY})
 
 						break;
@@ -124,17 +113,6 @@ export const handleCardDrop = (
 						
 						// Workaround for moving closed stacks to open stacks
 						if (!currentlyMovingStack) {
-							connections.current.map((connection) => {
-								connection.connection.send({
-									type: "cardMove_hand",
-									data: {
-										stackIndex: 0,
-										cardId: id,
-										stacks
-									}
-								})
-								return connection
-							})
 
 							const currentCardPos = data.current.getBoundingClientRect().left
 							let closestCard = {left: 0, cardIndex: 0}
@@ -189,37 +167,39 @@ export const handleCardDrop = (
 				// Updating all cards in all stacks
 				// This is probably not the pest performing variant to do this, but for now its the only I know of
 				stacks.map((stack) => {
-					stack.cards.map((card, i) => {
-						if(stack.stackType === "openStack" || stack.stackType === "hand") {
-							// Get Card by ID
-							const currentCard = usedCards.find(thisCard => thisCard.id === card)
-							
-							// Get Stack Index
-							const currentStackIndex = stacks.findIndex(thisStack => thisStack.cards.includes(card))
-							
-							// Get Stack in which the Card is
-							// const currentStack = stacks.find(thisStack => thisStack.cards.includes(card))
-							const currentStack = stacks[currentStackIndex]
-
-							// Get Stack Ref
-							const currentStackRef = stackRef[currentStackIndex]
-
-							const newCardPosition = calculateCardPosition(currentCard.ref, currentStackRef, currentStack, card)
-							updateCardPosition(card, {
-								x: newCardPosition,
-								y: getPositionAtCenter(currentStackRef).y - data.current.getBoundingClientRect().height / 2
-							})
-						}
-
-						// Settting Card zIndex in usedCards based on position in stack
-						setUsedCards(usedCards.map((cardInUsedCards) => {
-							if (cardInUsedCards.id === card) {
-								cardInUsedCards.zIndex = i
+					if(stack.cards) {
+						stack.cards.map((card, i) => {
+							if(stack.stackType === "openStack" || stack.stackType === "hand") {
+								// Get Card by ID
+								const currentCard = usedCards.find(thisCard => thisCard.id === card)
+								
+								// Get Stack Index
+								const currentStackIndex = stacks.findIndex(thisStack => thisStack.cards.includes(card))
+								
+								// Get Stack in which the Card is
+								// const currentStack = stacks.find(thisStack => thisStack.cards.includes(card))
+								const currentStack = stacks[currentStackIndex]
+	
+								// Get Stack Ref
+								const currentStackRef = stackRef[currentStackIndex]
+	
+								const newCardPosition = calculateCardPosition(currentCard.ref, currentStackRef, currentStack, card)
+								updateCardPosition(card, {
+									x: newCardPosition,
+									y: getPositionAtCenter(currentStackRef, "updateCardPosition - handle-card-drop.ts 188").y - data.current.getBoundingClientRect().height / 2
+								})
 							}
-							return cardInUsedCards
-						}))
-						return card
-					})
+	
+							// Settting Card zIndex in usedCards based on position in stack
+							setUsedCards(usedCards.map((cardInUsedCards) => {
+								if (cardInUsedCards.id === card) {
+									cardInUsedCards.zIndex = i
+								}
+								return cardInUsedCards
+							}))
+							return card
+						})
+					}
 					return stack
 				})
 
