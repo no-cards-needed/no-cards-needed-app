@@ -30,7 +30,7 @@ export const moveCardsToHand = (
             const newCardPosition = calculateCardPosition(card.ref, currentStackRef, handStack, card.id)
             updateCardPosition(card.id, {
                 x: newCardPosition,
-                y: getPositionAtCenter(currentStackRef).y - card.ref.current.getBoundingClientRect().height / 2
+                y: getPositionAtCenter(currentStackRef, "updateCardPosition - move-card-to-hands.ts 33").y - card.ref.current.getBoundingClientRect().height / 2
             })
         })
 }

@@ -32,7 +32,7 @@ export const moveCardsToStack = (
 
         const cardDimensions = {width: 107, height: 150}
         console.log(stacks, targetStackIndex, targetStackRef)
-        const stackPosition = getPositionAtCenter(targetStackRef)
+        const stackPosition = getPositionAtCenter(targetStackRef, "stackPosition - move-card-to-stack.ts 35")
 
         usedCards.map((card) => {
             moveCardToPosition(stacks, setStacks, usedCards, setUsedCards, targetStackIndex, updateCardPosition, card.id, stackPosition)

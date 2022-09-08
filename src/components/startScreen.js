@@ -36,10 +36,11 @@ function StartScreen() {
       setDisplayName( 'none' )
     }
   } 
-
+  const [name, setName] = useState("")
   const navigate = useNavigate()
   function nextName() {
-    navigate('/game/new')
+    console.log(name)
+    navigate('/auth', {state: {name: name}})
     if (processCreate) {
       setProcessCreate(false) 
       setDisplayModal( 'none' )
@@ -60,7 +61,7 @@ function StartScreen() {
     setDisplayModal( 'none' )
     setDisplayKey( 'none' )
   }
-  const [name, setName] = useState("")
+
     return (
       <div className="maxWidth">
         <div className="startScreen noselect">
@@ -80,7 +81,7 @@ function StartScreen() {
           <div className="modal" id="basicDrop" style={{display:displayName}}>
             <headline style={{textAlign: "center", letterSpacing: "0.01em"}}>  Choose your Nickname! </headline>
 
-            <input type="text" id="name" required minLength="3" maxLength="20" placeholder="Enter Your Name" onChange={(e) => setName(e.value)} value={name}/>
+            <input type="text" id="name" required minLength="3" maxLength="20" placeholder="Enter Your Name" onChange={(e) => setName(e.target.value)} value={name}/>
 
             <div className="buttonContainer">
               <div className="btn medium Secondary noselect" id="basicDrop" style={{width: "100%"}} onClick={discardName}>

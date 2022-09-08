@@ -11,7 +11,7 @@ export const calculateCardPosition = (
 
     const cardCount = stacksObject.cards.length
 
-    const stackCenter = getPositionAtCenter(stackRef);
+    const stackCenter = getPositionAtCenter(stackRef, "stackCenter - calculate-card-position.ts 14");
     const { width: cardWidth, height: cardHeight } = card.current.getBoundingClientRect();
 
     const overlap = cardWidth / 2

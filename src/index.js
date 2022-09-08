@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {
   BrowserRouter,
   Routes,
@@ -37,6 +37,29 @@ import ContextMenu from "./components/ContextMenu.js"
 
 import reportWebVitals from './reportWebVitals';
 import { GameWrapper } from './GameWrapper';
+import { initializeApp } from 'firebase/app';
+import { getAnalytics } from 'firebase/analytics';
+
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+	apiKey: "AIzaSyCG45BoW8JEIEefb6IbHAkSQgzlqz3EVvM",
+	authDomain: "no-cards-needed.firebaseapp.com",
+	databaseURL: "https://no-cards-needed-default-rtdb.europe-west1.firebasedatabase.app",
+	projectId: "no-cards-needed",
+	storageBucket: "no-cards-needed.appspot.com",
+	messagingSenderId: "917536359159",
+	appId: "1:917536359159:web:20c347751643b46b2a09f2",
+	measurementId: "G-LDX1SMVPRE"
+};
+
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app.current);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -44,7 +67,7 @@ root.render(
 		<BrowserRouter>
 			<Routes>
 				<Route path="/" element={<StartScreen />} />
-				<Route path="auth/" element={<GameWrapper />} />
+				<Route path="auth/" element={<GameWrapper app={app} />} />
 				<Route path="game/:gameId" element={<App />} />
 				{/* <Route path="gametest" element={<Game />} /> */}
 				<Route path="game/lobby" element={<CreateGame />} />

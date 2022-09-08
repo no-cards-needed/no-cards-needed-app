@@ -7,30 +7,17 @@ import { getAnalytics } from "firebase/analytics";
 import { useAuthState } from 'react-firebase-hooks/auth';
 
 import { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
+import PlayingGame from "./PlayingGame";
+import { setDefaultStacks, setDefaultUsedCards } from "./helpers/mp";
 
-export const GameWrapper = () => {
+export const GameWrapper = ({app}: {app: any}) => {
 
 	
-	// TODO: Add SDKs for Firebase products that you want to use
-	// https://firebase.google.com/docs/web/setup#available-libraries
 
-	// Your web app's Firebase configuration
-	// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-	const firebaseConfig = {
-	apiKey: "AIzaSyCG45BoW8JEIEefb6IbHAkSQgzlqz3EVvM",
-	authDomain: "no-cards-needed.firebaseapp.com",
-	databaseURL: "https://no-cards-needed-default-rtdb.europe-west1.firebasedatabase.app",
-	projectId: "no-cards-needed",
-	storageBucket: "no-cards-needed.appspot.com",
-	messagingSenderId: "917536359159",
-	appId: "1:917536359159:web:20c347751643b46b2a09f2",
-	measurementId: "G-LDX1SMVPRE"
-	};
-
-
-	// Initialize Firebase
-	const app = useRef(firebase.initializeApp(firebaseConfig));
-	const analytics = useRef(getAnalytics(app.current));
+	const {state} = useLocation();
+	const {name} = state as {name: string};
+	
 
 	const [userId, setUserId] = useState(null);
 	const playerRef = useRef(null);
@@ -38,11 +25,40 @@ export const GameWrapper = () => {
 	const allPlayersRef = useRef(null);
 	const [allPlayers, setAllPlayers] = useState({});
 
+	const usedCardsRef = useRef(null);
+	const stacksRef = useRef(null);
+	const [usedCardsState, setUsedCardsState] = useState([]);
+	const [stacksState, setStacksState] = useState([]);
+
 	const initGame = () => {
-		allPlayersRef.current = ref(getDatabase(app.current), 'game/debug/players/')
+		console.log("initGame");
+		allPlayersRef.current = ref(getDatabase(app.current), 'game/debug_/players/')
+		usedCardsRef.current = ref(getDatabase(app.current), 'game/debug_/usedCards/')
+		stacksRef.current = ref(getDatabase(app.current), 'game/debug_/stacks/')
 
 		onValue(allPlayersRef.current, (snapshot) => {
 			// Whenever a change occuts	// 
+			console.log("all players", snapshot.val());
+
+			// If this is the only player, set usedCardsRef and stacksRef
+			if (Object.keys(snapshot.val()).length === 1) {
+				// Temporatilly setting stacks and cards
+				set(usedCardsRef.current, setDefaultUsedCards());
+				set(stacksRef.current, setDefaultStacks());
+
+				// Sets the last player to be the host
+				update(playerRef.current, {host: true});
+			}
+		})
+
+		onValue(usedCardsRef.current, (snapshot) => {
+			console.log("usedCardsRef change", snapshot.val());
+			setUsedCardsState(snapshot.val());
+		})
+
+		onValue(stacksRef.current, (snapshot) => {
+			console.log("stacksRef change", snapshot.val());
+			setStacksState(snapshot.val());
 		})
 
 		onChildAdded(allPlayersRef.current, (snapshot) => {
@@ -55,31 +71,16 @@ export const GameWrapper = () => {
 		})
 	}
 
-	onAuthStateChanged(getAuth(app.current), (user) => {
-		if (user) {
-			// User is signed in, see docs for a list of available properties
-			// https://firebase.google.com/docs/reference/js/firebase.User
+	
 
-			playerRef.current = ref(getDatabase(app.current), 'game/debug/players/' + user.uid)
-			set(playerRef.current, {
-				id: user.uid,
-				name: "",
-				cards: [],
-				host: true
-			})
-
-			onDisconnect(playerRef.current).remove();
-
-
-			// Connected
-			initGame()
-
-		} else {
-			// User is signed out
-			// ...
-			console.log("User is signed out");
-		}
-	});
+	const setUsedCards = (usedCards) => {
+		console.log("setUsedCards");
+		set(usedCardsRef.current, usedCards);
+	}
+	const setStacks = (stacks) => {
+		console.log("setStacks");
+		set(stacksRef.current, stacks);
+	}
 
 	// Page Load
 	useEffect(() => {
@@ -92,15 +93,55 @@ export const GameWrapper = () => {
 			console.log(errorCode, errorMessage);
 		});
 
+		onAuthStateChanged(getAuth(app.current), (user) => {
+			if (user) {
+				// User is signed in, see docs for a list of available properties
+				// https://firebase.google.com/docs/reference/js/firebase.User
+	
+				playerRef.current = ref(getDatabase(app.current), 'game/debug_/players/' + user.uid)
+				set(playerRef.current, {
+					id: user.uid,
+					name: name || "Player",
+					cards: [],
+					host: false
+				})
+	
+
+				onDisconnect(playerRef.current).remove();
+	
+	
+				// Connected
+				initGame()
+	
+			} else {
+				// User is signed out
+				// ...
+				console.log("User is signed out");
+			}
+		});
+
+		return() => {
+			// Assign another player to be the host if leaving player is the host
+			if (allPlayers[userId] && allPlayers[userId].host) {
+				// Get the first player in the list
+				const firstPlayerId = Object.keys(allPlayers)[0];
+				update(ref(getDatabase(app.current), 'game/debug_/players/' + firstPlayerId), {host: true});
+			}
+		}
+
 	}, []);
 
 	return (
 		<>
 		{Object.values(allPlayers).map((player: any) => {
-			
-			return <div key={player.id}>{player.name}</div>
+			return <div key={player.id}>{player.name}-{player.host ? "Host" : ""}</div>
 		})
 		}
+		<PlayingGame 
+			usedCardsFirebase={usedCardsState}
+			stacks={stacksState}
+			setStacks={setStacks}
+		/>
 		</>
 	)
 }

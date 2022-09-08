@@ -16,15 +16,21 @@ export const handleCardDrag = (
                                 setIsColliding: (isColliding: boolean) => void) => {
 
     // Setting Z-Index of currently dragged Card to the highest
-    setUsedCards(usedCards.map((card, i) => {
-        if (i === id) {
-            card.zIndex = usedCards.length;
+    // Check if Card is already on top
+    if(usedCards[id].zIndex !== usedCards.length) {
+        console.log("Setting z-index")
+
+        setUsedCards(usedCards.map((card, i) => {
+            if (i === id) {
+                card.zIndex = usedCards.length;
+            }
+            return card;
         }
-        return card;
+        ))
     }
-    ))
 
     const card = data.current
+
     setNearestStack(getNearestStack(card))
 
     // Collision
@@ -48,10 +54,11 @@ export const handleCardDrag = (
 
         }
 
-        setUsedCards(usedCards.map((card, i) => {
-            card.movedAside = "false";
-            return card;
-        }))
+        // console.log("Setting used Cards why ever")
+        // setUsedCards(usedCards.map((card, i) => {
+        //     card.movedAside = "false";
+        //     return card;
+        // }))
     }
     
 }
