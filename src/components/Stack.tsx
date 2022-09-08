@@ -6,16 +6,6 @@ export const Stack = ({stack, updateCardPosition, stackRef}) => {
     const {stackType, orientation, cards, currentlyNearest, colliding, distance, height, width, position} = stack
     const {x, y} = position
 
-    const clamp = (value, min, max) => {
-        return Math.min(Math.max(value, min), max)
-    }
-
-    //Styling for Hand Stack
-
-    const opacity = 100000/ distance / 500
-
-
-
     return (
         <div className={`cardDropZone ${stackType}`} ref={stackRef}>
         </div>

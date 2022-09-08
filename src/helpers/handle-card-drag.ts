@@ -13,7 +13,8 @@ export const handleCardDrag = (
                                 nearestStack: {nearestStack, index: number, distance: number}, 
                                 setNearestStack: (nearestStack) => void, 
                                 stacks: {stackType: string, orientation: string, cards: number[], currentlyNearest: boolean, colliding: boolean, distance: number, height: number, width: number, position: {x: number, y: number}}[], 
-                                setIsColliding: (isColliding: boolean) => void) => {
+                                setIsColliding: (isColliding: boolean) => void,
+                                cardRef: any) => {
 
     // Setting Z-Index of currently dragged Card to the highest
     // Check if Card is already on top
@@ -43,7 +44,7 @@ export const handleCardDrag = (
         //Getting Stack Type of the Nearest Stack
         const nearestStackType = stacks[nearestStack.index].stackType;
         if (nearestStackType === "openStack" || nearestStackType === "hand") {
-            moveCardsAside(stacks, nearestStack, data.current, usedCards, setUsedCards, id)
+            moveCardsAside(stacks, nearestStack, data.current, usedCards, cardRef, setUsedCards, id)
         }
 
     } else {

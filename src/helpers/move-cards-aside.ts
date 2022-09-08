@@ -2,7 +2,8 @@ export const moveCardsAside = (
 	stacks: {cards: number[]}[], 
 	nearestStack: {nearestStack, distance: number, index: number}, 
 	currentCard, 
-	usedCards: {id: number, symbol: string, controlledPosition: {x: number, y: number}, zIndex: number, movedAside: string, onStackType: string, ref}[], 
+	usedCards: {id: number, symbol: string, controlledPosition: {x: number, y: number}, zIndex: number, movedAside: string, onStackType: string}[], 
+	cardRef,
 	setUsedCards: (usedCards) => void,
 	id: number) => {
 
@@ -19,8 +20,8 @@ export const moveCardsAside = (
 				// Get Card by ID
 				const card = usedCards.find(card => card.id === loopedCard);
 	
-				const cardWidth = card.ref.current.getBoundingClientRect().width
-				const currentCardCenter = card.ref.current.getBoundingClientRect().left + cardWidth / 2
+				const cardWidth = cardRef.current[id].current.getBoundingClientRect().width
+				const currentCardCenter = cardRef.current[id].current.getBoundingClientRect().left + cardWidth / 2
 	
 				const isLeft = cardLeft + cardWidth / 2 < currentCardCenter
 				const isRight = cardRight - cardWidth / 2 > currentCardCenter

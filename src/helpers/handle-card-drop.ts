@@ -31,6 +31,7 @@ export const handleCardDrop = (
 		y: any;
 	}) => void,
 	stackRef: React.MutableRefObject<any[]>,
+	cardRef: React.MutableRefObject<any[]>,
 	currentlyMovingStack: boolean,
 	setCurrentlyMovingStack: (currentlyMovingStack: boolean) => void) => {
 
@@ -117,22 +118,23 @@ export const handleCardDrop = (
 							const currentCardPos = data.current.getBoundingClientRect().left
 							let closestCard = {left: 0, cardIndex: 0}
 
-							// Cycle through all cards in stack
-							for (let i = 0; i < stacks[nearestStack.index].cards.length; i++) {
-								const cardIndex = stacks[nearestStack.index].cards[i];
-								const card = usedCards.find(card => card.id === cardIndex);
-								const cardPosition = card.ref.current.getBoundingClientRect().left;
+							if(stacks[nearestStack.index].cards && stacks[nearestStack.index].cards.length > 0) {
+								// Cycle through all cards in stack
+								for (let i = 0; i < stacks[nearestStack.index].cards.length; i++) {
+									const cardIndex = stacks[nearestStack.index].cards[i];
+									const card = usedCards.find(card => card.id === cardIndex);
+									const cardPosition = cardRef.current[cardIndex].ref.getBoundingClientRect().left;
 
-								if (cardPosition < currentCardPos && cardPosition > closestCard.left) {
-									closestCard.left = cardPosition;
-									closestCard.cardIndex = i;
+									if (cardPosition < currentCardPos && cardPosition > closestCard.left) {
+										closestCard.left = cardPosition;
+										closestCard.cardIndex = i;
+									}
 								}
 							}
 
 							// No card is further to the left
 							if (closestCard.left === 0) {
 								addCardIntoStack(stacks, setStacks, nearestStack.index, 0, id)
-
 							} else {
 								addCardIntoStack(stacks, setStacks, nearestStack.index,closestCard.cardIndex + 1, id)
 							}
@@ -172,18 +174,21 @@ export const handleCardDrop = (
 							if(stack.stackType === "openStack" || stack.stackType === "hand") {
 								// Get Card by ID
 								const currentCard = usedCards.find(thisCard => thisCard.id === card)
-								
+
 								// Get Stack Index
-								const currentStackIndex = stacks.findIndex(thisStack => thisStack.cards.includes(card))
+								const currentStackIndex = stacks.findIndex(thisStack => {
+									return thisStack.cards ? thisStack.cards.includes(card) : false
+								})
 								
 								// Get Stack in which the Card is
 								// const currentStack = stacks.find(thisStack => thisStack.cards.includes(card))
 								const currentStack = stacks[currentStackIndex]
+								console.log(stackRef.current[currentStackIndex])
 	
 								// Get Stack Ref
-								const currentStackRef = stackRef[currentStackIndex]
+								const currentStackRef = stackRef.current[currentStackIndex]
 	
-								const newCardPosition = calculateCardPosition(currentCard.ref, currentStackRef, currentStack, card)
+								const newCardPosition = calculateCardPosition(cardRef.current[card], currentStackRef, currentStack, card)
 								updateCardPosition(card, {
 									x: newCardPosition,
 									y: getPositionAtCenter(currentStackRef, "updateCardPosition - handle-card-drop.ts 188").y - data.current.getBoundingClientRect().height / 2

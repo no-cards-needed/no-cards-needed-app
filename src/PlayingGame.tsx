@@ -103,12 +103,13 @@ function PlayingGame({usedCardsFirebase, stacks, setStacks}: {usedCardsFirebase:
 	// Setting Card Ref in usedCards State
 	const setCardRef = (cardId, ref) => {
 		console.log("Setting Card Ref")
-		setUsedCards(usedCards.map((card, i) => {
-			if (i === cardId) {
-				card.ref = ref;
-			}
-			return card;
-		}))
+		// setUsedCards(usedCards.map((card, i) => {
+		// 	if (i === cardId) {
+		// 		card.ref = ref;
+		// 	}
+		// 	return card;
+		// }))
+		cardRef.current[cardId] = ref;
 	}
 
 	// Shuffle cards by cardId
@@ -342,8 +343,8 @@ function PlayingGame({usedCardsFirebase, stacks, setStacks}: {usedCardsFirebase:
 									key={card.id}
 									shuffle={shuffleCardsById}
 									handleLongPress={handleLongPress}
-									handleCardDrag={(data, id) => handleCardDrag(data, id, usedCards, setUsedCards, getNearestStack, nearestStack, setNearestStack, stacks, setIsColliding)} 
-									handleCardDrop={(data, id) => handleCardDrop(data, id, usedCards, setUsedCards, isColliding, setIsColliding, stacks, setStacks, nearestStack, updateCardPosition, stackRef, currentlyMovingStack, setCurrentlyMovingStack)} />
+									handleCardDrag={(data, id) => handleCardDrag(data, id, usedCards, setUsedCards, getNearestStack, nearestStack, setNearestStack, stacks, setIsColliding, cardRef)} 
+									handleCardDrop={(data, id) => handleCardDrop(data, id, usedCards, setUsedCards, isColliding, setIsColliding, stacks, setStacks, nearestStack, updateCardPosition, stackRef, cardRef, currentlyMovingStack, setCurrentlyMovingStack)} />
 						})
 					}
 				</div>
@@ -357,7 +358,7 @@ function PlayingGame({usedCardsFirebase, stacks, setStacks}: {usedCardsFirebase:
 						stacks.map((stack, index) => {
 							if(index === 1) {
 								return (
-									<Stack key={index} stack={stack} stackRef={el => stackRef[stack.id] = el} updateCardPosition={updateCardPosition}/>
+									<Stack key={index} stack={stack} stackRef={el => stackRef.current[stack.id] = el} updateCardPosition={updateCardPosition}/>
 								)
 							}
 						})
@@ -367,7 +368,7 @@ function PlayingGame({usedCardsFirebase, stacks, setStacks}: {usedCardsFirebase:
 						stacks.map((stack, index) => {
 							if(index === 0) {
 								return (
-									<Stack key={index} stack={stack} stackRef={el => stackRef[stack.id] = el} updateCardPosition={updateCardPosition}/>
+									<Stack key={index} stack={stack} stackRef={el => stackRef.current[stack.id] = el} updateCardPosition={updateCardPosition}/>
 								)
 							}
 						})
