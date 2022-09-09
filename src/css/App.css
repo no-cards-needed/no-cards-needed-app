@@ -19,7 +19,9 @@
           23.7px 47.4px 39.7px -4.3px hsl(var(--shadow-color) / 0.08),
           37.5px 75px 62.9px -5px hsl(var(--shadow-color) / 0.04);
 }
-
+body {
+  overscroll-behavior: contain;
+}
 .App {
   color: white;
   background-color: #282c34;
