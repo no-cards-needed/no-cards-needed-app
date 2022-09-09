@@ -50,7 +50,6 @@ stackPosition: {x: number, y: number}
 
 	addCardIntoStack(stacks, setStacks, stackIndex, stacks[stackIndex].cards ? stacks[stackIndex].cards.length : 0, cardId)
 
-	console.log("Dropping at", stackPosition)
 	updateCardPosition(cardId, {
 		x: stackPosition.x - cardDimensions.width / 2,
 		y: stackPosition.y - cardDimensions.height / 2

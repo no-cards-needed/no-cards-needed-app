@@ -56,14 +56,13 @@ export const GameWrapper = ({app}: {app:any}) => {
 	const [stacksState, setStacksState] = useState([]);
 
 	const initGame = () => {
-		console.log("initGame");
+
 		allPlayersRef.current = ref(getDatabase(app.current), 'game/debug_/players/')
 		usedCardsRef.current = ref(getDatabase(app.current), 'game/debug_/usedCards/')
 		stacksRef.current = ref(getDatabase(app.current), 'game/debug_/stacks/')
 
 		onValue(allPlayersRef.current, (snapshot) => {
 			// Whenever a change occuts	// 
-			console.log("all players", snapshot.val());
 
 			// If this is the only player, set usedCardsRef and stacksRef
 			if (Object.keys(snapshot.val()).length === 1) {

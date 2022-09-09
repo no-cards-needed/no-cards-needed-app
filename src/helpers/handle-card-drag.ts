@@ -19,8 +19,6 @@ export const handleCardDrag = (
     // Setting Z-Index of currently dragged Card to the highest
     // Check if Card is already on top
     if(usedCards[id].zIndex !== usedCards.length) {
-        console.log("Setting z-index")
-
         setUsedCards(usedCards.map((card, i) => {
             if (i === id) {
                 card.zIndex = usedCards.length;

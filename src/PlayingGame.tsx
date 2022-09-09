@@ -12,7 +12,7 @@ import { handleCardDrop } from "./helpers/handle-card-drop";
 import { moveCardsAside } from "./helpers/move-cards-aside";
 import { moveCardsToHand } from "./helpers/move-cards-to-hand";
 import { shuffleCards } from "./helpers/shuffle-cards";
-import {moveCardToPosition} from "./helpers/move-card-to-position";
+import {addCardIntoStack, moveCardToPosition} from "./helpers/move-card-to-position";
 import {moveCardsToStack} from "./helpers/move-cards-to-stack";
 import useTimeout from "./helpers/hooks/useTimeout";
 import GameHeader from "./components/GameHeader";
@@ -270,23 +270,49 @@ function PlayingGame({usedCardsFirebase, stacks, setStacks}: {usedCardsFirebase:
 		if(usedCards.length > 0) {
 			// Get all cards currently in stacks
 			const stacksWithCards = stacks.map((stack, i) => stack.cards ? {cards: stack.cards, stack: i} : []).flat()
-			console.log(stacksWithCards)
 
 			// Update all cards in stacks to their new position
 			stacksWithCards.map(stack => {
-				stack.cards.map((cardId, z) => {
-					const card = usedCards[cardId]
-					const stackPosition = getPositionAtCenter(stackRef.current[stack.stack], "useEffect - PlayingGame.tsx 271")
-					updateCardPosition(card.id, {x: stackPosition.x - cardDimensions.width / 2, y: stackPosition.y - cardDimensions.height / 2})
-					// Update Card z-Index and orientation
-					setUsedCards(usedCards.map((card, i) => {
-						if (card.id === cardId) {
-							card.zIndex = z
-							card.orientation = stacks[stack.stack].orientation
-						}
-						return card
-					}))
-				})
+				if(stacks[stack.stack].stackType === "stack") {
+					stack.cards.map((cardId, z) => {
+						const card = usedCards[cardId]
+						const stackPosition = getPositionAtCenter(stackRef.current[stack.stack], "useEffect - PlayingGame.tsx 271")
+						updateCardPosition(card.id, {x: stackPosition.x - cardDimensions.width / 2, y: stackPosition.y - cardDimensions.height / 2})
+						// Update Card z-Index and orientation
+						setUsedCards(usedCards.map((card, i) => {
+							if (card.id === cardId) {
+								card.zIndex = z
+								card.orientation = stacks[stack.stack].orientation
+							}
+							return card
+						}))
+					})
+				} else if(stacks[stack.stack].stackType === "hand" || stacks[stack.stack].stackType === "openStack") {
+					const {x: stackX, y: stackY} = getPositionAtCenter(stackRef[stack.stack], "stackPosition - handle-card-drop.ts 96");
+					
+					stack.cards.map((cardId, z) => {
+						
+	
+						
+						console.log(cardId)
+						updateCardPosition(cardId, {
+							x: calculateCardPosition(cardRef.current[cardId], stackRef[stack.stack], stacks[stack.stack], cardId), 
+							// x: newPosition, 
+							y: stackY - cardRef.current[cardId].current.getBoundingClientRect().height / 2
+						})
+	
+						// Set On Stack Type of Card
+						setUsedCards(usedCards.map((card, i) => {
+							if (card.id === cardId) {
+								card.onStackType = "openStack";
+								card.orientation = "front"
+							}
+							return card;
+						}))
+					})
+
+
+				}
 			}) 
 		}
 	}, [stacks])

@@ -26,5 +26,7 @@ export const calculateCardPosition = (
     else{
         firstCardX += -1 * cardCount / 2 * overlap + overlap / 2;
     }
+
+    console.log(firstCardX + cardPositionInStack * overlap + stackCenter.x)
     return firstCardX + cardPositionInStack * overlap + stackCenter.x
 }

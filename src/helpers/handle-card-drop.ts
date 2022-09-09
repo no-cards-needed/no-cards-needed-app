@@ -111,48 +111,70 @@ export const handleCardDrop = (
 					// Open Stack: Cards lie next to each other
 					case "openStack":
 					case "hand":
+						const currentCardPos = cardRef.current[id].current.getBoundingClientRect().left
+						let closestCard = {left: 0, cardIndex: 0}
+	
+						if(stacks[nearestStack.index].cards && stacks[nearestStack.index].cards.length > 0) {
+							// Cycle through all cards in stack
+							for (let i = 0; i < stacks[nearestStack.index].cards.length; i++) {
+								const cardIndex = stacks[nearestStack.index].cards[i];
+								const card = usedCards.find(card => card.id === cardIndex);
+								const cardPosition = cardRef.current[cardIndex].current.getBoundingClientRect().left;
+	
+								if (cardPosition < currentCardPos && cardPosition > closestCard.left) {
+									closestCard.left = cardPosition;
+									closestCard.cardIndex = i;
+								}
+							}
+						}
+
+						// No card is further to the left
+						if (closestCard.left === 0) {
+							addCardIntoStack(stacks, setStacks, nearestStack.index, 0, id)
+						} else {
+							addCardIntoStack(stacks, setStacks, nearestStack.index, closestCard.cardIndex + 1, id)
+						}
 						
 						// Workaround for moving closed stacks to open stacks
 						if (!currentlyMovingStack) {
+							// const currentCardPos = data.current.getBoundingClientRect().left
+							// let closestCard = {left: 0, cardIndex: 0}
 
-							const currentCardPos = data.current.getBoundingClientRect().left
-							let closestCard = {left: 0, cardIndex: 0}
+							// if(stacks[nearestStack.index].cards && stacks[nearestStack.index].cards.length > 0) {
+							// 	// Cycle through all cards in stack
+							// 	for (let i = 0; i < stacks[nearestStack.index].cards.length; i++) {
+							// 		const cardIndex = stacks[nearestStack.index].cards[i];
+							// 		const card = usedCards.find(card => card.id === cardIndex);
+							// 		const cardPosition = cardRef.current[cardIndex].current.getBoundingClientRect().left;
 
-							if(stacks[nearestStack.index].cards && stacks[nearestStack.index].cards.length > 0) {
-								// Cycle through all cards in stack
-								for (let i = 0; i < stacks[nearestStack.index].cards.length; i++) {
-									const cardIndex = stacks[nearestStack.index].cards[i];
-									const card = usedCards.find(card => card.id === cardIndex);
-									const cardPosition = cardRef.current[cardIndex].ref.getBoundingClientRect().left;
+							// 		if (cardPosition < currentCardPos && cardPosition > closestCard.left) {
+							// 			closestCard.left = cardPosition;
+							// 			closestCard.cardIndex = i;
+							// 		}
+							// 	}
+							// }
 
-									if (cardPosition < currentCardPos && cardPosition > closestCard.left) {
-										closestCard.left = cardPosition;
-										closestCard.cardIndex = i;
-									}
-								}
-							}
+							// // No card is further to the left
+							// if (closestCard.left === 0) {
+							// 	addCardIntoStack(stacks, setStacks, nearestStack.index, 0, id)
+							// } else {
+							// 	addCardIntoStack(stacks, setStacks, nearestStack.index, closestCard.cardIndex + 1, id)
+							// }
+							// console.log(id)
+							// updateCardPosition(id, {
+							// 	x: calculateCardPosition(data, nearestStack.nearestStack, stacks[nearestStack.index], id), 
+							// 	// x: newPosition, 
+							// 	y: stackY - data.current.getBoundingClientRect().height / 2
+							// })
 
-							// No card is further to the left
-							if (closestCard.left === 0) {
-								addCardIntoStack(stacks, setStacks, nearestStack.index, 0, id)
-							} else {
-								addCardIntoStack(stacks, setStacks, nearestStack.index,closestCard.cardIndex + 1, id)
-							}
-							updateCardPosition(id, {
-								
-								x: calculateCardPosition(data, nearestStack.nearestStack, stacks[nearestStack.index], id), 
-								// x: newPosition, 
-								y: stackY - data.current.getBoundingClientRect().height / 2
-							})
-
-							// Set On Stack Type of Card
-							setUsedCards(usedCards.map((card, i) => {
-								if (card.id === id) {
-									card.onStackType = "openStack";
-									card.orientation = "front"
-								}
-								return card;
-							}))
+							// // Set On Stack Type of Card
+							// setUsedCards(usedCards.map((card, i) => {
+							// 	if (card.id === id) {
+							// 		card.onStackType = "openStack";
+							// 		card.orientation = "front"
+							// 	}
+							// 	return card;
+							// }))
 						} else {
 							// Removing Stack Animation from all cards
 							setUsedCards(usedCards.map((card, i) => {
@@ -183,7 +205,6 @@ export const handleCardDrop = (
 								// Get Stack in which the Card is
 								// const currentStack = stacks.find(thisStack => thisStack.cards.includes(card))
 								const currentStack = stacks[currentStackIndex]
-								console.log(stackRef.current[currentStackIndex])
 	
 								// Get Stack Ref
 								const currentStackRef = stackRef.current[currentStackIndex]
