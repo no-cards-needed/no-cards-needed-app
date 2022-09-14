@@ -2,6 +2,7 @@ import Image from '../assets/no_cards_needed.svg';
 import { useState } from 'react';
 import {useNavigate} from "react-router-dom";
 import {generateLobbyString} from "../helpers/words";
+import Tutorial from "./TutorialModal.js"
 
 
 function StartScreen() {
@@ -13,6 +14,8 @@ function StartScreen() {
 
   const [ processCreate, setProcessCreate ] = useState( false )
   const [ processJoin, setProcessJoin ] = useState( false )
+
+  const [ displayTutorial, setDisplayTutorial ] = useState(true)
 
   function toggleCreate() { 
     setProcessCreate(true) 
@@ -38,6 +41,7 @@ function StartScreen() {
   } 
   const [name, setName] = useState("")
   const navigate = useNavigate()
+
   function nextName() {
     console.log(name)
     navigate('/auth', {state: {name: name}})
@@ -74,7 +78,7 @@ function StartScreen() {
           </div>
         </div>
 
-        
+        <Tutorial displayTutorial={displayTutorial} setDisplayTutorial={setDisplayTutorial} kind={'contentCreateGame'}/>
 
 
         <div className="modalBackground" style={{display:displayModal}}>

@@ -35,7 +35,7 @@
     margin: 0px 12.5px;
     min-height: 88px;
 
-    background: #DEDBE5;
+    background: var(--vg-10);
     border-radius: 24px;
   } 
 
@@ -68,7 +68,7 @@
   .hairline {
     position: relative;
     width:  100%;
-    border: .5px solid #CAC7D1;
+    border: .5px solid var(--vg-20);
     border-radius: 2px;
     align-self: stretch;
   }
@@ -86,7 +86,7 @@
     align-self: stretch;
     flex-grow: 1;
 
-    background: #CAC7D1;
+    background: var(--vg-20);
     border-radius: 8px;
   }
 

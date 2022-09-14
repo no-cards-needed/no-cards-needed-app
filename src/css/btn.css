@@ -13,7 +13,7 @@
   width: auto;
   height: 80px;
   margin: 0px 12.5px 16px 12.5px;
-  border: 0.75px solid rgba(0, 0, 0, 0.2);
+  border: 0.75px solid var(--border);
 
   text-transform: uppercase;  
 
@@ -21,22 +21,22 @@
 }
 
   .Primary {
-    color: #fff;
-    background: #7741EA;
+    color: var(--vg-0);
+    background: var(--violet-prime-50);
   }
   
   .Primary:active {
-    background: #6528C9;
+    background: var(--violet-70);
   }
 
 
   .Secondary {
-    color: #2C2833;
-    background: #CAC7D1;
+    color: var(--vg-100);
+    background: var(--vg-20);
   }
   
   .Secondary:active {
-    background: #B6B3BD;
+    background: var(--vg-30);
   }
 
 
@@ -48,7 +48,7 @@
     gap: 4px;
 
     position: relative;
-    border: 0.75px solid rgba(0, 0, 0, 0.2);
+    border: 0.75px solid var(--border);
 
     cursor: pointer;
   }
@@ -74,7 +74,7 @@
 
     position: relative;
     width: 40px;
-    border: 0.75px solid rgba(0, 0, 0, 0.2);
+    border: 0.75px solid var(--border);
 
     cursor: pointer;
   }

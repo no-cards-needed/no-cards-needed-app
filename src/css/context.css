@@ -7,7 +7,7 @@
 
     border-radius: 16px;
 
-    background: rgba(223, 216, 240, 0.6);
+    background: var(--transp-20-60);
 }
 
 .contextMenuItem {
@@ -24,5 +24,5 @@
 }
 
 .contextMenuItem:active {
-    background: rgba(180, 172, 197, 0.6);
+    background: var(--transp-40-60);
 }

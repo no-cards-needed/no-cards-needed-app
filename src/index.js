@@ -28,11 +28,8 @@ import App from './PlayingGame';
 // Menu Development
 // import App from './App';
 
-import Dropdown from './components/Dropdown.js';
-
 import StartScreen from "./components/startScreen.js"
 import CreateGame from "./components/CreateGame.js"
-import MenuHeader from "./components/MenuHeader.js"
 import ContextMenu from "./components/ContextMenu.js"
 
 import reportWebVitals from './reportWebVitals';

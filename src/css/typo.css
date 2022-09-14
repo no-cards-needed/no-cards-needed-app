@@ -29,3 +29,14 @@ label {
 
     padding: 0px 2px;
 }
+
+.tut {
+    font-family: 'Heebo';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0.02em;
+
+    color: var(--violet-prime-50);
+}

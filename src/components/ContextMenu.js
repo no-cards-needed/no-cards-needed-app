@@ -5,7 +5,7 @@ import shufflePile from '../assets/iconsBlack/shufflePile.svg';
 import dealAgain from '../assets/iconsBlack/dealAgain.svg';
 
 
-function ConpMenu() {
+function ContextMenu() {
 
 
     return (
@@ -34,4 +34,4 @@ function ConpMenu() {
     );
   }
 
-export default ConpMenu
+export default ContextMenu

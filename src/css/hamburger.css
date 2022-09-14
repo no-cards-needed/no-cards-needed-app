@@ -11,7 +11,7 @@
     right: 20px;
 
     z-index: 2;
-    background: #7741EA;
+    background: var(--violet-prime-50);
 }
 
 .hamburgerItem {
@@ -28,7 +28,7 @@
 }
 
 .hamburgerItem:active {
-    background: #6528C9;
+    background: var(--violet-70);
 }
 
 .hamburgerClose {

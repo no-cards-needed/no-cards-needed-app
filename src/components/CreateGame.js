@@ -176,10 +176,7 @@ function Menu( props ) {
                 <label>{cardsInDrawPile} cards in draw pile</label>
               </div>
             </div>
-
-
           </div>    
-
         </div> 
 
         <div class="btnBig Primary" id="basicDrop" >
