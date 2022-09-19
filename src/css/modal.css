@@ -102,6 +102,7 @@ input[type="text"] {
     width: 8px;
     height: 8px;
     border-radius: 4px;
+    border: 0.75px solid var(--border);
     background-color: var(--vg-40);
     cursor: pointer;
   }
