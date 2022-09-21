@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { createRef, useEffect, useRef, useState } from "react";
 import {useNavigate, useParams, } from "react-router-dom";
 import './css/App.css';
 
@@ -21,16 +21,23 @@ import toast, {Toaster} from "react-hot-toast";
 // https://www.npmjs.com/package/use-dynamic-refs
 // import useDynamicRefs from "./assets/helpers/use-dynamic-refs";
 
-function PlayingGame({usedCardsFirebase, stacks, setStacks}: {usedCardsFirebase: any[], stacks: any[], setStacks: (stacks) => void}) {
+function PlayingGame(
+		{
+			syncedCards, 
+			stacks, 
+			setCard,
+			setStack
+		}: {
+			syncedCards: {0?: Card}, 
+			stacks: {0?: Stack}, 
+			setCard: (card, cardId) => void,
+			setStack: (stack, stackId) => void
+		}) {
+
 	const [ lashTextTricks, setLashTextTricks ] = useState( 'Show Tricks' )
     const [ lashTextRemoved, setLashTextRemoved ] = useState( 'Show Removed Cards' )
-
     const [ activeTricks, setActiveTricks ] = useState( false )
-
     const [ activeRemoved, setActiveRemoved ] = useState( false )
-
-	const [ usedCards, setUsedCards ] = useState([])
-
 
 	function toggleDisplayTricks() {
         if (activeTricks) {   
@@ -43,42 +50,41 @@ function PlayingGame({usedCardsFirebase, stacks, setStacks}: {usedCardsFirebase:
           setActiveRemoved(false) 
           setLashTextRemoved('Show Removed Cards')
         }
-      } 
+	} 
 
-      function toggleDisplayRemoved() {
-        if (activeRemoved) {   
-            setActiveRemoved(false) 
-            setLashTextRemoved('Show Removed Cards')
-        } else { 
-          setActiveRemoved(true) 
-          setLashTextRemoved('Hide Removed Cards')
+	function toggleDisplayRemoved() {
+	if (activeRemoved) {   
+		setActiveRemoved(false) 
+		setLashTextRemoved('Show Removed Cards')
+	} else { 
+		setActiveRemoved(true) 
+		setLashTextRemoved('Hide Removed Cards')
 
-          setActiveTricks(false) 
-          setLashTextTricks('Show Tricks')
-        }
-      } 
+		setActiveTricks(false) 
+		setLashTextTricks('Show Tricks')
+	}
+	} 
+
+	const [ usedCards, setUsedCards ] = useState({})
 
 	const stackRef = useRef([]);
 	const cardRef = useRef([]);
+	
+	const stacksReference = useRef({})
+	stacksReference.current = stacks
+	
+	const usedCardsReference = useRef({})
+	usedCardsReference.current = usedCards
+	
+	const [nearestStack, setNearestStack] = useState(null);
+	const stackDistances = useRef({})
 	const [isColliding, setIsColliding] = useState(false);
-	const [cardStartPosition, setCardStartPosition] = useState({x: 0, y: 0});
 	const [currentlyMovingStack, setCurrentlyMovingStack] = useState(false);
 
-	const stacksReference = useRef([])
-	stacksReference.current = stacks
-
-	const [nearestStack, setNearestStack] = useState(null);
-	
-
-	const usedCardsReference = useRef([])
-	usedCardsReference.current = usedCards
-
-	const stackDistances = useRef({})
-
-	const getNearestStack = (card) => {
-		const distances = stacks.map((stack, index) => {
-			if (stackRef.current[index]) {
-				return getDistanceBetweenTwoElements(stackRef.current[index], card)
+	const getNearestStack = (cardRef) => {
+		const distances = Object.keys(stacks).map((stackId) => {
+			if (stackRef.current[stackId]) {
+				return getDistanceBetweenTwoElements(stackRef.current[stackId], cardRef.current)
 			} else {
 				return 99999
 			}
@@ -89,287 +95,96 @@ function PlayingGame({usedCardsFirebase, stacks, setStacks}: {usedCardsFirebase:
 	}
 
 	const updateCardPosition = (cardId, {x, y}) => {
-		setUsedCards(usedCardsReference.current.map((card, i) => {
-			if (i === cardId) {
-				card.controlledPosition = {
-					x,
-					y
+		setUsedCards(
+			{
+				...usedCards,
+				[cardId]: {
+					...usedCards[cardId],
+					controlledPosition: {
+						x,
+						y
+					}
 				}
 			}
-			return card;
-		}))
+		)
 	}
 
 	// Setting Card Ref in usedCards State
 	const setCardRef = (cardId, ref) => {
 		console.log("Setting Card Ref")
-		// setUsedCards(usedCards.map((card, i) => {
-		// 	if (i === cardId) {
-		// 		card.ref = ref;
-		// 	}
-		// 	return card;
-		// }))
 		cardRef.current[cardId] = ref;
 	}
 
-	// Shuffle cards by cardId
-	const shuffleCardsById = (cardId: number) => {
-		// Find stack of card
-		const stack = stacks.find((stack, index) => {
-			if (stack.cards.includes(cardId)) {
-				return stack;
-			}
-		})
-
-		const tempCards = stack.cards
-		const shuffledCards = shuffleCards(tempCards)
-
-		setStacks(stacks.map((updatedStack, index) => {
-			if (index === stack.id) {
-				updatedStack.cards = shuffledCards;
-			}
-			return updatedStack;
-		}))
-
-		resetCardZIndex(shuffledCards)
-	}
-
 	const resetCardZIndex = (shuffledCards) => {
-		console.log("resetCardZIndex", shuffledCards)
 		// Re-Set zIndex of the shuffled cards
-		setUsedCards(usedCardsReference.current.map((card, i) => {
-			if (shuffledCards.includes(card.id)) {
-				card.zIndex = shuffledCards.indexOf(card.id)
-				card.animation = "shuffle"
-				const timeout = setTimeout(() => {
-					// card.animation = "none"
-					setUsedCards(usedCardsReference.current.map((card, i) => {
-						if (i === i) {
-							card.animation = "none"
+		shuffledCards.forEach((cardId) => {
+			setUsedCards(
+				{
+					...usedCards,
+					[cardId]: {
+						...usedCards[cardId],
+						zIndex: shuffledCards.indexOf(cardId),
+						animation: "shuffle"
+					}
+				}
+			)
+		})
+		const timeout = setTimeout(() => {
+			shuffledCards.forEach((cardId) => {
+				setUsedCards(
+					{
+						...usedCards,
+						[cardId]: {
+							...usedCards[cardId],
+							animation: "none"
 						}
-						return card;
-					}))
-					clearTimeout(timeout)
-				}, 300)
+					}
+				)
+			})
+			clearTimeout(timeout)
+		}, 300)
+	}
+
+	useEffect(() => {
+		let cards;
+		Object.keys(syncedCards).forEach(cardId => {
+			cards[cardId] = {
+				...syncedCards[cardId],
+				controlledPosition: {x: 0, y: 0},
+				zIndex: 0,
+				animation: "none",
 			}
-			return card;
-		}))
-	}
-
-	// Check if LongPress is in proximity of card start position, if so: move stack not single card
-	const handleLongPress = (cardId: number, cardStartPosition: {x: number, y: number}, cardCurrentPosition: {x: number, y: number}) => {
-		// Check if cardPosition is in specific radius of cardStartPosition
-
-		const distance = Math.sqrt(Math.pow(cardStartPosition.x - cardCurrentPosition.x, 2) + Math.pow(cardStartPosition.y - cardCurrentPosition.y, 2))
-
-		if (distance < 50) {
-			setCurrentlyMovingStack(true)
-
-			// Set Animation of current card to "stack" the it's obvious the user is moving a stack
-			setUsedCards(usedCards.map((card, i) => {
-				if (i === cardId) {
-					card.animation = "stack"
-				}
-				return card;
-			}))
-
-			// Get All Cards in current Stack
-			const {cards} = stacks.find((stack, index) => {
-				if (stack.cards.includes(cardId)) {
-					return stack;
-				}
-			})
-
-			// Set All cards in stack of the moved card expect the one beeing moved to animation "hidden"
-			setUsedCards(usedCards.map((card, i) => {
-				if (cards.includes(card.id) && card.id !== cardId) {
-					card.animation = "hidden"
-				}
-				return card;
-			}))
-		}
-	}
-
-
-	// const dataRecievedCallback = (data) => {
-	// 	console.log(data)
-	// 	switch (data.type) {
-	// 		case "lobby":
-	// 			toast.success("Created Lobby: " + data.data.lobbyString)
-	// 			window.history.replaceState(null, "No Cards Needed", "/game/"+data.data.lobbyString)
-	// 			break;
-	// 		case "cards":
-	// 			setUsedCards(data.data.cards)
-	// 			// Sending Cards to Stack after a time period to make sure the cards are loaded
-	// 			window.setTimeout(() => {
-	// 				console.log("stackref", stackRef)
-	// 				moveCardsToStack(usedCardsReference.current, setUsedCards, updateCardPosition, stacksReference.current, setStacks, stackRef, 2)
-	// 			}, 100)
-	// 			break;
-	// 		case "stacks":
-	// 			setStacks(data.data.stacks)
-	// 			break;
-
-	// 		case "cardMove_stack":
-	// 			if(data.data.id !== peerId) {
-	// 				cardMove_stack(data)
-	// 			}
-	// 			break;
-	// 		case "cardMove_hand":
-	// 			if(data.data.id !== peerId) {
-	// 				cardMove_hand(data)
-	// 			}
-	// 			break;
-	// 		case "shuffle":
-	// 			recieveShuffledCards(data)
-	// 			break;
-	// 		case "newConnection":
-	// 			if(!connections.current.some((connection) => connection.peerId === data.data.id) && data.data.id !== peerId && data.data.id !== undefined) {
-	// 				console.log("if passed")
-	// 				handleConnectionInstance(peerInstance.current, connections, data.data.id, dataRecievedCallback)
-	// 				connections.current.map((connection) => {
-	// 					console.log("mapped connection: ", connection)
-	// 					if (connection.peerId !== undefined) {
-	// 						console.log("connection id defined")
-	// 						connection.connection.send({
-	// 							type: "newConnection",
-	// 							data: {
-	// 								id: data.data.id,
-	// 							}
-	// 						})
-	// 					}
-	// 					return connection
-	// 				})
-	// 			}
-	// 			break;
-	// 	}
-	// }
-
-	useEffect(() => {
-		if (currentlyMovingStack) {
-			// get all hidden cards to move to the closest stack
-			usedCards.map((card, i) => {
-				if (card.animation === "hidden") {
-					const stackPosition = getPositionAtCenter(nearestStack.nearestStack, "useEffect - PlayingGame.tsx 271")
-					const {width, height} = card.ref.current.getBoundingClientRect()
-					updateCardPosition(card.id, {x: stackPosition.x - width / 2, y: stackPosition.y - height / 2})
-				}
-			})
-			
-		}
-	}, [isColliding])
-
-	useEffect(() => {
-		setUsedCards(usedCardsFirebase)
-	}, [usedCardsFirebase])
+		});
+		setUsedCards(syncedCards)
+	}, [syncedCards])
 
 	const cardDimensions = {width: 80, height: 112}
 
-	// Update Card positions when stacks change
-	useEffect(() => {
-		if(usedCards.length > 0) {
-			// Get all cards currently in stacks
-			const stacksWithCards = stacks.map((stack, i) => stack.cards ? {cards: stack.cards, stack: i} : []).flat()
-
-			// Update all cards in stacks to their new position
-			stacksWithCards.map(stack => {
-				if(stacks[stack.stack].stackType === "stack") {
-					stack.cards.map((cardId, z) => {
-						const card = usedCards[cardId]
-						const stackPosition = getPositionAtCenter(stackRef.current[stack.stack], "useEffect - PlayingGame.tsx 271")
-						updateCardPosition(card.id, {x: stackPosition.x - cardDimensions.width / 2, y: stackPosition.y - cardDimensions.height / 2})
-						// Update Card z-Index and orientation
-						setUsedCards(usedCards.map((card, i) => {
-							if (card.id === cardId) {
-								card.zIndex = z
-								card.orientation = stacks[stack.stack].orientation
-							}
-							return card
-						}))
-					})
-				} else if(stacks[stack.stack].stackType === "hand" || stacks[stack.stack].stackType === "openStack") {
-					const {x: stackX, y: stackY} = getPositionAtCenter(stackRef[stack.stack], "stackPosition - handle-card-drop.ts 96");
-					
-					stack.cards.map((cardId, z) => {
-						
-	
-						
-						console.log(cardId)
-						updateCardPosition(cardId, {
-							x: calculateCardPosition(cardRef.current[cardId], stackRef[stack.stack], stacks[stack.stack], cardId), 
-							// x: newPosition, 
-							y: stackY - cardRef.current[cardId].current.getBoundingClientRect().height / 2
-						})
-	
-						// Set On Stack Type of Card
-						setUsedCards(usedCards.map((card, i) => {
-							if (card.id === cardId) {
-								card.onStackType = "openStack";
-								card.orientation = "front"
-							}
-							return card;
-						}))
-					})
-
-
-				}
-			}) 
-		}
-	}, [stacks])
-
-	
 	return (
 		<div>
-			{/* <div className='cardStack' style={{border: isColliding ? '1px solid green' : '1px solid red',}} ref={stackRef}></div> */}
-{/*			<div style={{margin: "100px auto", display: "flex", flexDirection: "column", alignItems: "center", position: "fixed", zIndex: 5}}>
-				<p style={{textAlign: "center", background: "#ffffff1a", padding: "4px 16px", borderRadius: "7px"}} onClick={() => navigator.clipboard.writeText(peerId)}>{
-					peerId
-				}</p>
-				<div>
-					<input value={connectionId} onChange={(e) => setConnectionId(e.target.value)}/>
-					<button onClick={() => handleConnectionInstance(peerInstance.current, connections, connectionId, dataRecievedCallback)}>Connect</button>
-				</div>
-			</div>	*/}
 			<div style={{background: "#DEDBE5", position: "fixed"}}>
 				<div><Toaster /></div>
                 <div className='backgroundElement'></div>
                 <div className="playingArea criticalMaxWidth">
-                    <div className="playingAreaColumn">
-                        <div className="playingAreaRow">
-							{
-								stacks.map((stack, index) => {
-									if(index > 1 && index < 3) {
-										return (
-											<Stack key={index} stack={stack} stackRef={el => stackRef.current[stack.id] = el} updateCardPosition={updateCardPosition}/>
-										)
-									}
-								})
-							}
-                        </div>
-                        <div className="playingAreaRow">
-							{
-								stacks.map((stack, index) => {
-									if(index > 2) {
-										return (
-											<Stack key={index} stack={stack} stackRef={el => stackRef.current[stack.id] = el} updateCardPosition={updateCardPosition}/>
-										)
-									}
-								})
-							}
-                        </div>
-                    </div>
+				{
+					Object.keys(stacks).map((stackId) => {
+						return (
+							<Stack key={stackId} stackType={stacks[stackId].stackType} stackRef={el => stackRef.current[stackId] = el}/>
+						)
+					})
+				}
                 </div>
 
 				<div className="cards">
 					{
-						usedCards.map((card, index) => {
+						Object.keys(usedCards).map((cardId) => {
 							return <Card 
 									setRef={setCardRef} 
-									card={card} 
-									key={card.id}
-									shuffle={shuffleCardsById}
-									handleLongPress={handleLongPress}
-									handleCardDrag={(data, id) => handleCardDrag(data, id, usedCards, setUsedCards, getNearestStack, nearestStack, setNearestStack, stacks, setIsColliding, cardRef)} 
+									card={usedCards[cardId]} 
+									key={cardId}
+									shuffle={() => {}}
+									handleLongPress={() => {}}
+									handleCardDrag={(cardRef, cardId) => handleCardDrag(cardRef, cardId, usedCards, setUsedCards, getNearestStack, nearestStack, setNearestStack, stacks, setIsColliding)} 
 									handleCardDrop={(data, id) => handleCardDrop(data, id, usedCards, setUsedCards, isColliding, setIsColliding, stacks, setStacks, nearestStack, updateCardPosition, stackRef, cardRef, currentlyMovingStack, setCurrentlyMovingStack)} />
 						})
 					}
@@ -377,28 +192,10 @@ function PlayingGame({usedCardsFirebase, stacks, setStacks}: {usedCardsFirebase:
 
                 <GameHeader />
 
-
-  
                 <div className="hand criticalMaxWidth" id="basicDrop">
-					{
-						stacks.map((stack, index) => {
-							if(index === 1) {
-								return (
-									<Stack key={index} stack={stack} stackRef={el => stackRef.current[stack.id] = el} updateCardPosition={updateCardPosition}/>
-								)
-							}
-						})
-					}
+					<Stack key={"handStack"} stackType={stacks[0].stackType} stackRef={el => stackRef.current[0] = el}/>
                 </div>
-				{
-						stacks.map((stack, index) => {
-							if(index === 0) {
-								return (
-									<Stack key={index} stack={stack} stackRef={el => stackRef.current[stack.id] = el} updateCardPosition={updateCardPosition}/>
-								)
-							}
-						})
-					}
+				<Stack key={"hiddenStack"} stackType={stacks[1].stackType} stackRef={el => stackRef.current[1] = el}/>
             </div>
 		</div>
 	);

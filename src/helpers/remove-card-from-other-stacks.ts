@@ -1,11 +1,25 @@
-export const removeCardFromOtherStacks = (setStacks, stacks, cardId) => {
-    // Removing Card from all other stacks
-    console.log("SETSTACKS: Removing Card from other stacks from move card from other stacks")
-	setStacks(stacks.map((stack, i) => {
-        if (stack.cards) {
-            stack.cards = stack.cards.filter(card => card !== cardId);
-        }
+export const removeCardFromOtherStacks = (
+		setStack: (stack, stackId) => void,
+		stacks: {0: Stack},
+		cardId: number
+	) => {
+	// Removing Card from all other stacks
+	
+	// Find out on what stacks the card is
+	const stacksWithCard = Object.keys(stacks).filter(stackId => {
+		const stack = stacks[stackId];
+		return stack.cards.includes(cardId);
+	});
 
-		return stack;
-	}))
+	stacksWithCard.forEach(stackId => {
+		setStack(
+			{
+				...stacks[stackId],
+				// Filtering the cards
+				// https://stackoverflow.com/a/37616104
+				cards: Object.fromEntries(Object.entries(stacks[stackId].cards).filter(([cardKey, cardVal]) => cardKey !== cardId.toString())),
+			},
+			stackId
+		);
+	});
 }

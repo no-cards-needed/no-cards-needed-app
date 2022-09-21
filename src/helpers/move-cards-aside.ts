@@ -1,44 +1,40 @@
-export const moveCardsAside = (
-	stacks: {cards: number[]}[], 
-	nearestStack: {nearestStack, distance: number, index: number}, 
-	currentCard, 
-	usedCards: {id: number, symbol: string, controlledPosition: {x: number, y: number}, zIndex: number, movedAside: string, onStackType: string}[], 
-	cardRef,
-	setUsedCards: (usedCards) => void,
-	id: number) => {
+import { cardDimensions } from "./card-dimensions"
 
+export const moveCardsAside = (
+	stacks: {0?: Stack}, 
+	nearestStack: {nearestStack, distance: number, index: number}, 
+	currentCardRef: React.MutableRefObject<HTMLElement>, 
+	usedCards: {0?: UsedCards},
+	setUsedCards: (usedCards) => void,
+	cardId: number) => {
 
 	const stack = stacks[nearestStack.index]
-	// Moving the Cards in the open Stack aside
 
+	// Moving the Cards in the open Stack aside
 	if(stack.cards) {
-		stack.cards.map((loopedCard, i) => {
-			if (loopedCard !== id) {
+		Object.keys(stack.cards).map((loopedCardId) => {
+			const loopedCardId_INT = parseInt(loopedCardId)
+			if (loopedCardId_INT !== cardId) {
 				// Get Position of currently dragged card
-				const { left: cardLeft, right: cardRight } = currentCard.getBoundingClientRect();
+				const { left: cardLeft, right: cardRight } = currentCardRef.current.getBoundingClientRect();
 	
-				// Get Card by ID
-				const card = usedCards.find(card => card.id === loopedCard);
-	
-				const cardWidth = cardRef.current[id].current.getBoundingClientRect().width
-				const currentCardCenter = cardRef.current[id].current.getBoundingClientRect().left + cardWidth / 2
+				const cardWidth = cardDimensions.width;
+				const currentCardCenter = cardLeft + cardWidth / 2
 	
 				const isLeft = cardLeft + cardWidth / 2 < currentCardCenter
 				const isRight = cardRight - cardWidth / 2 > currentCardCenter
 				// console.log(isLeft, isRight)
 				
 				// Set Card to Moved Aside
-				setUsedCards(usedCards.map((card, i) => {
-					if (card.id === loopedCard) {
-						if (isLeft) {
-							card.movedAside = "left"
-						} else if (isRight) {
-							card.movedAside = "right"
-						} 
-						// card.movedAside =  isLeft ? "left" : "right";
+				setUsedCards(
+					{
+						...usedCards,
+						[loopedCardId_INT]: {
+							...usedCards[loopedCardId_INT],
+							movedAside: isLeft ? "left" : "right"
+						}
 					}
-					return card;
-				}))
+				)
 	
 				// TODO: When in "Selection" mode, the collidion shouldnt toggle the stack width
 			}

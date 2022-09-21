@@ -1,4 +1,4 @@
-export const checkCollision = (collider, colliding) => {
+export const checkCollision = (collider: HTMLElement, colliding: HTMLElement) => {
     const colliderRect = collider.getBoundingClientRect();
     const collidingRect = colliding.getBoundingClientRect();
 

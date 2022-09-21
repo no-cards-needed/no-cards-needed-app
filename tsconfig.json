@@ -26,5 +26,8 @@
     ],
     "types": [
       "typePatches"
-    ]
+    ],
+    "paths": {
+      "*": ["types/*.d.ts"]
+  },
   }

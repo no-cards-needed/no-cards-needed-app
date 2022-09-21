@@ -37,9 +37,7 @@ export const GameWrapper = ({app}: {app:any}) => {
     const [pile, setPile] = useState(true)
 
 
-	// TODO: Add SDKs for Firebase products that you want to use
-	// https://firebase.google.com/docs/web/setup#available-libraries
-
+	// Getting the set User Name
 	const {state} = useLocation();
 	const {name} = state as {name: string};
 	
@@ -50,24 +48,24 @@ export const GameWrapper = ({app}: {app:any}) => {
 	const allPlayersRef = useRef(null);
 	const [allPlayers, setAllPlayers] = useState({});
 
-	const usedCardsRef = useRef(null);
+	const cardsRef = useRef(null);
 	const stacksRef = useRef(null);
-	const [usedCardsState, setUsedCardsState] = useState([]);
-	const [stacksState, setStacksState] = useState([]);
+	const [cardsState, setCardsState] = useState({});
+	const [stacksState, setStacksState] = useState({});
 
 	const initGame = () => {
 
 		allPlayersRef.current = ref(getDatabase(app.current), 'game/debug_/players/')
-		usedCardsRef.current = ref(getDatabase(app.current), 'game/debug_/usedCards/')
+		cardsRef.current = ref(getDatabase(app.current), 'game/debug_/cards/')
 		stacksRef.current = ref(getDatabase(app.current), 'game/debug_/stacks/')
 
 		onValue(allPlayersRef.current, (snapshot) => {
 			// Whenever a change occuts	// 
 
-			// If this is the only player, set usedCardsRef and stacksRef
+			// If this is the only player, set cardsRef and stacksRef
 			if (Object.keys(snapshot.val()).length === 1) {
 				// Temporatilly setting stacks and cards
-				set(usedCardsRef.current, setDefaultUsedCards());
+				set(cardsRef.current, setDefaultUsedCards());
 				set(stacksRef.current, setDefaultStacks());
 
 				// Sets the last player to be the host
@@ -75,9 +73,9 @@ export const GameWrapper = ({app}: {app:any}) => {
 			}
 		})
 
-		onValue(usedCardsRef.current, (snapshot) => {
-			console.log("usedCardsRef change", snapshot.val());
-			setUsedCardsState(snapshot.val());
+		onValue(cardsRef.current, (snapshot) => {
+			console.log("cardsRef change", snapshot.val());
+			setCardsState(snapshot.val());
 		})
 
 		onValue(stacksRef.current, (snapshot) => {
@@ -97,13 +95,13 @@ export const GameWrapper = ({app}: {app:any}) => {
 
 	
 
-	const setUsedCards = (usedCards) => {
-		console.log("setUsedCards");
-		set(usedCardsRef.current, usedCards);
+	const setCard = (card, cardId) => {
+		console.log("setcards");
+		set(cardsRef.current.child(cardId), card);
 	}
-	const setStacks = (stacks) => {
+	const setStack = (stack, stackId) => {
 		console.log("setStacks");
-		set(stacksRef.current, stacks);
+		set(stacksRef.current.child(stackId), stack);
 	}
 
 	// Page Load
@@ -146,11 +144,11 @@ export const GameWrapper = ({app}: {app:any}) => {
 
 		return() => {
 			// Assign another player to be the host if leaving player is the host
-			if (allPlayers[userId] && allPlayers[userId].host) {
-				// Get the first player in the list
-				const firstPlayerId = Object.keys(allPlayers)[0];
-				update(ref(getDatabase(app.current), 'game/debug_/players/' + firstPlayerId), {host: true});
-			}
+			// if (allPlayers[userId] && allPlayers[userId].host) {
+			// 	// Get the first player in the list
+			// 	const firstPlayerId = Object.keys(allPlayers)[0];
+			// 	update(ref(getDatabase(app.current), 'game/debug_/players/' + firstPlayerId), {host: true});
+			// }
 		}
 
 	}, []);
@@ -162,9 +160,10 @@ export const GameWrapper = ({app}: {app:any}) => {
 		})
 		} */}
 		<PlayingGame 
-			usedCardsFirebase={usedCardsState}
+			syncedCards={cardsState}
 			stacks={stacksState}
-			setStacks={setStacks}
+			setCard={setCard}
+			setStack={setStack}
 		/>
 			{/* <CreateGame deckCards={deckCards} setDeckCards={setDeckCards} joker={joker} setJoker={setJoker} decks={decks} setDecks={setDecks} hand={hand} setHand={setHand} pile={pile} setPile={setPile} dropdownContent={dropdownContent} players={players}/> */}
 

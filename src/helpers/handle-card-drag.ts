@@ -5,59 +5,49 @@ import { moveCardsAside } from "./move-cards-aside";
 // state of the position when the drag started
 
 export const handleCardDrag = (
-                                data: React.MutableRefObject<any>, 
-                                id: number, 
-                                usedCards: {id: number, symbol: string, controlledPosition: {x: number, y: number}, zIndex: number, movedAside: string, onStackType: string, ref}[], 
-                                setUsedCards: (usedCards) => void, 
-                                getNearestStack: (card) => {nearestStack, distance: number, index: number}, 
+                                cardRef: React.MutableRefObject<HTMLElement>,
+                                cardId: number, 
+                                usedCards: {0?: UsedCards}, 
+                                setUsedCards: (usedCards) => void,
+                                
+
+                                getNearestStack: (cardRef) => {nearestStack, distance: number, index: number}, 
                                 nearestStack: {nearestStack, index: number, distance: number}, 
                                 setNearestStack: (nearestStack) => void, 
-                                stacks: {stackType: string, orientation: string, cards: number[], currentlyNearest: boolean, colliding: boolean, distance: number, height: number, width: number, position: {x: number, y: number}}[], 
+                                stacks: {0?: Stack}, 
                                 setIsColliding: (isColliding: boolean) => void,
-                                cardRef: any) => {
+                                ) => {
 
     // Setting Z-Index of currently dragged Card to the highest
     // Check if Card is already on top
-    if(usedCards[id].zIndex !== usedCards.length) {
-        setUsedCards(usedCards.map((card, i) => {
-            if (i === id) {
-                card.zIndex = usedCards.length;
+    if(usedCards[cardId].zIndex !== Object.keys(usedCards).length) {
+        setUsedCards(
+            {
+                ...usedCards,
+                [cardId]: {
+                    ...usedCards[cardId],
+                    zIndex: Object.keys(usedCards).length
+                }
             }
-            return card;
-        }
-        ))
+        )
     }
 
-    const card = data.current
-
-    setNearestStack(getNearestStack(card))
+    setNearestStack(getNearestStack(cardRef))
 
     // Collision
-    if (nearestStack && nearestStack.nearestStack && checkCollision(nearestStack.nearestStack, card)) {
-        // Set Nearest Stack to Colliding
-        stacks[nearestStack.index].colliding = true;
-
+    if (nearestStack && nearestStack.nearestStack && checkCollision(nearestStack.nearestStack, cardRef.current)) {
         setIsColliding(true)
 
-        //Getting Stack Type of the Nearest Stack
+        // Checking if the Stack Type is an open one, so the cards can be moved aside
         const nearestStackType = stacks[nearestStack.index].stackType;
         if (nearestStackType === "openStack" || nearestStackType === "hand") {
-            moveCardsAside(stacks, nearestStack, data.current, usedCards, cardRef, setUsedCards, id)
+            moveCardsAside(stacks, nearestStack, cardRef, usedCards, setUsedCards, cardId)
         }
 
     } else {
         if(nearestStack && nearestStack.nearestStack) {
-            // Set Nearest Stack to Colliding
-            stacks[nearestStack.index].colliding = false;
             setIsColliding(false)
-
         }
-
-        // console.log("Setting used Cards why ever")
-        // setUsedCards(usedCards.map((card, i) => {
-        //     card.movedAside = "false";
-        //     return card;
-        // }))
     }
     
 }
