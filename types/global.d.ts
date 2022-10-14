@@ -11,9 +11,7 @@ declare interface Stack {
      * can be "hidden", "back", "front"
      */
     stackType: string,
-    cards: {
-        0: Card,
-    },
+    cards: number[],
     /**
      * Position of stack in Stack-Grid
      */

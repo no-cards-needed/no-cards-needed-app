@@ -161,7 +161,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 		} */}
 		<PlayingGame 
 			syncedCards={cardsState}
-			stacks={stacksState}
+			syncedStacks={stacksState}
 			setCard={setCard}
 			setStack={setStack}
 		/>

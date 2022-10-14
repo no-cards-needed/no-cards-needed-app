@@ -17,12 +17,12 @@ function Card({
 	handleCardDrag, 
 	handleCardDrop, 
 	card, 
+	cardId,
 	setRef,
 	shuffle,
 	handleLongPress,}) {
 
 	const {id, symbol, zIndex, controlledPosition, onStackType} = card;
-
 
 	const nodeRef = useRef(null)
 	const [transition, setTransition] = useState(false)
@@ -60,13 +60,12 @@ function Card({
 				y: y + ui.deltaY
 			}
 		)
-
-		handleCardDrag(nodeRef, id)
+		handleCardDrag(nodeRef, cardId)
 	}
 	
 	const handleStop = (e) => {
 		setDroppedTimer()
-		handleCardDrop(nodeRef, id)
+		handleCardDrop(nodeRef, cardId)
 	}
 
 	// Animate controlled position
@@ -91,7 +90,7 @@ function Card({
 	}
 	
 	useEffect(() => {
-		setRef(id, nodeRef)
+		setRef(cardId, nodeRef)
 	  	return () => clearTimeout(timerRef.current);
 	}, [])
 
@@ -228,7 +227,7 @@ function Card({
 					{/* <MenuItem>Pick Up</MenuItem>
 					<MenuItem>Remove Pile from Game</MenuItem>
 					<MenuItem>Take a Trick</MenuItem> */}
-					{onStackType === "stack" ? <MenuItem onClick={() => shuffle(id)}>Shuffle Pile</MenuItem> : null}
+					{onStackType === "stack" ? <MenuItem onClick={() => shuffle(cardId)}>Shuffle Pile</MenuItem> : null}
 					{/* <MenuItem>Deal all Cards Again</MenuItem> */}
 				</ControlledMenu>
 			</div >

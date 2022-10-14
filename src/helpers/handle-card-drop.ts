@@ -4,22 +4,14 @@ import {addCardIntoStack, moveCardToPosition} from "./move-card-to-position";
 import { removeCardFromOtherStacks } from "./remove-card-from-other-stacks";
 
 export const handleCardDrop = (
-	cardRef, 
 	cardId: number, 
-	usedCards: {0: Card},
+	usedCards: {0?: Card},
 	setUsedCards: (usedCards) => void, 
 	isColliding: boolean,
-	setIsColliding: (isColliding: boolean) => void,
 	stacks: {0: Stack}, 
 	setStack: (stack, stackId) => void,
 	nearestStack: {nearestStack, index: number, distance: number}, 
-	updateCardPosition: (cardId: any, { x, y }: {
-		x: any;
-		y: any;
-	}) => void,
-	stackRef: React.MutableRefObject<any[]>,
-	currentlyMovingStack: boolean,
-	setCurrentlyMovingStack: (currentlyMovingStack: boolean) => void) => {
+	setCards: (cardId: number, stackId: number) => void) => {
 
 			// Set movedAside in all cards to false
 			Object.keys(usedCards).forEach((cardId) => {
@@ -48,7 +40,8 @@ export const handleCardDrop = (
 
 				// update cards
 				setCards(
-					
+					cardId,
+					nearestStack.index,
 				)
 			}
 }

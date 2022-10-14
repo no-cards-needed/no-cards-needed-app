@@ -17,6 +17,7 @@ import {moveCardsToStack} from "./helpers/move-cards-to-stack";
 import useTimeout from "./helpers/hooks/useTimeout";
 import GameHeader from "./components/GameHeader";
 import toast, {Toaster} from "react-hot-toast";
+import { getCardPositionInStack } from "./helpers/get-card-position-in-stack";
 
 // https://www.npmjs.com/package/use-dynamic-refs
 // import useDynamicRefs from "./assets/helpers/use-dynamic-refs";
@@ -24,12 +25,12 @@ import toast, {Toaster} from "react-hot-toast";
 function PlayingGame(
 		{
 			syncedCards, 
-			stacks, 
+			syncedStacks, 
 			setCard,
 			setStack
 		}: {
 			syncedCards: {0?: Card}, 
-			stacks: {0?: Stack}, 
+			syncedStacks: {0?: Stack}, 
 			setCard: (card, cardId) => void,
 			setStack: (stack, stackId) => void
 		}) {
@@ -65,13 +66,25 @@ function PlayingGame(
 	}
 	} 
 
+	const [ usedStacks, setUsedStacks ] = useState({
+		0: {
+			stackType: "hand",
+			cards: [],
+			position: {x: 0, y: 0},
+		},
+		1: {
+			stackType: "hidden",
+			cards: [],
+			position: {x: 0, y: 0},
+		}
+	})
 	const [ usedCards, setUsedCards ] = useState({})
 
 	const stackRef = useRef([]);
 	const cardRef = useRef([]);
 	
 	const stacksReference = useRef({})
-	stacksReference.current = stacks
+	stacksReference.current = usedStacks
 	
 	const usedCardsReference = useRef({})
 	usedCardsReference.current = usedCards
@@ -82,7 +95,7 @@ function PlayingGame(
 	const [currentlyMovingStack, setCurrentlyMovingStack] = useState(false);
 
 	const getNearestStack = (cardRef) => {
-		const distances = Object.keys(stacks).map((stackId) => {
+		const distances = Object.keys(usedStacks).map((stackId) => {
 			if (stackRef.current[stackId]) {
 				return getDistanceBetweenTwoElements(stackRef.current[stackId], cardRef.current)
 			} else {
@@ -145,18 +158,80 @@ function PlayingGame(
 		}, 300)
 	}
 
-	useEffect(() => {
-		let cards;
-		Object.keys(syncedCards).forEach(cardId => {
-			cards[cardId] = {
-				...syncedCards[cardId],
-				controlledPosition: {x: 0, y: 0},
-				zIndex: 0,
-				animation: "none",
+	const setCards = (cardId: number, stackId: number) => {
+		const stack: {
+			stackType: string;
+			cards: number[];
+			position: {
+				x: number;
+				y: number;
+			};
+		} = usedStacks[stackId]
+		const card = usedCards[cardId]
+
+		const cardPosition = {
+			x: stack.stackType !== "hand" && stack.stackType !== "open" ? stackRef.current[stackId].getBoundingClientRect().x : calculateCardPosition(cardRef.current[cardId], stackRef.current[stackId], stack, cardId),
+			y: stackRef.current[stackId].getBoundingClientRect().y
+		}
+
+		setUsedCards(
+			{
+				...usedCards,
+				[cardId]: {
+					...card,
+					stackId: stackId,
+					controlledPosition: cardPosition,
+					orientation: stack.stackType === "hand" || stack.stackType === "front" ? "front" : "back",
+					zIndex: getCardPositionInStack(card, stack),
+				}
 			}
-		});
-		setUsedCards(syncedCards)
-	}, [syncedCards])
+		)
+		setUsedStacks(
+			{
+				...usedStacks,
+				[stackId]: {
+					...stack,
+					cards: [
+						...stack.cards ? stack.cards : [],
+						cardId
+					]
+				}
+			}
+		)
+		
+
+	}
+
+	useEffect(() => {
+		if(syncedCards) {
+			console.log("Synced Cards", syncedCards)
+			let cards = usedCards;
+			Object.keys(syncedCards).forEach(cardId => {
+				setCards(parseInt(cardId), syncedCards[cardId].onStack)
+				cards[cardId] = {
+					...syncedCards[cardId],
+					controlledPosition: usedCards[cardId] || {x: 0, y: 0},
+					zIndex: usedCards[cardId] || 0,
+					animation: usedCards[cardId] || "none",
+					orientation: "back"
+				}
+			});
+			setUsedCards(cards)
+		}
+
+		if(syncedStacks) {
+			// Update Stacks with syncedStacks
+			let stacks = usedStacks;
+			console.log("Synced Stacks", syncedStacks)
+			Object.keys(syncedStacks).forEach(stackId => {
+				stacks[stackId] = {
+					...syncedStacks[stackId],
+				}
+			});
+			setUsedStacks(stacks)
+		}
+
+	}, [syncedCards, syncedStacks])
 
 	const cardDimensions = {width: 80, height: 112}
 
@@ -167,9 +242,9 @@ function PlayingGame(
                 <div className='backgroundElement'></div>
                 <div className="playingArea criticalMaxWidth">
 				{
-					Object.keys(stacks).map((stackId) => {
+					Object.keys(usedStacks).map((stackId) => {
 						return (
-							<Stack key={stackId} stackType={stacks[stackId].stackType} stackRef={el => stackRef.current[stackId] = el}/>
+							<Stack key={stackId} stackType={usedStacks[stackId].stackType} stackRef={el => stackRef.current[stackId] = el}/>
 						)
 					})
 				}
@@ -181,11 +256,12 @@ function PlayingGame(
 							return <Card 
 									setRef={setCardRef} 
 									card={usedCards[cardId]} 
+									cardId={cardId}
 									key={cardId}
 									shuffle={() => {}}
 									handleLongPress={() => {}}
-									handleCardDrag={(cardRef, cardId) => handleCardDrag(cardRef, cardId, usedCards, setUsedCards, getNearestStack, nearestStack, setNearestStack, stacks, setIsColliding)} 
-									handleCardDrop={(data, id) => handleCardDrop(data, id, usedCards, setUsedCards, isColliding, setIsColliding, stacks, setStacks, nearestStack, updateCardPosition, stackRef, cardRef, currentlyMovingStack, setCurrentlyMovingStack)} />
+									handleCardDrag={(cardRef, cardId) => handleCardDrag(cardRef, cardId, usedCards, setUsedCards, getNearestStack, nearestStack, setNearestStack, usedStacks, setIsColliding)} 
+									handleCardDrop={(data, id) => handleCardDrop(id, usedCards, setUsedCards, isColliding, usedStacks, setUsedStacks, nearestStack, setCards)} />
 						})
 					}
 				</div>
@@ -193,9 +269,9 @@ function PlayingGame(
                 <GameHeader />
 
                 <div className="hand criticalMaxWidth" id="basicDrop">
-					<Stack key={"handStack"} stackType={stacks[0].stackType} stackRef={el => stackRef.current[0] = el}/>
+					<Stack key={"handStack"} stackType={usedStacks[0].stackType} stackRef={el => stackRef.current[0] = el}/>
                 </div>
-				<Stack key={"hiddenStack"} stackType={stacks[1].stackType} stackRef={el => stackRef.current[1] = el}/>
+				<Stack key={"hiddenStack"} stackType={usedStacks[1].stackType} stackRef={el => stackRef.current[1] = el}/>
             </div>
 		</div>
 	);

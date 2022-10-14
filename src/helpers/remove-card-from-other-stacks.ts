@@ -8,7 +8,7 @@ export const removeCardFromOtherStacks = (
 	// Find out on what stacks the card is
 	const stacksWithCard = Object.keys(stacks).filter(stackId => {
 		const stack = stacks[stackId];
-		return stack.cards.includes(cardId);
+		return stack.cards ? Object.keys(stack.cards).includes(cardId.toString()) : false;
 	});
 
 	stacksWithCard.forEach(stackId => {
