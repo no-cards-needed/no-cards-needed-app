@@ -85,7 +85,7 @@ function Tutorial( props) {
     return (
         <div className="modalBackground" style={{display: displayTutorial ? 'flex' : 'none'}}>
                 <div className="modal" id="basicDrop" style={{marginBottom: '64px', padding: '16px'}}>
-                    <div className="btn Secondary medium noselect" id="dropSmall" style={{alignSelf: 'flex-end'}}>
+                    <div className="btn Secondary medium noselect" id="dropSmall" style={{alignSelf: 'flex-end'}} onClick={() => setDisplayTutorial(false)}>
                         <p>SKIP</p>
                     </div>
                     <div className="content-text-container">
