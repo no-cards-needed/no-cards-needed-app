@@ -17,12 +17,12 @@ function Counter( props ) {
     
     return (
         <div className="counter">
-          <div class="quadBtnSmall Primary small noselect" id="dropSmall" onClick={countDown} style={{pointerEvents: disabled ? "none" : "inherit"}}>
-            <img src={minus} class="iconContainer" alt=""></img>
+          <div className="quadBtnSmall Primary small noselect" id="dropSmall" onClick={countDown} style={{pointerEvents: disabled ? "none" : "inherit"}}>
+            <img src={minus} className="iconContainer" alt=""></img>
           </div>
           <p style={{width: "19px", textAlign: "center", color: "#fff"}}>{value}</p>
-          <div class="quadBtnSmall Primary small noselect" id="dropSmall" onClick={countUp} style={{pointerEvents: disabled ? "none" : "inherit"}}>
-            <img src={plus} class="iconContainer" alt=""></img>
+          <div className="quadBtnSmall Primary small noselect" id="dropSmall" onClick={countUp} style={{pointerEvents: disabled ? "none" : "inherit"}}>
+            <img src={plus} className="iconContainer" alt=""></img>
           </div>
         </div>
     );

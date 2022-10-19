@@ -24,19 +24,13 @@ export const GameWrapper = ({app}: {app:any}) => {
 		[52, " Cards, 2–Ace"],
 	  ]
 
-	const players = [
-		"Milla", 
-		"Kleo", 
-		"Hannibal", 
-		"Kalle" 
-	]
-
 	const [deckCards, setDeckCards] = useState(dropdownContent[0])
     const [joker, setJoker] = useState(0)
     const [decks, setDecks] = useState(1)
     const [hand, setHand] = useState(5)
     const [pile, setPile] = useState(true)
-
+	const [startGame, setStartGame] = useState(false)
+	const [ganmeId, setGameId] = useState("auth")
 
 	// Getting the set User Name
 	const {state} = useLocation();
@@ -117,6 +111,8 @@ export const GameWrapper = ({app}: {app:any}) => {
 			console.log(errorCode, errorMessage);
 		});
 
+		console.log(allPlayers)
+
 		onAuthStateChanged(getAuth(app.current), (user) => {
 			if (user) {
 				// User is signed in, see docs for a list of available properties
@@ -162,12 +158,28 @@ export const GameWrapper = ({app}: {app:any}) => {
 		})
 		} */}
 
-		<PlayingGame 
+		{!startGame ? <CreateGame 
+			deckCards={deckCards} 
+			setDeckCards={setDeckCards} 
+			joker={joker} 
+			setJoker={setJoker} 
+			decks={decks} 
+			setDecks={setDecks} 
+			hand={hand} 
+			setHand={setHand} 
+			pile={pile} 
+			setPile={setPile} 
+			dropdownContent={dropdownContent} 
+			players={allPlayers} 
+			startGame={startGame}
+			setStartGame={setStartGame}
+			gameId={"jkhasjghf"}
+		/> : <PlayingGame 
 			syncedCards={cardsState}
 			syncedStacks={stacksState}
 			setCard={setCard}
 			setStack={setStack}
-		/>
+		/>}
 			{/* <CreateGame deckCards={deckCards} setDeckCards={setDeckCards} joker={joker} setJoker={setJoker} decks={decks} setDecks={setDecks} hand={hand} setHand={setHand} pile={pile} setPile={setPile} dropdownContent={dropdownContent} players={players}/> */}
 
 		</>
