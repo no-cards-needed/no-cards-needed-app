@@ -5,12 +5,12 @@ function PlayerCards( props ) {
     return (
   
       <div className="PlayerCards"> 
-        <div class="playerContainer">
+        <div className="playerContainer">
 
-                {names.map(name => (
-                <div class="player">
-                  <div class="avatar"></div>
-                  <p>{name}</p>
+                {Object.values(names).map((player, index) => (
+                <div className="player" key={index}>
+                  <div className="avatar" style={{display: player.host ? 'block' : 'none' }}></div>
+                  <p>{player.name}</p>
                 </div>
                 ))}
 

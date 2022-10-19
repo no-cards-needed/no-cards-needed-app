@@ -10,24 +10,24 @@ function ContextMenu() {
 
     return (
       <div className="conpMenu noselect" id="transpBlur">
-          <div class="conpMenuItem">
-                <img src={pickUp} class="iconContainerBig" alt=""></img>
+          <div className="conpMenuItem">
+                <img src={pickUp} className="iconContainerBig" alt=""></img>
                 <p>Pick Up</p>
           </div>
-          <div class="conpMenuItem">
-                <img src={removePile} class="iconContainerBig" alt=""></img>
+          <div className="conpMenuItem">
+                <img src={removePile} className="iconContainerBig" alt=""></img>
                 <p>Remove Pile <br/> from Game</p>
           </div>
-          <div class="conpMenuItem">
-                <img src={takeATrick} class="iconContainerBig" alt=""></img>
+          <div className="conpMenuItem">
+                <img src={takeATrick} className="iconContainerBig" alt=""></img>
                 <p>Take a Trick</p>
           </div>
-          <div class="conpMenuItem">
-                <img src={shufflePile} class="iconContainerBig" alt=""></img>
+          <div className="conpMenuItem">
+                <img src={shufflePile} className="iconContainerBig" alt=""></img>
                 <p>Shuffle Pile</p>
           </div>
-          <div class="conpMenuItem">
-                <img src={dealAgain} class="iconContainerBig" alt=""></img>
+          <div className="conpMenuItem">
+                <img src={dealAgain} className="iconContainerBig" alt=""></img>
                 <p>Deal all Cards <br/> Again</p>
           </div>
       </div>

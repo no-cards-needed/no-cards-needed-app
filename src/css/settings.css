@@ -81,7 +81,6 @@
 
     max-width: min-content;
     padding: 4px 12px 4px 4px;
-    gap: 8px;
 
     align-self: stretch;
     flex-grow: 1;
@@ -89,6 +88,11 @@
     background: var(--vg-20);
     border-radius: 8px;
   }
+
+  .player p {
+    margin-left: 8px;
+  }
+
 
   .playerContainer {
     display: flex;

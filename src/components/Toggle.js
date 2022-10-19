@@ -16,8 +16,8 @@ function Toggle( props ) {
      
   
       <div className="Toggle"> 
-        <div class={toggleOn ? "toggleOn" : "toggleOff"} onClick={activate}>
-            <div class={toggleOn ? "toggleCircleOn basicDrop" : "toggleCircleOff basicDrop"}></div>
+        <div className={toggleOn ? "toggleOn" : "toggleOff"} onClick={activate}>
+            <div className={toggleOn ? "toggleCircleOn basicDrop" : "toggleCircleOff basicDrop"}></div>
         </div>
       </div>
     );
