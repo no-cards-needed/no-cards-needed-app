@@ -88,20 +88,6 @@ function Card({
 		setTransition(true)
 	  	timerRef.current = setTimeout(() => setTransition(false), transitionTime)
 	}
-	
-	useEffect(() => {
-		setRef(cardId, nodeRef)
-	  	return () => clearTimeout(timerRef.current);
-	}, [])
-
-
-	const getRandomCard = () => {
-		const rand = Math.floor(Math.random() * cards.length)
-		return (cards[rand].icon)
-	}
-	// console.log(cards)
-
-	const backSide = back
 
 	const getCardBySymbol = () => {
 		try {
@@ -128,15 +114,14 @@ function Card({
 		}
     };
 
-	const [lastTouchTimestamp, setLastTouchTimestamp] = useState(0);
-
+	const lastTouchTimestamp = useRef(0);
     const onClick = (e) => {
 		if (e.type === "touchend") {
-			setLastTouchTimestamp(e.timeStamp);
+			lastTouchTimestamp.current = e.timeStamp;
 		}
 
 		// Open Context Menu on double press
-		if(e.detail === 2 || e.timeStamp - lastTouchTimestamp < 500) {
+		if(e.detail === 2 || e.timeStamp - lastTouchTimestamp.current < 500) {
 			toggleMenu(true)
 			if(e.type === "touchend") {
 				setAnchorPoint({x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY})
@@ -148,7 +133,7 @@ function Card({
 
 	const onMouseDown = (e) => {
 		// Setting cardStartPosition to current position of the card
-		//console.log("setting delta position")
+		console.log("setting delta position")
 		cardStartPosition = deltaPosition
 	}
 
@@ -176,9 +161,13 @@ function Card({
 
 	const transform = onStackType === "stack" ? `rotate(${rotation}deg)` : "rotate(0deg)";
 
-
 	const [menuProps, toggleMenu] = useMenuState();
     const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
+
+	useEffect(() => {
+		setRef(cardId, nodeRef)
+	  	return () => clearTimeout(timerRef.current);
+	}, [])
 
 	return (
 		<>
@@ -210,7 +199,7 @@ function Card({
 								card.orientation === "front" ?
 									cardToDisplay
 									: card.orientation === "back" ?
-									backSide
+									back
 									: <p>Rip </p>
 							}
 							

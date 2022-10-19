@@ -78,6 +78,11 @@ function PlayingGame(
 			position: {x: 0, y: 0},
 		}
 	})
+
+	useEffect(() => {
+		// console.log("usedStacks updated", usedStacks)
+	}, [usedStacks])
+
 	const [ usedCards, setUsedCards ] = useState({})
 
 	const stackRef = useRef([]);
@@ -159,47 +164,52 @@ function PlayingGame(
 	}
 
 	const setCards = (cardId: number, stackId: number) => {
-		const stack: {
-			stackType: string;
-			cards: number[];
-			position: {
-				x: number;
-				y: number;
-			};
-		} = usedStacks[stackId]
-		const card = usedCards[cardId]
-
-		const cardPosition = {
-			x: stack.stackType !== "hand" && stack.stackType !== "open" ? stackRef.current[stackId].getBoundingClientRect().x : calculateCardPosition(cardRef.current[cardId], stackRef.current[stackId], stack, cardId),
-			y: stackRef.current[stackId].getBoundingClientRect().y
+		try {
+			const stack: {
+				stackType: string;
+				cards: number[];
+				position: {
+					x: number;
+					y: number;
+				};
+			} = usedStacks[stackId]
+			const card = usedCards[cardId]
+	
+			const cardPosition = {
+				x: stack.stackType !== "hand" && stack.stackType !== "open" ? stackRef.current[stackId].getBoundingClientRect().x : calculateCardPosition(cardRef.current[cardId], stackRef.current[stackId], stack, cardId),
+				y: stackRef.current[stackId].getBoundingClientRect().y
+			}
+			console.log(getCardPositionInStack(card, stack))
+			setUsedCards(
+				{
+					...usedCards,
+					[cardId]: {
+						...card,
+						stackId: stackId,
+						controlledPosition: cardPosition,
+						orientation: stack.stackType === "hand" || stack.stackType === "front" ? "front" : "back",
+						zIndex: getCardPositionInStack(card, stack),
+					} 
+				}
+			)
+			setUsedStacks(
+				{
+					...usedStacks,
+					[stackId]: {
+						...stack,
+						cards: [
+							...stack.cards ? stack.cards : [],
+							cardId
+						]
+					}
+				}
+			)
 		}
-
-		setUsedCards(
-			{
-				...usedCards,
-				[cardId]: {
-					...card,
-					stackId: stackId,
-					controlledPosition: cardPosition,
-					orientation: stack.stackType === "hand" || stack.stackType === "front" ? "front" : "back",
-					zIndex: getCardPositionInStack(card, stack),
-				}
-			}
-		)
-		setUsedStacks(
-			{
-				...usedStacks,
-				[stackId]: {
-					...stack,
-					cards: [
-						...stack.cards ? stack.cards : [],
-						cardId
-					]
-				}
-			}
-		)
-		
-
+		catch (e) {
+			console.error(e)
+			console.error("COULD NOT SET CARDS")
+			console.error(cardId, stackId)
+		}
 	}
 
 	useEffect(() => {
@@ -210,15 +220,15 @@ function PlayingGame(
 				setCards(parseInt(cardId), syncedCards[cardId].onStack)
 				cards[cardId] = {
 					...syncedCards[cardId],
-					controlledPosition: usedCards[cardId] || {x: 0, y: 0},
-					zIndex: usedCards[cardId] || 0,
-					animation: usedCards[cardId] || "none",
+					controlledPosition: usedCards[cardId] ? usedCards[cardId].controlledPosition : {x: 0, y: 0},
+					zIndex: usedCards[cardId] ? usedCards[cardId].zIndex : 0,
+					animation: usedCards[cardId] ? usedCards[cardId].animation : "none",
 					orientation: "back"
 				}
 			});
 			setUsedCards(cards)
 		}
-
+ 
 		if(syncedStacks) {
 			// Update Stacks with syncedStacks
 			let stacks = usedStacks;
@@ -229,7 +239,7 @@ function PlayingGame(
 				}
 			});
 			setUsedStacks(stacks)
-		}
+		} 
 
 	}, [syncedCards, syncedStacks])
 
@@ -243,9 +253,11 @@ function PlayingGame(
                 <div className="playingArea criticalMaxWidth">
 				{
 					Object.keys(usedStacks).map((stackId) => {
-						return (
-							<Stack key={stackId} stackType={usedStacks[stackId].stackType} stackRef={el => stackRef.current[stackId] = el}/>
-						)
+						if(parseInt(stackId) > 1) {
+							return (
+								<Stack key={stackId} stackType={usedStacks[stackId].stackType} stackRef={el => stackRef.current[stackId] = el}/>
+							)
+						}
 					})
 				}
                 </div>

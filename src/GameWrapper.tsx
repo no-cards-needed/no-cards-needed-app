@@ -13,6 +13,7 @@ import { setDefaultStacks, setDefaultUsedCards } from "./helpers/mp";
 
 
 import CreateGame from "./components/CreateGame.js"
+import { textChangeRangeIsUnchanged } from "typescript";
 
 export const GameWrapper = ({app}: {app:any}) => {
 
@@ -65,7 +66,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 			// If this is the only player, set cardsRef and stacksRef
 			if (Object.keys(snapshot.val()).length === 1) {
 				// Temporatilly setting stacks and cards
-				set(cardsRef.current, setDefaultUsedCards());
+				set(cardsRef.current, setDefaultUsedCards()).then(() => console.log("data saved")).catch((error) => console.log(error));
 				set(stacksRef.current, setDefaultStacks());
 
 				// Sets the last player to be the host
@@ -104,6 +105,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 		set(stacksRef.current.child(stackId), stack);
 	}
 
+
 	// Page Load
 	useEffect(() => {
 		// Connect to Firebase
@@ -127,7 +129,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 					cards: [],
 					host: false
 				})
-	
+				setUserId(user.uid);
 
 				onDisconnect(playerRef.current).remove();
 	
@@ -159,6 +161,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 			return <div key={player.id}>{player.name}-{player.host ? "Host" : ""}</div>
 		})
 		} */}
+
 		<PlayingGame 
 			syncedCards={cardsState}
 			syncedStacks={stacksState}
