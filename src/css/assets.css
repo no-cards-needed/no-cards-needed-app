@@ -60,6 +60,7 @@
 
     background: var(--vg-20);
     border-radius: 8px;
+    cursor: pointer;
 }
 
 .counter {

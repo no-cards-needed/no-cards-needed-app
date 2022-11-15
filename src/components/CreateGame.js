@@ -18,15 +18,9 @@ function Menu( props ) {
   
   const {deckCards, setDeckCards, joker, setJoker, decks, setDecks, hand, setHand, pile, setPile, dropdownContent, players, startGame, setStartGame, gameId} = props
 
-  // const dropdownContent = [
-  //   [24, " Cards, 9–Ace"],
-  //   [32, " Cards, 7–Ace"],
-  //   [36, " Cards, 6-Ace"],
-  //   [52, " Cards, 2–Ace"],
-  // ]
-
   const [ active, setActive ] = useState(true)
   const [ displaySettings, setDisplaySettings ] = useState( 'none' )
+  const [ isHost, setIsHost ] = useState(true)
 
   function toggleDisplay() {
     if (active) {   
@@ -35,7 +29,6 @@ function Menu( props ) {
     } else { 
       setActive(true) 
       setDisplaySettings( 'none' )
-
     }
   } 
 
@@ -43,6 +36,11 @@ function Menu( props ) {
 
     const [totalCards, setTotalCards] = useState(24)
     const [cardsInDrawPile, setCardsInDrawPile] = useState(19)
+    const [maxValue, setMaxValue] = useState(totalCards / Object.values(players).length)
+
+    const copy = async () => {
+      await navigator.clipboard.writeText(gameId);
+    }
 
     useEffect(() => {
       setTotalCards((deckCards[0] + joker) * decks)
@@ -50,6 +48,8 @@ function Menu( props ) {
       setCardsInDrawPile(totalCards - (Object.values(players).length * hand))
 
       if (split) setHand(totalCards / Object.values(players).length)
+
+      totalCards % Object.values(players).length !== 0 ? setMaxValue(totalCards / Object.values(players).length - 1) : setMaxValue(totalCards / Object.values(players).length)
 
     }, [deckCards, totalCards, joker, decks, hand, players, split, pile])
 
@@ -69,24 +69,24 @@ function Menu( props ) {
           </div>
 
           <div style={{display: "flex", flexDirection: "row", alignItems: "flex-start", gap: "16px", width: "100%", maxWidth: "394px"}}>
-              <div className="labelItemGroup">
-                <label>access code</label>
-                <div className="infoTag">
-                  <label>{gameId}</label>
-                </div>
-              </div>
-              
-              <div className="labelItemGroup">
-                <label>share access</label>
-                <div className="quadBtnSmall Primary small noselect" id="basicDrop">
-                  <img src={share} className="iconContainer" alt=""></img>
-                </div>
+            <div className="labelItemGroup">
+              <label>access code</label>
+              <div className="infoTag" onClick={copy}>
+                <label>{gameId}</label>
+                {/* <label style={{display: }}>Copied to clipboard</label> */}
               </div>
             </div>
-
+              
+            <div className="labelItemGroup">
+              <label>share access</label>
+              <div className="quadBtnSmall Primary small noselect" id="basicDrop">
+                <img onClick={copy} src={share} className="iconContainer" alt=""></img>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="settingsContainer noselect" id="basicDrop">
+        <div className="settingsContainer noselect" id="basicDrop" style={{display: isHost ? 'flex' : 'none'}}>
 
           <div className="settingsLabel" onClick={toggleDisplay}>
             <p>Game Settings</p>
@@ -112,14 +112,14 @@ function Menu( props ) {
                     <img src={jokerIcon} className="iconContainer" alt=""></img>
                     <label>jokers per deck</label>
                   </div>
-                  <Counter value={joker} setValue={setJoker} minValue={0} disabled={false}/>
+                  <Counter value={joker} setValue={setJoker} minValue={0} maxValue={10} disabled={false}/>
                 </div>
                 <div className="labelItemGroup" style={{maxWidth: "197px"}}>
                   <div className="labelIconCombo">
                     <img src={deckIcon} className="iconContainer" alt=""></img>
                     <label>number of decks</label>
                   </div>
-                  <Counter value={decks} setValue={setDecks} minValue={1} disabled={false}/>
+                  <Counter value={decks} setValue={setDecks} minValue={1} maxValue={10} disabled={false}/>
                 </div>
               </div>
             </div>
@@ -133,7 +133,7 @@ function Menu( props ) {
                       <label>Hand Cards</label>
                   </div>
                 <div style={{opacity: split ? "0.7" : "1" }}>
-                  <Counter value={hand} setValue={setHand} minValue={0} disabled={split ? true : false} />
+                  <Counter value={hand} setValue={setHand} minValue={0} maxValue={maxValue} disabled={split ? true : false} />
                 </div>
               </div> 
             </div>
@@ -166,7 +166,7 @@ function Menu( props ) {
           </div>    
         </div> 
 
-        <div className="btnBig Primary" id="basicDrop" onClick={() => setStartGame(true)}>
+        <div className="btnBig Primary" id="basicDrop" onClick={() => setStartGame(true)} style={{display: isHost ? 'flex' : 'none'}}>
           <div className="headline">Start Game</div>
         </div>
 

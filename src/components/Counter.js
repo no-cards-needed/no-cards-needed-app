@@ -5,14 +5,14 @@ import React, { useState } from 'react';
 function Counter( props ) {
 
 
-    const {value, setValue, minValue, disabled} = props
+    const {value, setValue, minValue, maxValue, disabled} = props
   
     function countDown() {
       if (value > minValue && disabled === false) setValue(value - 1) 
     } 
   
     function countUp() {
-      if (disabled === false) setValue(value + 1)
+      if (disabled === false && value < maxValue) setValue(value + 1)
     } 
     
     return (

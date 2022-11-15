@@ -1,21 +1,30 @@
+@font-face {
+    font-family: 'Heebo';
+    src: url('/src/font/Heebo/Heebo-VariableFont_wght.ttf') format("truetype-variations");
+}
+
 /* Headline / H1 */
 .headline {
     font-family: 'Heebo';
     font-style: normal;
-    font-weight: 745;
+    font-weight: 600;
     font-size: 20px;
     line-height: 120%;
-    letter-spacing: 0.05em;
+    letter-spacing: 5%;
 }
 /* Body */
 p {
     margin: 0;
     font-family: 'Heebo';
     font-style: normal;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 16px;
     line-height: 24px;
-    letter-spacing: 0.02em;
+    letter-spacing: 2%;
+}
+
+a {
+    color: var(--violet-prime-50)
 }
 
 /* Label */

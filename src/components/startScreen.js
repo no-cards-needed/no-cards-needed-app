@@ -3,6 +3,7 @@ import { useState } from 'react';
 import {useNavigate} from "react-router-dom";
 import {generateLobbyString} from "../helpers/words";
 import Tutorial from "./TutorialModal.js"
+import { Link } from "react-router-dom";
 
 
 function StartScreen() {
@@ -77,6 +78,18 @@ function StartScreen() {
           </div>
           <div className="btnBig Secondary" id="basicDrop" onClick={toggleJoin}>
             <div className="headline">Join Game </div>
+          </div>
+          <div style={{padding: '0 12.5px', display: 'flex', flexDirection: 'row', gap: '16px'}}>
+            <div className="btn small Secondary" id="basicDrop" style={{width: '100%'}}>
+              <Link to='About' style={{color: 'var(--vg-100)', textDecoration: 'none'}}>
+                <p>About</p>           
+              </Link>
+            </div>
+            <div className="btn small Secondary" id="basicDrop" style={{width: '100%'}}>
+              <Link to='Imprint' style={{color: 'var(--vg-100)', textDecoration: 'none'}}>
+                <p>Imprint</p> 
+              </Link>          
+            </div>
           </div>
         </div>
 

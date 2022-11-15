@@ -30,6 +30,8 @@ import App from './PlayingGame';
 
 import StartScreen from "./components/startScreen.js"
 import CreateGame from "./components/CreateGame.js"
+import Imprint from "./components/Imprint.js"
+import About from "./components/About.js"
 import ContextMenu from "./components/ContextMenu.js"
 
 import reportWebVitals from './reportWebVitals';
@@ -37,7 +39,7 @@ import { GameWrapper } from './GameWrapper';
 import { initializeApp } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
 
-// TODO: Add SDKs for Firebase products that you want to use
+// TODO: Add SDKs for Firebase products that you want to usea
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
@@ -68,6 +70,8 @@ root.render(
 				<Route path="game/:gameId" element={<App />} />
 				{/* <Route path="gametest" element={<Game />} /> */}
 				<Route path="game/lobby" element={<CreateGame />} />
+				<Route path="imprint" element={<Imprint />} />
+				<Route path="about" element={<About />} />
 			</Routes>
 		</BrowserRouter>
 	</React.StrictMode>
