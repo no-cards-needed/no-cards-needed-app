@@ -79,6 +79,11 @@ function PlayingGame(
 		}
 	})
 
+	const tempSetUsedStacks = (stacks) => {
+		console.log('tempSetUsedStacks', stacks)
+		setUsedStacks(stacks)
+	}
+
 	useEffect(() => {
 		// console.log("usedStacks updated", usedStacks)
 	}, [usedStacks])
@@ -179,7 +184,7 @@ function PlayingGame(
 				x: stack.stackType !== "hand" && stack.stackType !== "open" ? stackRef.current[stackId].getBoundingClientRect().x : calculateCardPosition(cardRef.current[cardId], stackRef.current[stackId], stack, cardId),
 				y: stackRef.current[stackId].getBoundingClientRect().y
 			}
-			console.log(getCardPositionInStack(card, stack))
+
 			setUsedCards(
 				{
 					...usedCards,
@@ -192,9 +197,20 @@ function PlayingGame(
 					} 
 				}
 			)
+			console.log("setting used cards again")
+
+			// Filter current card out of the tempUsedStacks
+			const tempUsedStacks = Object.keys(usedStacks).map(
+				(stackId) => {
+					return {
+						...stack,
+						cards: stack.cards.filter((card) => card !== cardId)
+					}
+				}
+			)
 			setUsedStacks(
 				{
-					...usedStacks,
+					...tempUsedStacks,
 					[stackId]: {
 						...stack,
 						cards: [
@@ -273,7 +289,7 @@ function PlayingGame(
 									shuffle={() => {}}
 									handleLongPress={() => {}}
 									handleCardDrag={(cardRef, cardId) => handleCardDrag(cardRef, cardId, usedCards, setUsedCards, getNearestStack, nearestStack, setNearestStack, usedStacks, setIsColliding)} 
-									handleCardDrop={(data, id) => handleCardDrop(id, usedCards, setUsedCards, isColliding, usedStacks, setUsedStacks, nearestStack, setCards)} />
+									handleCardDrop={(data, id) => handleCardDrop(id, usedCards, setUsedCards, isColliding, usedStacks, tempSetUsedStacks, nearestStack, setCards)} />
 						})
 					}
 				</div>
