@@ -8,7 +8,7 @@ export const handleCardDrop = (
 	usedCards: {0?: Card},
 	setUsedCards: (usedCards) => void, 
 	isColliding: boolean,
-	stacks: {0: Stack}, 
+	stacks: {0?: Stack}, 
 	setStacks: (stacks) => void,
 	nearestStack: {nearestStack, index: number, distance: number}, 
 	setCards: (cardId: number, stackId: number) => void) => {
@@ -32,8 +32,6 @@ export const handleCardDrop = (
 				
 				const previousStackIndex = usedCards[cardId].onStack
 
-				// Removing Card-ID from all other stacks
-				removeCardFromOtherStacks(setStacks, stacks, cardId)
 
 				// Stack Position
 				const {x: stackX, y: stackY} = getPositionAtCenter(nearestStack.nearestStack, "stackPosition - handle-card-drop.ts 96");
