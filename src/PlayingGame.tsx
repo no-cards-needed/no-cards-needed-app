@@ -66,18 +66,20 @@ function PlayingGame(
 	}
 	} 
 
-	const [ usedStacks, setUsedStacks ] = useState({
-		0: {
-			stackType: "hand",
-			cards: [],
-			position: {x: 0, y: 0},
-		},
-		1: {
-			stackType: "hidden",
-			cards: [],
-			position: {x: 0, y: 0},
+	const [ usedStacks, setUsedStacks ] = useState<{0?: Stack, 1?: Stack}>(
+		{
+			0: {
+				stackType: "hand",
+				cards: [],
+				position: {x: 0, y: 0},
+			},
+			1: {
+				stackType: "hidden",
+				cards: [],
+				position: {x: 0, y: 0},
+			}
 		}
-	})
+	)
 
 	const tempSetUsedStacks = (stacks) => {
 		console.log('tempSetUsedStacks', stacks)
@@ -184,7 +186,6 @@ function PlayingGame(
 				x: stack.stackType !== "hand" && stack.stackType !== "open" ? stackRef.current[stackId].getBoundingClientRect().x : calculateCardPosition(cardRef.current[cardId], stackRef.current[stackId], stack, cardId),
 				y: stackRef.current[stackId].getBoundingClientRect().y
 			}
-
 			setUsedCards(
 				{
 					...usedCards,
@@ -193,21 +194,21 @@ function PlayingGame(
 						stackId: stackId,
 						controlledPosition: cardPosition,
 						orientation: stack.stackType === "hand" || stack.stackType === "front" ? "front" : "back",
-						zIndex: getCardPositionInStack(card, stack),
+						zIndex: usedStacks[stackId].cards ? usedStacks[stackId].cards.length : 0,
 					} 
 				}
 			)
-			console.log("setting used cards again")
 
 			// Filter current card out of the tempUsedStacks
-			const tempUsedStacks = Object.keys(usedStacks).map(
-				(stackId) => {
-					return {
-						...stack,
-						cards: stack.cards.filter((card) => card !== cardId)
+			let tempUsedStacks = {}
+			Object.keys(usedStacks).map((stackId) => {
+				return (
+					tempUsedStacks[stackId] = {
+						...usedStacks[stackId],
+						cards: usedStacks[stackId].cards ? usedStacks[stackId].cards.filter((card) => card !== cardId) : []
 					}
-				}
-			)
+				)
+			})
 			setUsedStacks(
 				{
 					...tempUsedStacks,
@@ -227,6 +228,23 @@ function PlayingGame(
 			console.error(cardId, stackId)
 		}
 	}
+
+	useEffect(() => {
+		setUsedStacks(
+			{
+				0: {
+					stackType: "hand",
+					cards: [],
+					position: {x: 0, y: 0},
+				},
+				1: {
+					stackType: "hidden",
+					cards: [],
+					position: {x: 0, y: 0},
+				}
+			}
+		)	
+	}, [])
 
 	useEffect(() => {
 		if(syncedCards) {
