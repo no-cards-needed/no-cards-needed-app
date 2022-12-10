@@ -16,7 +16,7 @@ function Imprint() {
         <div className='tut' style={{color: 'var(--vg-100)'}}>
         <p>Angaben gemäß § 5 TMG </p>
         Eric Wätke & Silas Wolf<br/>
-        No cards needed <br/>– eine Kartenspiel Simulation <br/>
+        No cards needed <br/>eine Kartenspiel Simulation <br/>
         <br/>
         Kastanienallee 17<br/>
         14471 Potsdam<br/>

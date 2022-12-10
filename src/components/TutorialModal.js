@@ -1,12 +1,12 @@
-import { map } from '@firebase/util';
 import React, { useState, useEffect } from 'react';
+import { setItem, getItem } from '../helpers/localStorageHelper.ts';
 
 import chevronLeft from '../assets/iconsBlack/chevron/left.svg';
 import chevronRight from '../assets/iconsWhite/chevron/right.svg';
 
 function Tutorial( props) {
 
-    const { displayTutorial, setDisplayTutorial, kind } = props
+    const { displayTutorial, setDisplayTutorial, kind, wasSkipped, setWasSkipped } = props
 
     const contentCreateGame = [
         {
@@ -85,7 +85,7 @@ function Tutorial( props) {
     return (
         <div className="modalBackground" style={{display: displayTutorial ? 'flex' : 'none'}}>
                 <div className="modal" id="basicDrop" style={{marginBottom: '64px', padding: '16px'}}>
-                    <div className="btn Secondary medium noselect" id="dropSmall" style={{alignSelf: 'flex-end'}} onClick={() => setDisplayTutorial(false)}>
+                    <div className="btn Secondary medium noselect" id="dropSmall" style={{alignSelf: 'flex-end'}} onClick={() => {setDisplayTutorial(false); setWasSkipped(true); setItem('wasSkipped', wasSkipped)}}>
                         <p>SKIP</p>
                     </div>
                     <div className="content-text-container">

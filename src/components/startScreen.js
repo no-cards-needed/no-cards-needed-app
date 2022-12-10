@@ -18,6 +18,8 @@ function StartScreen() {
 
   const [ displayTutorial, setDisplayTutorial ] = useState(true)
 
+  const [ wasSkipped, setWasSkipped ] = useState(false)
+ 
   function toggleCreate() { 
     setProcessCreate(true) 
     setDisplayModal( 'flex' )
@@ -79,7 +81,7 @@ function StartScreen() {
           <div className="btnBig Secondary" id="basicDrop" onClick={toggleJoin}>
             <div className="headline">Join Game </div>
           </div>
-          <div style={{padding: '0 12.5px', display: 'flex', flexDirection: 'row', gap: '16px'}}>
+          <div style={{padding: '0 16px', display: 'flex', flexDirection: 'row', gap: '16px'}}>
             <div className="btn small Secondary" id="basicDrop" style={{width: '100%'}}>
               <Link to='About' style={{color: 'var(--vg-100)', textDecoration: 'none'}}>
                 <p>About</p>           
@@ -93,7 +95,7 @@ function StartScreen() {
           </div>
         </div>
 
-        <Tutorial displayTutorial={displayTutorial} setDisplayTutorial={setDisplayTutorial} kind={'contentCreateGame'}/>
+        <Tutorial displayTutorial={!wasSkipped ? displayTutorial : false} setDisplayTutorial={setDisplayTutorial} kind={'contentCreateGame'} wasSkipped={wasSkipped} setWasSkipped={setWasSkipped}/>
 
 
         <div className="modalBackground" style={{display:displayModal}}>

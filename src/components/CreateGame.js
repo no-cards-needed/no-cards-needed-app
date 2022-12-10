@@ -38,8 +38,10 @@ function Menu( props ) {
     const [cardsInDrawPile, setCardsInDrawPile] = useState(19)
     const [maxValue, setMaxValue] = useState(totalCards / Object.values(players).length)
 
-    const copy = async () => {
-      await navigator.clipboard.writeText(gameId);
+    const URL = window.location.href
+
+    const shareId = async () => {
+      navigator.share({title: "ncn game", text: "Share link to your game!", url: URL}).then(() => {}).catch(e => {console.log("User didn't share: " + e)})
     }
 
     useEffect(() => {
@@ -71,16 +73,15 @@ function Menu( props ) {
           <div style={{display: "flex", flexDirection: "row", alignItems: "flex-start", gap: "16px", width: "100%", maxWidth: "394px"}}>
             <div className="labelItemGroup">
               <label>access code</label>
-              <div className="infoTag" onClick={copy}>
+              <div className="infoTag">
                 <label>{gameId}</label>
-                {/* <label style={{display: }}>Copied to clipboard</label> */}
               </div>
             </div>
               
             <div className="labelItemGroup">
               <label>share access</label>
               <div className="quadBtnSmall Primary small noselect" id="basicDrop">
-                <img onClick={copy} src={share} className="iconContainer" alt=""></img>
+                <img onClick={shareId} src={share} className="iconContainer" alt=""></img>
               </div>
             </div>
           </div>

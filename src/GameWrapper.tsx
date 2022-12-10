@@ -30,7 +30,7 @@ export const GameWrapper = ({app}: {app:any}) => {
     const [hand, setHand] = useState(5)
     const [pile, setPile] = useState(true)
 	const [startGame, setStartGame] = useState(false)
-	const [ganmeId, setGameId] = useState("auth")
+	const [gameId, setGameId] = useState("auth")
 
 	// Getting the set User Name
 	const {state} = useLocation();
