@@ -1,103 +1,86 @@
-import { createRef, useEffect, useRef, useState } from "react";
-import {useNavigate, useParams, } from "react-router-dom";
+import { RefObject, useEffect, useRef, useState } from "react";
 import './css/App.css';
 
 import Card from "./components/Card";
 import { Stack } from "./components/Stack";
 import { calculateCardPosition } from "./helpers/calculate-card-position";
 import { getDistanceBetweenTwoElements } from "./helpers/get-distance-between-two-elements";
-import { getPositionAtCenter } from "./helpers/get-position-at-center";
 import { handleCardDrag } from "./helpers/handle-card-drag";
 import { handleCardDrop } from "./helpers/handle-card-drop";
-import { moveCardsAside } from "./helpers/move-cards-aside";
-import { moveCardsToHand } from "./helpers/move-cards-to-hand";
-import { shuffleCards } from "./helpers/shuffle-cards";
-import {addCardIntoStack, moveCardToPosition} from "./helpers/move-card-to-position";
-import {moveCardsToStack} from "./helpers/move-cards-to-stack";
-import useTimeout from "./helpers/hooks/useTimeout";
 import GameHeader from "./components/GameHeader";
-import toast, {Toaster} from "react-hot-toast";
-import { getCardPositionInStack } from "./helpers/get-card-position-in-stack";
-
-// https://www.npmjs.com/package/use-dynamic-refs
-// import useDynamicRefs from "./assets/helpers/use-dynamic-refs";
+import {Toaster} from "react-hot-toast";
 
 function PlayingGame(
 		{
+			gameStatus,
+			setGameStatus,
+
 			syncedCards, 
-			syncedStacks, 
 			setCard,
+
+			syncedStacks, 
 			setStack,
 		}: {
-			syncedCards: {0?: Card}, 
-			syncedStacks: {0?: Stack}, 
-			setCard: (card, cardId) => void,
-			setStack: (stack, stackId) => void
+			gameStatus: GameStatus,
+			setGameStatus: (gameStatus: GameStatus) => void,
+
+			syncedCards: Card[], 
+			syncedStacks: Stack[], 
+			setCard: (card: Card, cardId: number) => void,
+			setStack: (stack: Stack, stackId: number) => void
 		}) {
 
-	const [ lashTextTricks, setLashTextTricks ] = useState( 'Show Tricks' )
-    const [ lashTextRemoved, setLashTextRemoved ] = useState( 'Show Removed Cards' )
-    const [ activeTricks, setActiveTricks ] = useState( false )
-    const [ activeRemoved, setActiveRemoved ] = useState( false )
+	// const [ lashTextTricks, setLashTextTricks ] = useState( 'Show Tricks' )
+	// const [ lashTextRemoved, setLashTextRemoved ] = useState( 'Show Removed Cards' )
+	// const [ activeTricks, setActiveTricks ] = useState( false )
+	// const [ activeRemoved, setActiveRemoved ] = useState( false )
 
-	function toggleDisplayTricks() {
-        if (activeTricks) {   
-            setActiveTricks(false) 
-            setLashTextTricks('Show Tricks')
-        } else { 
-          setActiveTricks(true) 
-          setLashTextTricks('Hide Tricks')
+	// function toggleDisplayTricks() {
+	// 	if (activeTricks) {   
+	// 		setActiveTricks(false) 
+	// 		setLashTextTricks('Show Tricks')
+	// 	} else { 
+	// 	setActiveTricks(true) 
+	// 	setLashTextTricks('Hide Tricks')
 
-          setActiveRemoved(false) 
-          setLashTextRemoved('Show Removed Cards')
-        }
-	} 
+	// 	setActiveRemoved(false) 
+	// 	setLashTextRemoved('Show Removed Cards')
+	// 	}
+	// } 
 
-	function toggleDisplayRemoved() {
-	if (activeRemoved) {   
-		setActiveRemoved(false) 
-		setLashTextRemoved('Show Removed Cards')
-	} else { 
-		setActiveRemoved(true) 
-		setLashTextRemoved('Hide Removed Cards')
+	// function toggleDisplayRemoved() {
+	// 	if (activeRemoved) {   
+	// 		setActiveRemoved(false) 
+	// 		setLashTextRemoved('Show Removed Cards')
+	// 	} else { 
+	// 		setActiveRemoved(true) 
+	// 		setLashTextRemoved('Hide Removed Cards')
 
-		setActiveTricks(false) 
-		setLashTextTricks('Show Tricks')
-	}
-	} 
+	// 		setActiveTricks(false) 
+	// 		setLashTextTricks('Show Tricks')
+	// 	}
+	// } 
 
-	const [ usedStacks, setUsedStacks ] = useState<{0?: Stack, 1?: Stack}>(
-		{
-			0: {
+	const [ usedStacks, setUsedStacks ] = useState<Stack[]>(
+		[
+			{
 				stackType: "hand",
 				cards: [],
 				position: {x: 0, y: 0},
 			},
-			1: {
+			{
 				stackType: "hidden",
 				cards: [],
 				position: {x: 0, y: 0},
 			}
-		}
+		]
 	)
-
-	const tempSetUsedStacks = (stacks) => {
-		console.log('tempSetUsedStacks', stacks)
-		setUsedStacks(stacks)
-	}
-
-	useEffect(() => {
-		// console.log("usedStacks updated", usedStacks)
-	}, [usedStacks])
-
-	const [ usedCards, setUsedCards ] = useState({})
-
-	const stackRef = useRef([]);
-	const cardRef = useRef([]);
-	
-	const stacksReference = useRef({})
+	const stackRef = useRef<HTMLDivElement[]>([]);
+	const stacksReference = useRef<Stack[]>([])
 	stacksReference.current = usedStacks
 	
+	const cardRef = useRef<HTMLDivElement[]>([]);
+	const [usedCards, setUsedCards] = useState<UsedCard[]>([])
 	const usedCardsReference = useRef({})
 	usedCardsReference.current = usedCards
 	
@@ -106,8 +89,8 @@ function PlayingGame(
 	const [isColliding, setIsColliding] = useState(false);
 	const [currentlyMovingStack, setCurrentlyMovingStack] = useState(false);
 
-	const getNearestStack = (cardRef) => {
-		const distances = Object.keys(usedStacks).map((stackId) => {
+	const getNearestStack = (cardRef: RefObject<HTMLDivElement>) => {
+		const distances = usedStacks.map((stack: Stack, stackId: number) => {
 			if (stackRef.current[stackId]) {
 				return getDistanceBetweenTwoElements(stackRef.current[stackId], cardRef.current)
 			} else {
@@ -119,52 +102,34 @@ function PlayingGame(
 		return {nearestStack, distance: Math.min(...distances), index: distances.indexOf(Math.min(...distances))};
 	}
 
-	const updateCardPosition = (cardId, {x, y}) => {
-		setUsedCards(
-			{
-				...usedCards,
-				[cardId]: {
-					...usedCards[cardId],
-					controlledPosition: {
-						x,
-						y
-					}
-				}
-			}
-		)
+	const updateCardPosition = (cardId: number, {x, y}: {x: number, y: number}) => {
+
+		// Find card by cardId in usedCards and update the controlled Position
+		const tempUsedCards = usedCards
+		tempUsedCards[cardId].controlledPosition = {x, y}
+
+		setUsedCards(tempUsedCards)
 	}
 
 	// Setting Card Ref in usedCards State
-	const setCardRef = (cardId, ref) => {
+	const setCardRef = (cardId: number, ref: HTMLDivElement) => {
 		console.log("Setting Card Ref")
 		cardRef.current[cardId] = ref;
 	}
 
-	const resetCardZIndex = (shuffledCards) => {
+	const resetCardZIndex = (shuffledCards: UsedCard[]) => {
 		// Re-Set zIndex of the shuffled cards
-		shuffledCards.forEach((cardId) => {
-			setUsedCards(
-				{
-					...usedCards,
-					[cardId]: {
-						...usedCards[cardId],
-						zIndex: shuffledCards.indexOf(cardId),
-						animation: "shuffle"
-					}
-				}
-			)
+		shuffledCards.forEach((card: UsedCard, cardId: number) => {
+			const tempUsedCards = usedCards
+			tempUsedCards[cardId].zIndex = cardId
+			tempUsedCards[cardId].animation = "shuffle"
+			setUsedCards(tempUsedCards)
 		})
 		const timeout = setTimeout(() => {
-			shuffledCards.forEach((cardId) => {
-				setUsedCards(
-					{
-						...usedCards,
-						[cardId]: {
-							...usedCards[cardId],
-							animation: "none"
-						}
-					}
-				)
+			shuffledCards.forEach((card: UsedCard, cardId: number) => {
+				const tempUsedCards = usedCards
+				tempUsedCards[cardId].animation = "none"
+				setUsedCards(tempUsedCards)
 			})
 			clearTimeout(timeout)
 		}, 300)
@@ -180,47 +145,32 @@ function PlayingGame(
 					y: number;
 				};
 			} = usedStacks[stackId]
-			const card = usedCards[cardId]
 	
 			const cardPosition = {
-				x: stack.stackType !== "hand" && stack.stackType !== "open" ? stackRef.current[stackId].getBoundingClientRect().x : calculateCardPosition(cardRef.current[cardId], stackRef.current[stackId], stack, cardId),
+				x: stack.stackType !== "hand" && stack.stackType !== "open" 
+						? stackRef.current[stackId].getBoundingClientRect().x 
+						: calculateCardPosition(cardRef.current[cardId], stackRef.current[stackId], stack, cardId),
 				y: stackRef.current[stackId].getBoundingClientRect().y
 			}
-			setUsedCards(
-				{
-					...usedCards,
-					[cardId]: {
-						...card,
-						stackId: stackId,
-						controlledPosition: cardPosition,
-						orientation: stack.stackType === "hand" || stack.stackType === "front" ? "front" : "back",
-						zIndex: usedStacks[stackId].cards ? usedStacks[stackId].cards.length : 0,
-					} 
-				}
-			)
+
+			const tempUsedCards = usedCards
+			tempUsedCards[cardId] = {
+				...tempUsedCards[cardId],
+				onStack: stackId,
+				controlledPosition: cardPosition,
+				zIndex: usedStacks[stackId].cards ? usedStacks[stackId].cards.length : 0,
+			} 
+			setUsedCards(tempUsedCards)
 
 			// Filter current card out of the tempUsedStacks
-			let tempUsedStacks = {}
-			Object.keys(usedStacks).map((stackId) => {
-				return (
-					tempUsedStacks[stackId] = {
-						...usedStacks[stackId],
-						cards: usedStacks[stackId].cards ? usedStacks[stackId].cards.filter((card) => card !== cardId) : []
-					}
-				)
-			})
-			setUsedStacks(
-				{
-					...tempUsedStacks,
-					[stackId]: {
-						...stack,
-						cards: [
-							...stack.cards ? stack.cards : [],
-							cardId
-						]
-					}
+			let tempUsedStacks: Stack[] = []
+			usedStacks.forEach((stack: Stack, stackId: number) => {
+				tempUsedStacks[stackId] = {
+					...usedStacks[stackId],
+					cards: usedStacks[stackId].cards ? usedStacks[stackId].cards.filter((card) => card !== cardId) : []
 				}
-			)
+			})
+			setUsedStacks(tempUsedStacks)
 		}
 		catch (e) {
 			console.error(e)
@@ -230,49 +180,44 @@ function PlayingGame(
 	}
 
 	useEffect(() => {
-		setUsedStacks(
-			{
-				0: {
-					stackType: "hand",
-					cards: [],
-					position: {x: 0, y: 0},
-				},
-				1: {
-					stackType: "hidden",
-					cards: [],
-					position: {x: 0, y: 0},
-				}
-			}
-		)	
-	}, [])
-
-	useEffect(() => {
 		if(syncedCards) {
-			console.log("Synced Cards", syncedCards)
-			let cards = usedCards;
-			Object.keys(syncedCards).forEach(cardId => {
-				setCards(parseInt(cardId), syncedCards[cardId].onStack)
-				cards[cardId] = {
+			// Update usedCards with syncedCards
+			console.log("🐉 [acid tang] Synced Cards", syncedCards)
+			
+			const tempUsedCards = usedCards;
+
+			syncedCards.forEach((card: Card, cardId: number) => {
+				// Get Stack Type
+				const stackType = usedStacks[card.onStack].stackType
+
+				setCards(cardId, card.onStack)
+				tempUsedCards[cardId] = {
 					...syncedCards[cardId],
 					controlledPosition: usedCards[cardId] ? usedCards[cardId].controlledPosition : {x: 0, y: 0},
 					zIndex: usedCards[cardId] ? usedCards[cardId].zIndex : 0,
 					animation: usedCards[cardId] ? usedCards[cardId].animation : "none",
-					orientation: "back"
+					movedAside: "none",
+					onStackType: stackType,
 				}
-			});
-			setUsedCards(cards)
+			})
+
+			setUsedCards(tempUsedCards)
 		}
  
 		if(syncedStacks) {
-			// Update Stacks with syncedStacks
-			let stacks = usedStacks;
-			console.log("Synced Stacks", syncedStacks)
-			Object.keys(syncedStacks).forEach(stackId => {
-				stacks[stackId] = {
+			// Update usedStacks with syncedStacks
+			console.log("🐉 [acid tang] Synced Stacks", syncedStacks)
+			const tempStacks = usedStacks;
+
+			syncedStacks.forEach((stack: Stack, stackId: number) => {
+				// Adding "2" to the stackId to avoid overwriting the first two stacks
+				// (Hand and Hidden stack)
+				tempStacks[stackId + 2] = {
 					...syncedStacks[stackId],
 				}
-			});
-			setUsedStacks(stacks)
+			})
+
+			setUsedStacks(tempStacks)
 		} 
 
 	}, [syncedCards, syncedStacks])
@@ -286,22 +231,23 @@ function PlayingGame(
                 <div className='backgroundElement'></div>
                 <div className="playingArea criticalMaxWidth">
 				{
-					Object.keys(usedStacks).map((stackId) => {
-						if(parseInt(stackId) > 1) {
+					usedStacks.map((stack: Stack, stackId: number) => {
+						if(stackId > 1) {
 							return (
-								<Stack key={stackId} stackType={usedStacks[stackId].stackType} stackRef={el => stackRef.current[stackId] = el}/>
+								<Stack key={stackId} stackType={usedStacks[stackId].stackType} stackRef={(el: HTMLDivElement) => stackRef.current[stackId] = el}/>
 							)
 						}
+						return null
 					})
 				}
                 </div>
 
 				<div className="cards">
 					{
-						Object.keys(usedCards).map((cardId) => {
+						usedCards.map((card: UsedCard, cardId: number) => {
 							return <Card 
 									setRef={setCardRef} 
-									card={usedCards[cardId]} 
+									card={card} 
 									cardId={cardId}
 									key={cardId}
 									shuffle={() => {}}
@@ -315,9 +261,10 @@ function PlayingGame(
                 <GameHeader />
 
                 <div className="hand criticalMaxWidth" id="basicDrop">
-					<Stack key={"handStack"} stackType={usedStacks[0].stackType} stackRef={el => stackRef.current[0] = el}/>
+					<Stack key={"handStack"} stackType={usedStacks[0].stackType} stackRef={(el: HTMLDivElement) => stackRef.current[0] = el}/>
                 </div>
-				<Stack key={"hiddenStack"} stackType={usedStacks[1].stackType} stackRef={el => stackRef.current[1] = el}/>
+
+				<Stack key={"hiddenStack"} stackType={usedStacks[1].stackType} stackRef={(el: HTMLDivElement) => stackRef.current[1] = el}/>
             </div>
 		</div>
 	);

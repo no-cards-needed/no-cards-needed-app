@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import Draggable from "react-draggable";
+import Draggable, { DraggableData, DraggableEvent, DraggableEventHandler } from "react-draggable";
 
 import { cards, back } from "../helpers/Cards";
 
@@ -14,15 +14,24 @@ import '@szhsin/react-menu/dist/index.css';
 
 
 function Card({
-	handleCardDrag, 
-	handleCardDrop, 
-	card, 
-	cardId,
-	setRef,
-	shuffle,
-	handleLongPress,}) {
+		handleCardDrag, 
+		handleCardDrop, 
+		card, 
+		cardId,
+		setRef,
+		shuffle,
+		handleLongPress
+	} : {
+		handleCardDrag: (nodeRef: any, cardId: number) => void,
+		handleCardDrop: (nodeRef: any, cardId: number) => void,
+		card: UsedCard,
+		cardId: number,
+		setRef: (cardId: number, ref: HTMLDivElement) => void,
+		shuffle: () => void,
+		handleLongPress: (cardId: number) => void
+	}) {
 
-	const {id, symbol, zIndex, controlledPosition, onStackType} = card;
+	const {symbol, zIndex, controlledPosition, onStackType} = card;
 
 	const nodeRef = useRef(null)
 	const [transition, setTransition] = useState(false)
@@ -49,10 +58,10 @@ function Card({
 		}
 	}, [card.movedAside])
 
-	const handleStart = () => {
+	const handleStart: DraggableEventHandler = () => {
 	}
 
-	const handleDrag = (e, ui) => {
+	const handleDrag: DraggableEventHandler = (e: DraggableEvent, ui: DraggableData) => {
 		const {x, y} = deltaPosition
 		setDeltaPosition(
 			{
@@ -63,7 +72,7 @@ function Card({
 		handleCardDrag(nodeRef, cardId)
 	}
 	
-	const handleStop = (e) => {
+	const handleStop: DraggableEventHandler = () => {
 		setDroppedTimer()
 		handleCardDrop(nodeRef, cardId)
 	}
@@ -101,21 +110,16 @@ function Card({
 		}
 	}
 
-	const [cardToDisplay, setCardToDisplay] = useState(getCardBySymbol());
+	const [cardToDisplay] = useState(getCardBySymbol());
 
+	const cardStartPosition = {x: 0, y: 0}
 
-	let cardStartPosition = {x: 0, y: 0}
+	const onLongPress: DraggableEventHandler = () => {
 
-	const onLongPress = () => {
-		if(onStackType === "stack") {
-			// MOving Whole stack, not working for now
-
-			//handleLongPress(id, cardStartPosition, deltaPosition)
-		}
     };
 
 	const lastTouchTimestamp = useRef(0);
-    const onClick = (e) => {
+    const onClick = (e: any) => {
 		if (e.type === "touchend") {
 			lastTouchTimestamp.current = e.timeStamp;
 		}
@@ -131,10 +135,10 @@ function Card({
 		}
     }
 
-	const onMouseDown = (e) => {
+	const onMouseDown = (e: Event) => {
 		// Setting cardStartPosition to current position of the card
-		console.log("setting delta position")
-		cardStartPosition = deltaPosition
+		// console.log("setting delta position")
+		// cardStartPosition = deltaPosition
 	}
 
     const defaultOptions = {
@@ -159,13 +163,13 @@ function Card({
 		}
 	}, [card.animation])
 
-	const transform = onStackType === "stack" ? `rotate(${rotation}deg)` : "rotate(0deg)";
+	const transform = onStackType === "front" ? `rotate(${rotation}deg)` : "rotate(0deg)";
 
 	const [menuProps, toggleMenu] = useMenuState();
     const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
 
 	useEffect(() => {
-		setRef(cardId, nodeRef)
+		setRef(cardId, nodeRef.current)
 	  	return () => clearTimeout(timerRef.current);
 	}, [])
 
@@ -191,21 +195,16 @@ function Card({
 					// onClick={touchStart}
 					>
 						<div 
-						style={{transform}} 
-						className={`card ${classList}`}
-						{...longPressEvent}
-						>
+							style={{transform}} 
+							className={`card ${classList}`}
+							{...longPressEvent}>
 							{
-								card.orientation === "front" ?
+								card.onStackType === "front" ?
 									cardToDisplay
-									: card.orientation === "back" ?
-									back
-									: <p>Rip </p>
+									: back
 							}
 							
 						</div>
-					{/* {card.movedAside} */}
-
 				</div>
 			</Draggable>
 
@@ -216,7 +215,7 @@ function Card({
 					{/* <MenuItem>Pick Up</MenuItem>
 					<MenuItem>Remove Pile from Game</MenuItem>
 					<MenuItem>Take a Trick</MenuItem> */}
-					{onStackType === "stack" ? <MenuItem onClick={() => shuffle(cardId)}>Shuffle Pile</MenuItem> : null}
+					{onStackType === "back" ? <MenuItem onClick={() => shuffle()}>Shuffle Pile</MenuItem> : null}
 					{/* <MenuItem>Deal all Cards Again</MenuItem> */}
 				</ControlledMenu>
 			</div >

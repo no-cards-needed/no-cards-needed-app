@@ -48,10 +48,10 @@ export const GameWrapper = ({app}: {app:any}) => {
 	const [allPlayers, setAllPlayers] = useState({});
 	
 	const cardsRef = useRef(null);
-	const [cardsState, setCardsState] = useState({});
+	const [cardsState, setCardsState] = useState<Card[]>([]);
 	
 	const stacksRef = useRef(null);
-	const [stacksState, setStacksState] = useState({});
+	const [stacksState, setStacksState] = useState<Stack[]>([]);
 
 	const initGame = () => {
 
