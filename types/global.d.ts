@@ -1,10 +1,16 @@
-declare interface Card {
+type GameStatus = {
+    host: string,
+    created: Date,
+    currentGameState: "lobby" | "game"
+} 
+
+type Card = {
     symbol: string,
     onStack: number,
     hasPlayer: string
 }
 
-declare interface Stack {
+type Stack = {
     /**
      * Type of stack
      * 
@@ -18,7 +24,7 @@ declare interface Stack {
     position: {x: number, y: number}
 }
 
-declare interface UsedCards {
+type UsedCards = {
     symbol: string,
     onStack: number,
     hasPlayer: string,

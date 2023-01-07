@@ -27,7 +27,7 @@ function PlayingGame(
 			syncedCards, 
 			syncedStacks, 
 			setCard,
-			setStack
+			setStack,
 		}: {
 			syncedCards: {0?: Card}, 
 			syncedStacks: {0?: Stack}, 
@@ -278,7 +278,7 @@ function PlayingGame(
 	}, [syncedCards, syncedStacks])
 
 	const cardDimensions = {width: 80, height: 112}
-
+ 
 	return (
 		<div>
 			<div style={{background: "#DEDBE5", position: "fixed"}}>

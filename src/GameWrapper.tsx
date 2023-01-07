@@ -1,19 +1,14 @@
 // Firebase Stuff
 // Import the functions you need from the SDKs you need
-import * as firebase from "firebase/app";	
 import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
-import { ref, getDatabase, set, onValue, push, child, get, update, remove, onDisconnect, onChildAdded } from "firebase/database";
-import { getAnalytics } from "firebase/analytics";
-import { useAuthState } from 'react-firebase-hooks/auth';
+import { ref, getDatabase, set, onValue, onDisconnect, onChildAdded } from "firebase/database";
 
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import PlayingGame from "./PlayingGame";
 import { setDefaultStacks, setDefaultUsedCards } from "./helpers/mp";
 
-
 import CreateGame from "./components/CreateGame.js"
-import { textChangeRangeIsUnchanged } from "typescript";
 
 export const GameWrapper = ({app}: {app:any}) => {
 
@@ -36,48 +31,76 @@ export const GameWrapper = ({app}: {app:any}) => {
 	const {state} = useLocation();
 	const {name} = state as {name: string};
 	
+	const gameStatusRef = useRef(null)
+	const [gameStatusState, setGameStatusState] = useState<GameStatus>()
+	const defaultGameStatus: (userId: string) => GameStatus = (userId: string) => {
+		return {
+			host: userId,
+			created: new Date(),
+			currentGameState: "lobby"
+		}
+	}
 
 	const [userId, setUserId] = useState(null);
 	const playerRef = useRef(null);
 
 	const allPlayersRef = useRef(null);
 	const [allPlayers, setAllPlayers] = useState({});
-
+	
 	const cardsRef = useRef(null);
-	const stacksRef = useRef(null);
 	const [cardsState, setCardsState] = useState({});
+	
+	const stacksRef = useRef(null);
 	const [stacksState, setStacksState] = useState({});
 
 	const initGame = () => {
 
-		allPlayersRef.current = ref(getDatabase(app.current), 'game/debug_/players/')
-		cardsRef.current = ref(getDatabase(app.current), 'game/debug_/cards/')
-		stacksRef.current = ref(getDatabase(app.current), 'game/debug_/stacks/')
+		gameStatusRef.current = ref(getDatabase(app.current), `game/${gameId}/status/`)
+		allPlayersRef.current = ref(getDatabase(app.current), `game/${gameId}/players/`)
+		cardsRef.current = ref(getDatabase(app.current), `game/${gameId}/cards/`)
+		stacksRef.current = ref(getDatabase(app.current), `game/${gameId}/stacks/`)
 
+		// A new player connected to the game
 		onValue(allPlayersRef.current, (snapshot) => {
-			// Whenever a change occuts	// 
 
-			// If this is the only player, set cardsRef and stacksRef
+			// If this is the only player, this player is starting the game instance
 			if (Object.keys(snapshot.val()).length === 1) {
-				// Temporatilly setting stacks and cards
-				set(cardsRef.current, setDefaultUsedCards()).then(() => console.log("data saved")).catch((error) => console.log(error));
-				set(stacksRef.current, setDefaultStacks());
 
-				// Sets the last player to be the host
-				update(playerRef.current, {host: true});
+				// Setting the game status to the initial values
+				set(gameStatusRef.current, defaultGameStatus(userId))
+					.then(() => console.log("👁️ [gamewrapper] game status set"))
+					.catch((error) => console.log("👁️ [gamewrapper] Encountered error setting game status", error));
+				
+				// Temporatilly setting stacks and cards
+				// TODO: Get correct cards from CreateGame.js
+				set(cardsRef.current, setDefaultUsedCards())
+					.then(() => console.log("👁️ [gamewrapper] cards set"))
+					.catch((error) => console.log("👁️ [gamewrapper] Encountered error setting cards", error));
+				set(stacksRef.current, setDefaultStacks())
+					.then(() => console.log("👁️ [gamewrapper] stacks set"))
+					.catch((error) => console.log("👁️ [gamewrapper] Encountered error setting stacks", error));
 			}
 		})
 
+		// Game Status Value Change in FireBase Realtime Database
+		onValue(gameStatusRef.current, (snapshot) => {
+			console.log("👁️ [gamewrapper] recieved a new game status: ", snapshot.val())
+			setGameStatusState(snapshot.val())
+		})
+
+		// Card Value Change in FireBase Realtime Database
 		onValue(cardsRef.current, (snapshot) => {
-			console.log("cardsRef change", snapshot.val());
+			console.log("👁️ [gamewrapper] recieved new cards: ", snapshot.val());
 			setCardsState(snapshot.val());
 		})
 
+		// Stack Value Change in FireBase Realtime Database
 		onValue(stacksRef.current, (snapshot) => {
-			console.log("stacksRef change", snapshot.val());
+			console.log("👁️ [gamewrapper] recieved new stacks: ", snapshot.val());
 			setStacksState(snapshot.val());
 		})
 
+		// Add the new player to the "allPlayers" state
 		onChildAdded(allPlayersRef.current, (snapshot) => {
 			const addedPlayer = snapshot.val();
 
@@ -88,17 +111,32 @@ export const GameWrapper = ({app}: {app:any}) => {
 		})
 	}
 
-	
-
-	const setCard = (card, cardId) => {
-		console.log("setcards");
-		set(cardsRef.current.child(cardId), card);
-	}
-	const setStack = (stack, stackId) => {
-		console.log("setStacks");
-		set(stacksRef.current.child(stackId), stack);
+	// Updater Function for the Game Status
+	// recieves a GameStatus object and sets it in the Firebase Database
+	const setGameStatus = (updatedGameStatus: GameStatus) => {
+		console.log("👁️ [gamewrapper] setting user requested gameStatus");
+		set(gameStatusRef.current, updatedGameStatus)
+			.then(() => console.log("👁️ [gamewrapper] game status set"))
+			.catch((e) => console.log("👁️ [gamewrapper] Encountered error setting game status", e))
 	}
 
+	// Updater Function for the Cards
+	// recieves a *SINGLE* Card object and sets it in the Firebase Database
+	const setCard = (card: Card, cardId: number) => {
+		console.log("👁️ [gamewrapper] setting user requested cards");
+		set(cardsRef.current.child(cardId), card)
+			.then(() => console.log("👁️ [gamewrapper] card set"))
+			.catch((e) => console.log("👁️ [gamewrapper] Encountered error setting the card", e))
+	}
+
+	// Updater Function for the Cards
+	// recieves a *SINGLE* Stack object and sets it in the Firebase Database
+	const setStack = (stack: Stack, stackId: number) => {
+		console.log("👁️ [gamewrapper] setting user requested stacks");
+		set(stacksRef.current.child(stackId), stack)
+			.then(() => console.log("👁️ [gamewrapper] stack set"))
+			.catch((e) => console.log("👁️ [gamewrapper] Encountered error setting the stack", e))
+	}
 
 	// Page Load
 	useEffect(() => {
@@ -108,80 +146,64 @@ export const GameWrapper = ({app}: {app:any}) => {
 			var errorCode = error.code;
 			var errorMessage = error.message;
 			// ...
-			console.log(errorCode, errorMessage);
+			console.log("👁️ [gamewrapper] error signing in to no cards needed firebase", errorCode, errorMessage);
 		});
 
-		console.log(allPlayers)
-
 		onAuthStateChanged(getAuth(app.current), (user) => {
+			// If User is signed in
 			if (user) {
-				// User is signed in, see docs for a list of available properties
-				// https://firebase.google.com/docs/reference/js/firebase.User
-	
-				playerRef.current = ref(getDatabase(app.current), 'game/debug_/players/' + user.uid)
+				playerRef.current = ref(getDatabase(app.current), `game/${gameId}/players/${user.uid}`)
 				set(playerRef.current, {
 					id: user.uid,
 					name: name || "Player",
 					cards: [],
-					host: false
 				})
 				setUserId(user.uid);
 
 				onDisconnect(playerRef.current).remove();
 	
-	
 				// Connected
 				initGame()
-	
 			} else {
 				// User is signed out
 				// ...
-				console.log("User is signed out");
+				console.log("👁️ [gamewrapper] User is signed out");
 			}
 		});
 
 		return() => {
-			// Assign another player to be the host if leaving player is the host
-			// if (allPlayers[userId] && allPlayers[userId].host) {
-			// 	// Get the first player in the list
-			// 	const firstPlayerId = Object.keys(allPlayers)[0];
-			// 	update(ref(getDatabase(app.current), 'game/debug_/players/' + firstPlayerId), {host: true});
-			// }
 		}
 
 	}, []);
 
 	return (
 		<>
-		{/* {Object.values(allPlayers).map((player: any) => {
-			return <div key={player.id}>{player.name}-{player.host ? "Host" : ""}</div>
-		})
-		} */}
+			{!startGame ? <CreateGame 
+				deckCards={deckCards} 
+				setDeckCards={setDeckCards} 
+				joker={joker} 
+				setJoker={setJoker} 
+				decks={decks} 
+				setDecks={setDecks} 
+				hand={hand} 
+				setHand={setHand} 
+				pile={pile} 
+				setPile={setPile} 
+				dropdownContent={dropdownContent} 
+				players={allPlayers} 
+				startGame={startGame}
+				setStartGame={setStartGame}
+				gameId={"jkhasjghf"}
+			/> : <PlayingGame 
+				gameStatus={gameStatusState}
+				setGameStatus={setGameStatus}
 
-		{!startGame ? <CreateGame 
-			deckCards={deckCards} 
-			setDeckCards={setDeckCards} 
-			joker={joker} 
-			setJoker={setJoker} 
-			decks={decks} 
-			setDecks={setDecks} 
-			hand={hand} 
-			setHand={setHand} 
-			pile={pile} 
-			setPile={setPile} 
-			dropdownContent={dropdownContent} 
-			players={allPlayers} 
-			startGame={startGame}
-			setStartGame={setStartGame}
-			gameId={"jkhasjghf"}
-		/> : <PlayingGame 
-			syncedCards={cardsState}
-			syncedStacks={stacksState}
-			setCard={setCard}
-			setStack={setStack}
-		/>}
-			{/* <CreateGame deckCards={deckCards} setDeckCards={setDeckCards} joker={joker} setJoker={setJoker} decks={decks} setDecks={setDecks} hand={hand} setHand={setHand} pile={pile} setPile={setPile} dropdownContent={dropdownContent} players={players}/> */}
-
+				syncedCards={cardsState}
+				setCard={setCard}
+				
+				syncedStacks={stacksState}
+				setStack={setStack}
+			/>}
 		</>
 	)
 }

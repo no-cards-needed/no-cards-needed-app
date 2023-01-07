@@ -14,9 +14,8 @@ import deckIcon from '../assets/iconsBlack/deck.svg';
 import handIcon from '../assets/iconsBlack/hand.svg';
 import share from '../assets/iconsWhite/share.svg';
 
-function Menu( props ) {
+function Menu( {deckCards, setDeckCards, joker, setJoker, decks, setDecks, hand, setHand, pile, setPile, dropdownContent, players, startGame, setStartGame, gameId} ) {
   
-  const {deckCards, setDeckCards, joker, setJoker, decks, setDecks, hand, setHand, pile, setPile, dropdownContent, players, startGame, setStartGame, gameId} = props
 
   const [ active, setActive ] = useState(true)
   const [ displaySettings, setDisplaySettings ] = useState( 'none' )
