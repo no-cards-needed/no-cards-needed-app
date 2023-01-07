@@ -3,8 +3,6 @@ import Draggable, { DraggableData, DraggableEvent, DraggableEventHandler } from 
 
 import { cards, back } from "../helpers/Cards";
 
-import useLongPress from "../helpers/use-long-press";
-
 import {
     ControlledMenu,
     MenuItem,
@@ -145,7 +143,7 @@ function Card({
         shouldPreventDefault: true,
         delay: 500,
     };
-    const longPressEvent = useLongPress(onLongPress, onClick, onMouseDown, defaultOptions);
+    // const longPressEvent = useLongPress(onLongPress, onClick, onMouseDown, defaultOptions);
 
 	const maxRotationInDegrees = 10;
 	const [rotation, setRotation] = useState(Math.random() * maxRotationInDegrees * 2 - maxRotationInDegrees);
@@ -197,7 +195,8 @@ function Card({
 						<div 
 							style={{transform}} 
 							className={`card ${classList}`}
-							{...longPressEvent}>
+							// {...longPressEvent}
+							>
 							{
 								card.onStackType === "front" ?
 									cardToDisplay

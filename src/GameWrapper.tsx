@@ -1,7 +1,7 @@
 // Firebase Stuff
 // Import the functions you need from the SDKs you need
 import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
-import { ref, getDatabase, set, onValue, onDisconnect, onChildAdded } from "firebase/database";
+import { ref, getDatabase, set, onValue, onDisconnect, onChildAdded, serverTimestamp } from "firebase/database";
 
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -36,12 +36,12 @@ export const GameWrapper = ({app}: {app:any}) => {
 	const defaultGameStatus: (userId: string) => GameStatus = (userId: string) => {
 		return {
 			host: userId,
-			created: new Date(),
+			created: serverTimestamp(),
 			currentGameState: "lobby"
 		}
 	}
 
-	const [userId, setUserId] = useState(null);
+	const [userId, setUserId] = useState<string>(null);
 	const playerRef = useRef(null);
 
 	const allPlayersRef = useRef(null);
@@ -55,20 +55,20 @@ export const GameWrapper = ({app}: {app:any}) => {
 
 	const initGame = () => {
 
-		gameStatusRef.current = ref(getDatabase(app.current), `game/${gameId}/status/`)
+		gameStatusRef.current = ref(getDatabase(app.current), `game/${gameId}/gameStatus/`)
 		allPlayersRef.current = ref(getDatabase(app.current), `game/${gameId}/players/`)
 		cardsRef.current = ref(getDatabase(app.current), `game/${gameId}/cards/`)
 		stacksRef.current = ref(getDatabase(app.current), `game/${gameId}/stacks/`)
 
 		// A new player connected to the game
 		onValue(allPlayersRef.current, (snapshot) => {
-
 			// If this is the only player, this player is starting the game instance
 			if (Object.keys(snapshot.val()).length === 1) {
-
+				console.log("👁️ [gamewrapper] this is the first player, setting up the game", snapshot.val())
+				const gameStatus = defaultGameStatus(Object.keys(snapshot.val())[0])
 				// Setting the game status to the initial values
-				set(gameStatusRef.current, defaultGameStatus(userId))
-					.then(() => console.log("👁️ [gamewrapper] game status set"))
+				set(gameStatusRef.current, gameStatus)
+					.then(() => console.log("👁️ [gamewrapper] game status set", gameStatus))
 					.catch((error) => console.log("👁️ [gamewrapper] Encountered error setting game status", error));
 				
 				// Temporatilly setting stacks and cards
@@ -116,7 +116,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 	const setGameStatus = (updatedGameStatus: GameStatus) => {
 		console.log("👁️ [gamewrapper] setting user requested gameStatus");
 		set(gameStatusRef.current, updatedGameStatus)
-			.then(() => console.log("👁️ [gamewrapper] game status set"))
+			.then(() => console.log("👁️ [gamewrapper] game status set", updatedGameStatus))
 			.catch((e) => console.log("👁️ [gamewrapper] Encountered error setting game status", e))
 	}
 
@@ -125,7 +125,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 	const setCard = (card: Card, cardId: number) => {
 		console.log("👁️ [gamewrapper] setting user requested cards");
 		set(cardsRef.current.child(cardId), card)
-			.then(() => console.log("👁️ [gamewrapper] card set"))
+			.then(() => console.log("👁️ [gamewrapper] card set", card, cardId))
 			.catch((e) => console.log("👁️ [gamewrapper] Encountered error setting the card", e))
 	}
 
@@ -134,7 +134,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 	const setStack = (stack: Stack, stackId: number) => {
 		console.log("👁️ [gamewrapper] setting user requested stacks");
 		set(stacksRef.current.child(stackId), stack)
-			.then(() => console.log("👁️ [gamewrapper] stack set"))
+			.then(() => console.log("👁️ [gamewrapper] stack set", stack, stackId))
 			.catch((e) => console.log("👁️ [gamewrapper] Encountered error setting the stack", e))
 	}
 
@@ -171,9 +171,13 @@ export const GameWrapper = ({app}: {app:any}) => {
 			}
 		});
 
-		return() => {
+		return () => {
+			// Cleanup, remove the player from the game
+			// if(allPlayersRef.current) {
+			// 	console.log("👁️ [gamewrapper] cleanup, removed player from game", userId, allPlayersRef.current);
+			// 	allPlayersRef.current.child(userId).remove();
+			// }
 		}
-
 	}, []);
 
 	return (

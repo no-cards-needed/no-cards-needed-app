@@ -1,6 +1,6 @@
 type GameStatus = {
     host: string,
-    created: Date,
+    created: object,
     currentGameState: "lobby" | "game"
 } 
 
@@ -17,6 +17,7 @@ type NearestStack = {
 }
 
 type Stack = {
+    id: number,
     /**
      * Type of stack
      * 

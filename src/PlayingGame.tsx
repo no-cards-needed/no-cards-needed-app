@@ -64,23 +64,33 @@ function PlayingGame(
 	const [ usedStacks, setUsedStacks ] = useState<Stack[]>(
 		[
 			{
+				id: 0,
 				stackType: "hand",
 				cards: [],
 				position: {x: 0, y: 0},
 			},
 			{
+				id: 1,
 				stackType: "hidden",
 				cards: [],
 				position: {x: 0, y: 0},
 			}
 		]
 	)
+	useEffect(() => {
+		console.log("🐉 [acid tang] Used Stacks updated", usedStacks)
+	}, [usedStacks])
+
 	const stackRef = useRef<HTMLDivElement[]>([]);
 	const stacksReference = useRef<Stack[]>([])
 	stacksReference.current = usedStacks
 	
 	const cardRef = useRef<HTMLDivElement[]>([]);
 	const [usedCards, setUsedCards] = useState<UsedCard[]>([])
+	useEffect(() => {
+		console.log("🐉 [acid tang] Used Cards updated", usedCards)
+	}, [usedCards])
+
 	const usedCardsReference = useRef({})
 	usedCardsReference.current = usedCards
 	
@@ -153,12 +163,14 @@ function PlayingGame(
 				y: stackRef.current[stackId].getBoundingClientRect().y
 			}
 
-			const tempUsedCards = usedCards
+			const tempUsedCards = [...usedCards]
+			const stackType = usedStacks[stackId].stackType
 			tempUsedCards[cardId] = {
 				...tempUsedCards[cardId],
 				onStack: stackId,
 				controlledPosition: cardPosition,
 				zIndex: usedStacks[stackId].cards ? usedStacks[stackId].cards.length : 0,
+				onStackType: stackType,
 			} 
 			setUsedCards(tempUsedCards)
 
@@ -178,34 +190,10 @@ function PlayingGame(
 	}
 
 	useEffect(() => {
-		if(syncedCards) {
-			// Update usedCards with syncedCards
-			console.log("🐉 [acid tang] Synced Cards", syncedCards)
-			
-			const tempUsedCards = usedCards;
-
-			syncedCards.forEach((card: Card, cardId: number) => {
-				// Get Stack Type
-				const stackType = usedStacks[card.onStack].stackType
-
-				setCards(cardId, card.onStack)
-				tempUsedCards[cardId] = {
-					...syncedCards[cardId],
-					controlledPosition: usedCards[cardId] ? usedCards[cardId].controlledPosition : {x: 0, y: 0},
-					zIndex: usedCards[cardId] ? usedCards[cardId].zIndex : 0,
-					animation: usedCards[cardId] ? usedCards[cardId].animation : "none",
-					movedAside: "none",
-					onStackType: stackType,
-				}
-			})
-
-			setUsedCards(tempUsedCards)
-		}
- 
 		if(syncedStacks) {
 			// Update usedStacks with syncedStacks
 			console.log("🐉 [acid tang] Synced Stacks", syncedStacks)
-			const tempStacks = usedStacks;
+			const tempStacks = [...usedStacks];
 
 			syncedStacks.forEach((stack: Stack, stackId: number) => {
 				// Adding "2" to the stackId to avoid overwriting the first two stacks
@@ -217,8 +205,60 @@ function PlayingGame(
 
 			setUsedStacks(tempStacks)
 		} 
+		
+	}, [syncedStacks])
 
-	}, [syncedCards, syncedStacks])
+	useEffect(() => {
+		const updateCards = () => {
+			// Update usedCards with syncedCards
+			console.log("🐉 [acid tang] Synced Cards", syncedCards)
+				
+			const tempUsedCards = [...usedCards];
+	
+			syncedCards.forEach((card: Card, cardId: number) => {
+				// Get Stack Type
+				try {
+					if(!usedStacks[card.onStack]){
+						throw new Error("Stack not found with id: " + card.onStack)
+					}
+					
+					const stackType = usedStacks[card.onStack].stackType
+
+					setCards(cardId, card.onStack)
+					tempUsedCards[cardId] = {
+						...syncedCards[cardId],
+						controlledPosition: usedCards[cardId] ? usedCards[cardId].controlledPosition : {x: 0, y: 0},
+						zIndex: usedCards[cardId] ? usedCards[cardId].zIndex : 0,
+						animation: usedCards[cardId] ? usedCards[cardId].animation : "none",
+						movedAside: "none",
+						onStackType: stackType,
+					}
+					
+	
+				} catch(e: any) {
+					if (e instanceof Error) {
+						console.error("🐉 [acid tang] Error updating cards", e, cardId, card)
+						console.log(usedStacks[card.onStack])
+					}
+				}
+			})
+	
+			setUsedCards(tempUsedCards)
+		}
+
+		if(syncedCards) {
+			console.log("USED CARDS:",usedCards)
+			if(usedCards.length === 0) {
+				// Set a timeout to wait for the stacks to be added
+				const timeout = setTimeout(() => {
+					updateCards()
+					clearTimeout(timeout)
+				}, 1000)
+			} else {
+				updateCards()
+			}
+		}
+	}, [syncedCards])
 
 	const cardDimensions = {width: 80, height: 112}
  
@@ -230,9 +270,10 @@ function PlayingGame(
                 <div className="playingArea criticalMaxWidth">
 				{
 					usedStacks.map((stack: Stack, stackId: number) => {
-						if(stackId > 1) {
+						console.log(`${stack.id}-${stack.stackType}`)
+						if(stack.stackType !== "hand" && stack.stackType !== "hidden") {
 							return (
-								<Stack key={stackId} stackType={usedStacks[stackId].stackType} stackRef={(el: HTMLDivElement) => stackRef.current[stackId] = el}/>
+								<Stack key={`${stack.id}-${stack.stackType}`} stackType={stack.stackType} stackRef={(el: HTMLDivElement) => stackRef.current[stackId] = el}/>
 							)
 						}
 						return null

@@ -2,8 +2,8 @@ import { getCardPositionInStack } from "./get-card-position-in-stack";
 import { getPositionAtCenter } from "./get-position-at-center";
 
 export const calculateCardPosition = (
-	card: HTMLElement, 
-	stackRef: HTMLElement, 
+	card: HTMLDivElement, 
+	stackRef: HTMLDivElement, 
 	stacksObject: {
 		stackType: string, 
 		cards: number[], 
