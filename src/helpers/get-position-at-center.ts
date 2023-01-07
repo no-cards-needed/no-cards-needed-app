@@ -1,4 +1,4 @@
-export const getPositionAtCenter = (element, caller?: string) => {
+export const getPositionAtCenter = (element: HTMLDivElement, caller?: string) => {
     if(element) {
         const { top, left, width, height } = element.getBoundingClientRect();
         return {
@@ -6,7 +6,7 @@ export const getPositionAtCenter = (element, caller?: string) => {
             y: top + height / 2
         };
     } else {
-        console.log(`Error getting porision at center from ${caller}`);
+        console.log(`🥅 [get-position-at-center] Error getting porision at center from ${caller}`);
         return {
             x: 0,
             y: 0

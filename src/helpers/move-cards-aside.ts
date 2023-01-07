@@ -1,14 +1,14 @@
 import { cardDimensions } from "./card-dimensions"
 
 export const moveCardsAside = (
-	stacks: {0?: Stack}, 
-	nearestStack: {nearestStack, distance: number, index: number}, 
+	stacks: Stack[], 
+	nearestStack: NearestStack, 
 	currentCardRef: React.MutableRefObject<HTMLElement>, 
-	usedCards: {0?: UsedCards},
-	setUsedCards: (usedCards) => void,
+	usedCards: UsedCard[],
+	setUsedCards: (usedCards: UsedCard[]) => void,
 	cardId: number) => {
 
-	const stack = stacks[nearestStack.index]
+	const stack = stacks[nearestStack.stackIndex]
 
 	// Moving the Cards in the open Stack aside
 	if(stack.cards) {
@@ -31,7 +31,7 @@ export const moveCardsAside = (
 						...usedCards,
 						[loopedCardId_INT]: {
 							...usedCards[loopedCardId_INT],
-							movedAside: isLeft ? "left" : "right"
+							movedAside: isLeft ? "left" : isRight ? "right" : "none"
 						}
 					}
 				)

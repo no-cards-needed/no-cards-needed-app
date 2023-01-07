@@ -89,7 +89,7 @@ function PlayingGame(
 	const [isColliding, setIsColliding] = useState(false);
 	const [currentlyMovingStack, setCurrentlyMovingStack] = useState(false);
 
-	const getNearestStack = (cardRef: RefObject<HTMLDivElement>) => {
+	const getNearestStack: (cardRef: RefObject<HTMLDivElement>) => NearestStack = (cardRef: RefObject<HTMLDivElement>) => {
 		const distances = usedStacks.map((stack: Stack, stackId: number) => {
 			if (stackRef.current[stackId]) {
 				return getDistanceBetweenTwoElements(stackRef.current[stackId], cardRef.current)
@@ -99,7 +99,7 @@ function PlayingGame(
 		});
 		const nearestStack = stackRef.current[distances.indexOf(Math.min(...distances))];
 
-		return {nearestStack, distance: Math.min(...distances), index: distances.indexOf(Math.min(...distances))};
+		return {nearestStack, distanceToCard: Math.min(...distances), stackIndex: distances.indexOf(Math.min(...distances))};
 	}
 
 	const updateCardPosition = (cardId: number, {x, y}: {x: number, y: number}) => {
@@ -173,9 +173,7 @@ function PlayingGame(
 			setUsedStacks(tempUsedStacks)
 		}
 		catch (e) {
-			console.error(e)
-			console.error("COULD NOT SET CARDS")
-			console.error(cardId, stackId)
+			console.error("🐉 [acid tang] error setting cards", e, cardId, stackId)
 		}
 	}
 
@@ -253,7 +251,7 @@ function PlayingGame(
 									shuffle={() => {}}
 									handleLongPress={() => {}}
 									handleCardDrag={(cardRef, cardId) => handleCardDrag(cardRef, cardId, usedCards, setUsedCards, getNearestStack, nearestStack, setNearestStack, usedStacks, setIsColliding)} 
-									handleCardDrop={(data, id) => handleCardDrop(id, usedCards, setUsedCards, isColliding, usedStacks, tempSetUsedStacks, nearestStack, setCards)} />
+									handleCardDrop={(data, id) => handleCardDrop(id, usedCards, setUsedCards, isColliding, nearestStack, setCards)} />
 						})
 					}
 				</div>

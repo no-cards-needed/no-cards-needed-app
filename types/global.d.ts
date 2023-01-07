@@ -10,6 +10,12 @@ type Card = {
     hasPlayer: string
 }
 
+type NearestStack = {
+    nearestStack: HTMLDivElement,
+    distanceToCard: number,
+    stackIndex: number
+}
+
 type Stack = {
     /**
      * Type of stack
