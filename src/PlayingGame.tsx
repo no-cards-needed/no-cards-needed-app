@@ -61,7 +61,7 @@ function PlayingGame(
 	// 	}
 	// } 
 
-	const [ usedStacks, setUsedStacks ] = useState<Stack[]>(
+	const [ usedStacks, setUsedStacksState ] = useState<Stack[]>(
 		[
 			{
 				id: 0,
@@ -77,6 +77,24 @@ function PlayingGame(
 			}
 		]
 	)
+	const usedStacksRef = useRef<Stack[]>([
+		{
+			id: 0,
+			stackType: "hand",
+			cards: [],
+			position: {x: 0, y: 0},
+		},
+		{
+			id: 1,
+			stackType: "hidden",
+			cards: [],
+			position: {x: 0, y: 0},
+		}
+	])
+	const setUsedStacks = (usedStacks: Stack[]) => {
+		setUsedStacksState(usedStacks)
+		usedStacksRef.current = usedStacks
+	}
 	useEffect(() => {
 		console.log("🐉 [acid tang] Used Stacks updated", usedStacks)
 	}, [usedStacks])
@@ -86,13 +104,15 @@ function PlayingGame(
 	stacksReference.current = usedStacks
 	
 	const cardRef = useRef<HTMLDivElement[]>([]);
-	const [usedCards, setUsedCards] = useState<UsedCard[]>([])
+	const [usedCards, setUsedCardsState] = useState<UsedCard[]>([])
+	const usedCardsRef = useRef<UsedCard[]>([])
+	const setUsedCards = (usedCards: UsedCard[]) => {
+		setUsedCardsState(usedCards)
+		usedCardsRef.current = usedCards
+	}
 	useEffect(() => {
 		console.log("🐉 [acid tang] Used Cards updated", usedCards)
 	}, [usedCards])
-
-	const usedCardsReference = useRef({})
-	usedCardsReference.current = usedCards
 	
 	const [nearestStack, setNearestStack] = useState(null);
 	const stackDistances = useRef({})
@@ -100,7 +120,7 @@ function PlayingGame(
 	const [currentlyMovingStack, setCurrentlyMovingStack] = useState(false);
 
 	const getNearestStack: (cardRef: RefObject<HTMLDivElement>) => NearestStack = (cardRef: RefObject<HTMLDivElement>) => {
-		const distances = usedStacks.map((stack: Stack, stackId: number) => {
+		const distances = usedStacksRef.current.map((stack: Stack, stackId: number) => {
 			if (stackRef.current[stackId]) {
 				return getDistanceBetweenTwoElements(stackRef.current[stackId], cardRef.current)
 			} else {
@@ -110,15 +130,6 @@ function PlayingGame(
 		const nearestStack = stackRef.current[distances.indexOf(Math.min(...distances))];
 
 		return {nearestStack, distanceToCard: Math.min(...distances), stackIndex: distances.indexOf(Math.min(...distances))};
-	}
-
-	const updateCardPosition = (cardId: number, {x, y}: {x: number, y: number}) => {
-
-		// Find card by cardId in usedCards and update the controlled Position
-		const tempUsedCards = usedCards
-		tempUsedCards[cardId].controlledPosition = {x, y}
-
-		setUsedCards(tempUsedCards)
 	}
 
 	// Setting Card Ref in usedCards State
@@ -147,15 +158,7 @@ function PlayingGame(
 
 	const setCards = (cardId: number, stackId: number) => {
 		try {
-			console.log(stackId, usedStacks)
-			const stack: {
-				stackType: string;
-				cards: number[];
-				position: {
-					x: number;
-					y: number;
-				};
-			} = stacksReference.current[stackId]
+			const stack: Stack = usedStacksRef.current[stackId]
 	
 			const cardPosition = {
 				x: stack.stackType !== "hand" && stack.stackType !== "open" 
@@ -164,23 +167,32 @@ function PlayingGame(
 				y: stackRef.current[stackId].getBoundingClientRect().y
 			}
 
-			const tempUsedCards = [...usedCards]
-			const stackType = usedStacks[stackId].stackType
+			const stackType = usedStacksRef.current[stackId].stackType
+			const tempUsedCards = [...usedCardsRef.current]
+			const hasShadow = usedStacksRef.current[stackId]?.cards ? usedStacksRef.current[stackId].cards.length - usedStacksRef.current[stackId].cards.indexOf(cardId) <= 10 ? true : false : false
 			tempUsedCards[cardId] = {
 				...tempUsedCards[cardId],
 				onStack: stackId,
 				controlledPosition: cardPosition,
-				zIndex: usedStacks[stackId].cards ? usedStacks[stackId].cards.length : 0,
+				zIndex: usedStacksRef.current[stackId].cards ? usedStacksRef.current[stackId].cards.length : 0,
 				onStackType: stackType,
+				hasShadow,
 			} 
 			setUsedCards(tempUsedCards)
 
 			// Filter current card out of the tempUsedStacks
 			let tempUsedStacks: Stack[] = []
-			usedStacks.forEach((stack: Stack, stackId: number) => {
-				tempUsedStacks[stackId] = {
-					...usedStacks[stackId],
-					cards: usedStacks[stackId].cards ? usedStacks[stackId].cards.filter((card) => card !== cardId) : []
+			usedStacksRef.current.forEach((stack: Stack, tempStackId: number) => {
+				if(tempStackId === stackId) {
+					tempUsedStacks[tempStackId] = {
+						...stack,
+						cards: stack.cards ? [...stack.cards, cardId] : [cardId]
+					}
+				} else {
+					tempUsedStacks[tempStackId] = {
+						...stack,
+						cards: stack.cards ? usedStacksRef.current[tempStackId].cards.filter((card) => card !== cardId) : []
+					}
 				}
 			})
 			setUsedStacks(tempUsedStacks)
@@ -194,7 +206,7 @@ function PlayingGame(
 		if(syncedStacks) {
 			// Update usedStacks with syncedStacks
 			console.log("🐉 [acid tang] Synced Stacks", syncedStacks)
-			const tempStacks = [...usedStacks];
+			const tempStacks = [...usedStacksRef.current];
 
 			syncedStacks.forEach((stack: Stack, stackId: number) => {
 				// Adding "2" to the stackId to avoid overwriting the first two stacks
@@ -213,35 +225,43 @@ function PlayingGame(
 			// Update usedCards with syncedCards
 			console.log("🐉 [acid tang] Synced Cards", syncedCards)
 				
-			const tempUsedCards = [...usedCards];
+			const tempUsedCards = [...usedCardsRef.current];
 	
-			syncedCards.forEach((card: Card, cardId: number) => {
+			syncedCards.forEach((card: UsedCard, cardId: number) => {
 				// Get Stack Type
 				try {
-					if(!usedStacks[card.onStack]){
+					if(!usedStacksRef.current[card.onStack]){
 						throw new Error("Stack not found with id: " + card.onStack)
 					}
 					
-					// const stackType = usedStacks[card.onStack].stackType
-					const stackType: Stack["stackType"] = "back"
+					const stackType = usedStacksRef.current[card.onStack].stackType
+
+					// Index of Card in Stack  
+					const cardIndex = usedStacksRef.current[card.onStack].cards ? usedStacksRef.current[card.onStack].cards.indexOf(cardId) : 0
+
+					// Set const "hasShadow" to true if the card is in the top 10 cards of the stack
+					const hasShadow = usedStacksRef.current[card.onStack].cards ? usedStacksRef.current[card.onStack].cards.length - usedStacksRef.current[card.onStack].cards.indexOf(cardId) <= 10 ? true : false : false
+
 
 					tempUsedCards[cardId] = {
 						...syncedCards[cardId],
-						controlledPosition: usedCards[cardId] ? usedCards[cardId].controlledPosition : {x: 0, y: 0},
-						zIndex: usedCards[cardId] ? usedCards[cardId].zIndex : 0,
-						animation: usedCards[cardId] ? usedCards[cardId].animation : "none",
+						controlledPosition: card ? card.controlledPosition ? card.controlledPosition : {x: 0, y: 0} : {x: 0, y: 0},
+						zIndex: card ? card.zIndex ? card.zIndex : cardIndex : 0,
+						animation: card ? card.animation ? card.animation : "none" : "none",
 						movedAside: "none",
 						onStackType: stackType,
+						hasShadow
 					}
 					
 	
 				} catch(e: any) {
 					if (e instanceof Error) {
 						console.error("🐉 [acid tang] Error updating cards", e, cardId, card)
-						console.log(usedStacks[card.onStack])
+						console.log(usedStacksRef.current[card.onStack])
 					}
 				}
 			})
+			console.log("🐉 [acid tang] Updated Cards", tempUsedCards)
 			setUsedCards(tempUsedCards)
 
 			for (let i = 0; i < syncedCards.length; i++) {
@@ -252,22 +272,18 @@ function PlayingGame(
 			}
 		}
 	useEffect(() => {
-
 		if(syncedCards) {
-			console.log("USED CARDS:",usedCards)
-			if(usedCards.length === 0) {
+			if(usedCardsRef.current.length === 0) {
 				// Set a timeout to wait for the stacks to be added
 				const timeout = setTimeout(() => {
 					updateCards()
 					clearTimeout(timeout)
-				}, 5000)
+				}, 1000)
 			} else {
 				updateCards()
 			}
 		}
 	}, [syncedCards])
-
-	const cardDimensions = {width: 80, height: 112}
  
 	return (
 		<div>
@@ -277,20 +293,18 @@ function PlayingGame(
                 <div className="playingArea criticalMaxWidth">
 				{
 					usedStacks.map((stack: Stack, stackId: number) => {
-						console.log(`${stack.id}-${stack.stackType}`)
 						if(stack.stackType !== "hand" && stack.stackType !== "hidden") {
 							return (
-								<Stack key={`${stack.id}-${stack.stackType}`} stackType={stack.stackType} stackRef={(el: HTMLDivElement) => stackRef.current[stackId] = el}/>
+								<Stack key={stack.id} stackType={stack.stackType} stackRef={(el: HTMLDivElement) => stackRef.current[stackId] = el}/>
 							)
 						}
-						return null
 					})
 				}
                 </div>
 
 				<div className="cards">
 					{
-						usedCards.map((card: UsedCard, cardId: number) => {
+						usedCards?.map((card: UsedCard, cardId: number) => {
 							return <Card 
 									setRef={setCardRef} 
 									card={card} 
@@ -298,7 +312,7 @@ function PlayingGame(
 									key={cardId}
 									shuffle={() => {}}
 									handleLongPress={() => {}}
-									handleCardDrag={(cardRef, cardId) => handleCardDrag(cardRef, cardId, usedCards, setUsedCards, getNearestStack, nearestStack, setNearestStack, usedStacks, setIsColliding)} 
+									handleCardDrag={(cardRef, cardId) => handleCardDrag(cardRef, cardId, usedCardsRef.current, setUsedCards, getNearestStack, nearestStack, setNearestStack, usedStacks, setIsColliding)} 
 									handleCardDrop={(data, id) => handleCardDrop(id, usedCards, setUsedCards, isColliding, nearestStack, setCards)} />
 						})
 					}

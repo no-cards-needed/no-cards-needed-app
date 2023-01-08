@@ -23,7 +23,7 @@ type Stack = {
      * 
      * can be "hidden", "back", "front"
      */
-    stackType: "hand" | "hidden" | "back" | "front",
+    stackType: "hand" | "hidden" | "back" | "front" | "open",
     cards: number[],
     /**
      * Position of stack in Stack-Grid
@@ -34,11 +34,12 @@ type Stack = {
 type UsedCard = {
     symbol: string,
     onStack: number,
-    onStackType: "hand" | "hidden" | "back" | "front"
+    onStackType: Stack["stackType"]
     hasPlayer: string,
 
     controlledPosition: {x: number, y: number},
     zIndex: number,
     animation: string,
-    movedAside: "left" | "right" | "none"
+    movedAside: "left" | "right" | "none",
+    hasShadow: boolean
 }

@@ -10,15 +10,6 @@ import {
 } from '@szhsin/react-menu';
 import '@szhsin/react-menu/dist/index.css';
 
-type CardProps = {
-	handleCardDrag: (nodeRef: any, cardId: number) => void,
-	handleCardDrop: (nodeRef: any, cardId: number) => void,
-	card: UsedCard,
-	cardId: number,
-	setRef: (cardId: number, ref: HTMLDivElement) => void,
-	shuffle: () => void,
-	handleLongPress: (cardId: number) => void,
-}
 
 function Card({
 		handleCardDrag, 
@@ -27,15 +18,18 @@ function Card({
 		cardId,
 		setRef,
 		shuffle,
-		handleLongPress,
-	} : CardProps) {
+		handleLongPress
+	} : {
+		handleCardDrag: (nodeRef: any, cardId: number) => void,
+		handleCardDrop: (nodeRef: any, cardId: number) => void,
+		card: UsedCard,
+		cardId: number,
+		setRef: (cardId: number, ref: HTMLDivElement) => void,
+		shuffle: () => void,
+		handleLongPress: (cardId: number) => void
+	}) {
 
-	const {
-		symbol,
-		zIndex, 
-		controlledPosition, 
-		onStackType
-	} = card;
+	const {symbol, zIndex, controlledPosition, onStackType} = card;
 
 	const nodeRef = useRef(null)
 	const [transition, setTransition] = useState(false)
@@ -66,6 +60,9 @@ function Card({
 	}
 
 	const handleDrag: DraggableEventHandler = (e: DraggableEvent, ui: DraggableData) => {
+		// Set zIndex to 9999 when dragging
+		nodeRef.current.style.zIndex = "9999"
+
 		const {x, y} = deltaPosition
 		setDeltaPosition(
 			{
@@ -104,15 +101,10 @@ function Card({
 
 	const getCardBySymbol = () => {
 		try {
-			const cardObj = cards.filter((card) => card.name === symbol)[0]
-			if(!cardObj) {
-				console.log(card)
-				throw new Error("Card not found:")
-			}
-			if (cardObj.icon) {
-				return cardObj.icon
+			if (cards.filter((card) => card.name === symbol)[0].icon) {
+				return cards.filter((card) => card.name === symbol)[0].icon
 			} else {
-				return <></>
+				return null
 			}
 		} catch(e) {
 			console.log(e)
@@ -207,7 +199,7 @@ function Card({
 				<div 
 					ref={nodeRef} 
 					// TODO: When moving on from debug, delete absolute dimensions
- 					style={{position: 'absolute', top: 0, left: 0, zIndex, height: 112, width: 80, boxShadow: card.hasShadow ? "var(--shadow-elevation-medium)" : "none"}} 
+					style={{position: 'absolute', top: 0, left: 0, zIndex, height: 112, width: 80}} 
 					className={transition ? "animation" : null}
 					// onTouchStart={touchStart}
 					// onClick={touchStart}
