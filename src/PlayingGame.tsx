@@ -147,6 +147,7 @@ function PlayingGame(
 
 	const setCards = (cardId: number, stackId: number) => {
 		try {
+			console.log(stackId, usedStacks)
 			const stack: {
 				stackType: string;
 				cards: number[];
@@ -154,7 +155,7 @@ function PlayingGame(
 					x: number;
 					y: number;
 				};
-			} = usedStacks[stackId]
+			} = stacksReference.current[stackId]
 	
 			const cardPosition = {
 				x: stack.stackType !== "hand" && stack.stackType !== "open" 
@@ -208,8 +209,7 @@ function PlayingGame(
 		
 	}, [syncedStacks])
 
-	useEffect(() => {
-		const updateCards = () => {
+	const updateCards = () => {
 			// Update usedCards with syncedCards
 			console.log("🐉 [acid tang] Synced Cards", syncedCards)
 				
@@ -222,9 +222,9 @@ function PlayingGame(
 						throw new Error("Stack not found with id: " + card.onStack)
 					}
 					
-					const stackType = usedStacks[card.onStack].stackType
+					// const stackType = usedStacks[card.onStack].stackType
+					const stackType: Stack["stackType"] = "back"
 
-					setCards(cardId, card.onStack)
 					tempUsedCards[cardId] = {
 						...syncedCards[cardId],
 						controlledPosition: usedCards[cardId] ? usedCards[cardId].controlledPosition : {x: 0, y: 0},
@@ -242,9 +242,16 @@ function PlayingGame(
 					}
 				}
 			})
-	
 			setUsedCards(tempUsedCards)
+
+			for (let i = 0; i < syncedCards.length; i++) {
+				const cardId = i
+				const card = syncedCards[i];
+				
+				setCards(cardId, card.onStack)
+			}
 		}
+	useEffect(() => {
 
 		if(syncedCards) {
 			console.log("USED CARDS:",usedCards)
@@ -253,7 +260,7 @@ function PlayingGame(
 				const timeout = setTimeout(() => {
 					updateCards()
 					clearTimeout(timeout)
-				}, 1000)
+				}, 5000)
 			} else {
 				updateCards()
 			}

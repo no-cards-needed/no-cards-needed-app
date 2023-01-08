@@ -4,7 +4,7 @@ import {useNavigate} from "react-router-dom";
 import {generateLobbyString} from "../helpers/words";
 import Tutorial from "./TutorialModal.js"
 import { Link } from "react-router-dom";
-
+import { getItem } from '../helpers/localStorageHelper';
 
 function StartScreen() {
   const [ displayModal, setDisplayModal ] = useState( 'none' )
@@ -18,7 +18,7 @@ function StartScreen() {
 
   const [ displayTutorial, setDisplayTutorial ] = useState(true)
 
-  const [ wasSkipped, setWasSkipped ] = useState(false)
+  const [ wasSkipped, setWasSkipped ] = useState(getItem("wasSkipped") === "true" ? true : false)
  
   function toggleCreate() { 
     setProcessCreate(true) 

@@ -81,11 +81,16 @@ function Tutorial( props) {
     //     console.log(page)
     //   }, [page]);
   
+    const skipTutorial = () => {
+        setDisplayTutorial(false);
+        setWasSkipped(true);
+        setItem('wasSkipped', true)
+    }
 
     return (
         <div className="modalBackground" style={{display: displayTutorial ? 'flex' : 'none'}}>
                 <div className="modal" id="basicDrop" style={{marginBottom: '64px', padding: '16px'}}>
-                    <div className="btn Secondary medium noselect" id="dropSmall" style={{alignSelf: 'flex-end'}} onClick={() => {setDisplayTutorial(false); setWasSkipped(true); setItem('wasSkipped', wasSkipped)}}>
+                    <div className="btn Secondary medium noselect" id="dropSmall" style={{alignSelf: 'flex-end'}} onClick={() => {skipTutorial()}}>
                         <p>SKIP</p>
                     </div>
                     <div className="content-text-container">
