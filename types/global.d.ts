@@ -7,7 +7,7 @@ type GameStatus = {
 type Card = {
     symbol: string,
     onStack: number,
-    hasPlayer: string
+    hasPlayer: string | "none",
 }
 
 type NearestStack = {
@@ -31,11 +31,8 @@ type Stack = {
     position: {x: number, y: number}
 }
 
-type UsedCard = {
-    symbol: string,
-    onStack: number,
+interface UsedCard extends Card {
     onStackType: Stack["stackType"]
-    hasPlayer: string,
 
     controlledPosition: {x: number, y: number},
     zIndex: number,

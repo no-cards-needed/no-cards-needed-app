@@ -15,25 +15,30 @@ const DebugComponent = ({error}: {error:any}) => {
 	return <></>
 }
 
+type PlayingGameProps = {
+	gameStatus: GameStatus,
+	setGameStatus: (gameStatus: GameStatus) => void,
+	userId: string,
+
+	syncedCards: Card[], 
+	setCard: (card: Card, cardId: number) => void,
+	
+	syncedStacks: Stack[], 
+	setStack: (stack: Stack, stackId: number) => void	
+}
+
 function PlayingGame(
 		{
 			gameStatus,
 			setGameStatus,
+			userId,
 
 			syncedCards, 
 			setCard,
 
 			syncedStacks, 
 			setStack,
-		}: {
-			gameStatus: GameStatus,
-			setGameStatus: (gameStatus: GameStatus) => void,
-
-			syncedCards: Card[], 
-			syncedStacks: Stack[], 
-			setCard: (card: Card, cardId: number) => void,
-			setStack: (stack: Stack, stackId: number) => void
-		}) {
+		}: PlayingGameProps) {
 
 	// const [ lashTextTricks, setLashTextTricks ] = useState( 'Show Tricks' )
 	// const [ lashTextRemoved, setLashTextRemoved ] = useState( 'Show Removed Cards' )
@@ -190,8 +195,8 @@ function PlayingGame(
 				setCard(
 					{
 						symbol: usedCards[cardId].symbol,
-						onStack: nearestStack.stackIndex,
-						hasPlayer: usedCards[cardId].hasPlayer || "none"
+						onStack: nearestStack.stackIndex === 0 ? 1 : nearestStack.stackIndex,
+						hasPlayer: stackId === 0 || stackId === 1 ? userId : "none"
 					},
 					cardId,
 				)
@@ -207,14 +212,18 @@ function PlayingGame(
 					...tempUsedStacks[prevStackId],
 					cards: tempUsedStacks[prevStackId].cards ? tempUsedStacks[prevStackId].cards.filter((card: number) => card !== cardId) : []
 				}
-				setStack(tempUsedStacks[prevStackId], prevStackId-stackOffset)
+				if (stackId !== 0 && stackId !== 1) {
+					setStack(tempUsedStacks[prevStackId], prevStackId-stackOffset)
+				}
 
 				// Add card to the new stack
 				tempUsedStacks[stackId] = {
 					...tempUsedStacks[stackId],
 					cards: tempUsedStacks[stackId].cards ? [...tempUsedStacks[stackId].cards, cardId] : [cardId]
 				}
-				setStack(tempUsedStacks[stackId], stackId-stackOffset)
+				if (stackId !== 0 && stackId !== 1) {
+					setStack(tempUsedStacks[stackId], stackId-stackOffset)
+				}
 
 				setUsedStacks(tempUsedStacks)
 			}

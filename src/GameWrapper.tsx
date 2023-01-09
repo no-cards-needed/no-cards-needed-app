@@ -63,7 +63,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 		// A new player connected to the game
 		onValue(allPlayersRef.current, (snapshot) => {
 			// If this is the only player, this player is starting the game instance
-			if (Object.keys(snapshot.val()).length === 1) {
+			if (snapshot.val() && Object.keys(snapshot.val()).length === 1) {
 				console.log("👁️ [gamewrapper] this is the first player, setting up the game", snapshot.val())
 				const gameStatus = defaultGameStatus(Object.keys(snapshot.val())[0])
 				// Setting the game status to the initial values
@@ -205,6 +205,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 			/> : <PlayingGame 
 				gameStatus={gameStatusState}
 				setGameStatus={setGameStatus}
+				userId={userId}
 
 				syncedCards={cardsState}
 				setCard={setCard}
