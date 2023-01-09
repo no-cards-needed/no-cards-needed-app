@@ -64,6 +64,15 @@ function StartScreen() {
     setDisplayName( 'flex' )
   }
 
+  function handleKey(e) {
+    console.log(e)
+    if (e.key === 'Enter'){
+      nextKey()
+    }
+      else {
+    }
+  }
+
   function nextKey() {
     setProcessJoin(false) 
     setDisplayModal( 'none' )
@@ -102,13 +111,13 @@ function StartScreen() {
           <div className="modal" id="basicDrop" style={{display:displayName}}>
             <div className="headline"style={{textAlign: "center", letterSpacing: "0.01em"}}>  Choose your Nickname! </div>
 
-            <input type="text" id="name" required minLength="3" maxLength="20" placeholder="Enter Your Name" onChange={(e) => setName(e.target.value)} value={name}/>
+            <input type="text" id="name" required minLength="3" maxLength="20" placeholder="Enter Your Name" onChange={(e) => setName(e.target.value)} value={name} onKeyDown={(e) => name !== "" ? handleKey(e) : null }/>
 
             <div className="buttonContainer">
               <div className="btn medium Secondary noselect" id="basicDrop" style={{width: "100%"}} onClick={discardName}>
                 <p>Discard</p>
               </div>
-              <div className="btn medium Primary noselect" id="basicDrop" style={{width: "100%"}} onClick={() => name !== "" ? nextName() : null}>
+              <div className="btn medium Primary noselect" id="basicDrop" style={{width: "100%"}} onClick={() => name !== "" ? nextName() : null }>
                 <p>Next</p>
               </div>
             </div>
