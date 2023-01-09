@@ -5,10 +5,10 @@ import { ref, getDatabase, set, onValue, onDisconnect, onChildAdded, serverTimes
 
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
-import PlayingGame from "./PlayingGame";
 import { setDefaultStacks, setDefaultUsedCards } from "./helpers/mp";
 
 import CreateGame from "./components/CreateGame.js"
+import PlayingGame from "./PlayingGame";
 
 export const GameWrapper = ({app}: {app:any}) => {
 
