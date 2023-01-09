@@ -1,7 +1,7 @@
 // Firebase Stuff
 // Import the functions you need from the SDKs you need
 import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
-import { ref, getDatabase, set, onValue, onDisconnect, onChildAdded, serverTimestamp } from "firebase/database";
+import { ref, getDatabase, set, onValue, onDisconnect, onChildAdded, serverTimestamp, DatabaseReference } from "firebase/database";
 
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -123,8 +123,10 @@ export const GameWrapper = ({app}: {app:any}) => {
 	// Updater Function for the Cards
 	// recieves a *SINGLE* Card object and sets it in the Firebase Database
 	const setCard = (card: Card, cardId: number) => {
-		console.log("👁️ [gamewrapper] setting user requested cards");
-		set(cardsRef.current.child(cardId), card)
+		const cardRef = ref(getDatabase(app.current), `game/${gameId}/cards/${cardId}`)
+
+		console.log("👁️ [gamewrapper] setting user requested cards with path: ", cardRef);
+		set(cardRef, card)
 			.then(() => console.log("👁️ [gamewrapper] card set", card, cardId))
 			.catch((e) => console.log("👁️ [gamewrapper] Encountered error setting the card", e))
 	}
@@ -132,8 +134,10 @@ export const GameWrapper = ({app}: {app:any}) => {
 	// Updater Function for the Cards
 	// recieves a *SINGLE* Stack object and sets it in the Firebase Database
 	const setStack = (stack: Stack, stackId: number) => {
-		console.log("👁️ [gamewrapper] setting user requested stacks");
-		set(stacksRef.current.child(stackId), stack)
+		const stackRef = ref(getDatabase(app.current), `game/${gameId}/stacks/${stackId}`)
+
+		console.log("👁️ [gamewrapper] setting user requested stacks with stackpath: ", stackRef);
+		set(stackRef, stack)
 			.then(() => console.log("👁️ [gamewrapper] stack set", stack, stackId))
 			.catch((e) => console.log("👁️ [gamewrapper] Encountered error setting the stack", e))
 	}

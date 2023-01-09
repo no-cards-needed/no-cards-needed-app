@@ -4,7 +4,7 @@ export const handleCardDrop = (
 	setUsedCards: (usedCards: UsedCard[]) => void, 
 	isColliding: boolean,
 	nearestStack: NearestStack, 
-	setCards: (cardId: number, stackId: number) => void) => {
+	setCards: (cardId: number, stackId: number, comingFromSync: boolean) => void) => {
 
 		// Set movedAside in all cards to false
 		usedCards.forEach((card: Card, cardId: number) => {
@@ -17,9 +17,11 @@ export const handleCardDrop = (
 		// Check if Card and Nearest Stack are colliding
 		if (isColliding) {
 			// update cards
+			console.log("🫱 is colliding, updating cards", cardId, nearestStack)
 			setCards(
 				cardId,
 				nearestStack.stackIndex,
+				false
 			)
 		}
 }

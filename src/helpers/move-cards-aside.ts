@@ -12,9 +12,11 @@ export const moveCardsAside = (
 
 	// Moving the Cards in the open Stack aside
 	if(stack.cards) {
-		Object.keys(stack.cards).map((loopedCardId) => {
-			const loopedCardId_INT = parseInt(loopedCardId)
-			if (loopedCardId_INT !== cardId) {
+
+		for (let loopedCardId = 0; loopedCardId < stack.cards.length; loopedCardId++) {
+			const loopedCard = stack.cards[loopedCardId];
+
+			if (loopedCardId !== cardId) {
 				// Get Position of currently dragged card
 				const { left: cardLeft, right: cardRight } = currentCardRef.current.getBoundingClientRect();
 	
@@ -26,18 +28,14 @@ export const moveCardsAside = (
 				// console.log(isLeft, isRight)
 				
 				// Set Card to Moved Aside
-				setUsedCards(
-					{
-						...usedCards,
-						[loopedCardId_INT]: {
-							...usedCards[loopedCardId_INT],
-							movedAside: isLeft ? "left" : isRight ? "right" : "none"
-						}
-					}
-				)
-	
+				const tempUsedCards = [...usedCards];
+				const movedAside = isLeft ? "left" : isRight ? "right" : "none"
+				if(movedAside !== "none" || tempUsedCards[loopedCardId].movedAside !== movedAside) {
+					tempUsedCards[loopedCardId].movedAside = movedAside
+					setUsedCards(tempUsedCards)
+				}
 				// TODO: When in "Selection" mode, the collidion shouldnt toggle the stack width
 			}
-		})
+		}
 	}
 }

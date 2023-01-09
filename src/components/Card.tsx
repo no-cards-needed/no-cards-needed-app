@@ -218,11 +218,10 @@ function Card({
 							// {...longPressEvent}
 							>
 							{
-								card.onStackType === "front" ?
+								card.onStackType === "front" || card.onStackType === "open" || card.onStackType === "hand" ?
 									cardToDisplay
 									: back
 							}
-							
 						</div>
 				</div>
 			</Draggable>
