@@ -214,7 +214,7 @@ function Card({
 					>
 						<div 
 							style={{transform, boxShadow: card.hasShadow ? "var(--shadow-elevation-medium)" : "none"}} 
-							className={`card ${classList}`}
+							className={`cardContainer ${classList}`}
 							// {...longPressEvent}
 							>
 							{
