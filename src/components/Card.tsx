@@ -207,13 +207,13 @@ function Card({
 				<div 
 					ref={nodeRef} 
 					// TODO: When moving on from debug, delete absolute dimensions
- 					style={{position: 'absolute', top: 0, left: 0, zIndex, height: 112, width: 80, boxShadow: card.hasShadow ? "var(--shadow-elevation-medium)" : "none"}} 
+ 					style={{position: 'absolute', top: 0, left: 0, zIndex, height: 112, width: 80}} 
 					className={transition ? "animation" : null}
 					// onTouchStart={touchStart}
 					// onClick={touchStart}
 					>
 						<div 
-							style={{transform}} 
+							style={{transform, boxShadow: card.hasShadow ? "var(--shadow-elevation-medium)" : "none"}} 
 							className={`card ${classList}`}
 							// {...longPressEvent}
 							>
