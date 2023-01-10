@@ -104,3 +104,49 @@
     width: 100%;
     flex-wrap: wrap;
   }
+
+  .countTag {
+    display: flex;
+    flex-direction: row;
+    background-color: var(--vg-20);
+    border-radius: 4px;
+    padding: 2px 8px;
+    height: fit-content;
+  }
+
+  .multiCardBox {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+    align-items: center;
+  }
+
+  .tagCardBox {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .miniCards:last-child {
+    height: 56px;
+    width: 40px;
+    border-radius: 5px;
+    background-color: var(--vg-0);
+    margin-left: 0;
+
+  }
+
+  .miniCards {
+    height: 56px;
+    width: 40px;
+    border-radius: 5px;
+    background-color: var(--vg-0);
+    margin-left: -32px;
+  }
+
+  .cardRow {
+    
+    display: flex;
+    flex-direction: row-reverse;
+  }

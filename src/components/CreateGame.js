@@ -14,6 +14,17 @@ import deckIcon from '../assets/iconsBlack/deck.svg';
 import handIcon from '../assets/iconsBlack/hand.svg';
 import share from '../assets/iconsWhite/share.svg';
 
+import miniBack from '../assets/cards-small/Back.svg';
+import miniCA from '../assets/cards-small/CA.svg';
+import miniD2 from '../assets/cards-small/D2.svg';
+import miniD6 from '../assets/cards-small/D6.svg';
+import miniD7 from '../assets/cards-small/D7.svg';
+import miniD9 from '../assets/cards-small/D9.svg';
+import miniJoker from '../assets/cards-small/Joker.svg';
+
+
+
+
 function Menu( {deckCards, setDeckCards, joker, setJoker, decks, setDecks, hand, setHand, pile, setPile, dropdownContent, players, startGame, setStartGame, gameId} ) {
   
 
@@ -83,6 +94,88 @@ function Menu( {deckCards, setDeckCards, joker, setJoker, decks, setDecks, hand,
                 <img onClick={shareId} src={share} className="iconContainer" alt=""></img>
               </div>
             </div>
+          </div>
+        </div>
+
+        <div className="settingsContainer noselect" id="basicDrop" style={{display: isHost ? 'flex' : 'none'}}>
+          <div className="settingsLabel">
+            <p>Used Cards</p>
+          </div>
+          <div style={{display: "flex", flexDirection: "row", alignItems: "flex-start", gap: "16px", flexWrap: "wrap", width: "100%", maxWidth: "668px"}}>
+
+            <div className="labelItemGroup" style={{maxWidth: "197px"}}>
+              <div className="labelIconCombo">
+                <img src={cardIcon} className="iconContainer" alt=""></img>
+                <label>cards in deck</label>
+              </div>
+              <div className="tagCardBox">
+                <div className="multiCardBox">
+                  <div className="cardRow">
+                    <div className="miniCards" id="basicDrop"></div>
+                    <img src={miniCA} className="miniCards" id="basicDrop" alt=""></img>
+                  </div>
+                  <p>...</p>                      
+                  <div className="cardRow">
+                    <img src={miniCA
+                    
+                    } className="miniCards" id="basicDrop" style={{zIndex: "1"}}></img>
+                    <div className="miniCards" id="basicDrop"></div>
+                  </div>
+                </div>
+                
+                <div className="countTag">
+                  <p>{decks}×</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="labelItemGroup" style={{maxWidth: "197px"}}>
+              <div className="labelIconCombo">
+                <img src={jokerIcon} className="iconContainer" alt=""></img>
+                <label>Jokers</label>
+              </div>
+              <div className="tagCardBox">
+                  <div className="cardRow">
+                    <div className="miniCards" id="basicDrop"></div>
+                    <img src={miniJoker} className="miniCards" id="basicDrop"></img>
+                  </div>
+                
+                <div className="countTag">
+                  <p>{joker}×</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="labelItemGroup" style={{maxWidth: "197px"}}>
+              <div className="labelIconCombo">
+                <img src={handIcon} className="iconContainer" alt=""></img>
+                <label>Cards on Hand</label>
+              </div>
+              <div className="tagCardBox">
+                  <div className="cardRow">
+                    <div className="miniCards" id="basicDrop"></div>
+                    <div className="miniCards" id="basicDrop"></div>
+                    <div className="miniCards" id="basicDrop"></div>
+                    <div className="miniCards" id="basicDrop"></div>
+                    <div className="miniCards" id="basicDrop"></div>
+                  </div>
+                
+                <div className="countTag">
+                  <p>{hand}×</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="labelItemGroup" style={{maxWidth: "197px", display: pile ? 'flex' : 'none'}}>
+              <div className="labelIconCombo">
+                <img src={cardIcon} className="iconContainer" alt=""></img>
+                <label>Draw Pile</label>
+              </div>
+                <div className="cardRow">
+                  <div className="miniCards" id="basicDrop"></div>
+                </div>
+            </div>
+
           </div>
         </div>
 
