@@ -109,6 +109,9 @@ function PlayingGame(
 		console.log("🐉 [acid tang] Used Stacks updated", usedStacks)
 	}, [usedStacks])
 
+	// TODO: Stacks generated from cards
+
+
 	const stackRef = useRef<HTMLDivElement[]>([]);
 	const stacksReference = useRef<Stack[]>([])
 	stacksReference.current = usedStacks
@@ -129,6 +132,8 @@ function PlayingGame(
 	const [nearestStack, setNearestStack] = useState(null);
 	const [isColliding, setIsColliding] = useState(false);
 
+
+	//TODO: Only check distances on drop
 	const getNearestStack: (cardRef: RefObject<HTMLDivElement>) => NearestStack = (cardRef: RefObject<HTMLDivElement>) => {
 		const distances = usedStacksRef.current.map((stack: Stack, stackId: number) => {
 			if (stackRef.current[stackId]) {
@@ -210,7 +215,7 @@ function PlayingGame(
 				// Remove card from previous stack
 				tempUsedStacks[prevStackId] = {
 					...tempUsedStacks[prevStackId],
-					cards: tempUsedStacks[prevStackId].cards ? tempUsedStacks[prevStackId].cards.filter((card: number) => card !== cardId) : []
+					cards: tempUsedStacks[prevStackId].cards ? tempUsedStacks[prevStackId].cards.filter((_: any, cardIndex: number) => cardIndex !== cardId) : []
 				}
 				if (stackId !== 0 && stackId !== 1) {
 					setStack(tempUsedStacks[prevStackId], prevStackId-stackOffset)
@@ -311,6 +316,7 @@ function PlayingGame(
 				updateCards()
 			}
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [syncedCards])
  
 	return (
@@ -321,11 +327,12 @@ function PlayingGame(
                 <div className="playingArea criticalMaxWidth">
 				{
 					usedStacks.map((stack: Stack, stackId: number) => {
+						console.log("RERENDERING STACKS")
 						if(stack.stackType !== "hand" && stack.stackType !== "hidden") {
 							return (
 								<Stack key={stack.id} stackType={stack.stackType} stackRef={(el: HTMLDivElement) => stackRef.current[stackId] = el}/>
 							)
-						}
+						} else return null
 					})
 				}
                 </div>

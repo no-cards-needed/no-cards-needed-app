@@ -1,7 +1,7 @@
 // Firebase Stuff
 // Import the functions you need from the SDKs you need
 import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
-import { ref, getDatabase, set, onValue, onDisconnect, onChildAdded, serverTimestamp, DatabaseReference } from "firebase/database";
+import { ref, getDatabase, set, onValue, onDisconnect, onChildAdded, serverTimestamp } from "firebase/database";
 
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -25,12 +25,14 @@ export const GameWrapper = ({app}: {app:any}) => {
     const [hand, setHand] = useState(5)
     const [pile, setPile] = useState(true)
 	const [startGame, setStartGame] = useState(false)
-	const [gameId, setGameId] = useState("auth")
+
+	// TODO: Generate Random room name
+	const [gameId] = useState("auth")
 
 	// Getting the set User Name
 	const {state} = useLocation();
 	const {name} = state as {name: string};
-	
+	  
 	const gameStatusRef = useRef(null)
 	const [gameStatusState, setGameStatusState] = useState<GameStatus>()
 	const defaultGameStatus: (userId: string) => GameStatus = (userId: string) => {
@@ -182,6 +184,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 			// 	allPlayersRef.current.child(userId).remove();
 			// }
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (

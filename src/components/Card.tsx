@@ -42,6 +42,7 @@ function Card({
 
 	const [deltaPosition, setDeltaPosition] = useState({x: 0, y: 0})
 	
+	// TODO: Causes Performance issues
 	// Move card aside when card.movedAside is left or right
 
 	const [temporalPosition, setTemporalPosition] = useState({x: 0, y: 0})
