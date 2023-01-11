@@ -1,10 +1,11 @@
+import { MutableRefObject } from "react";
 import { checkCollision } from "./check-collision";
 import { moveCardsAside } from "./move-cards-aside";
 
 // state of the position when the drag started
 
 export const handleCardDrag = (
-		cardRef: React.MutableRefObject<HTMLDivElement>,
+		cardRef: MutableRefObject<HTMLDivElement>,
 		cardId: number, 
 
 		usedCards: UsedCard[], 
@@ -15,6 +16,7 @@ export const handleCardDrag = (
 		setNearestStack: (nearestStack: NearestStack) => void, 
 		
 		stacks: Stack[], 
+		controlledStacks: MutableRefObject<ControlledStacks>,
 		
 		setIsColliding: (isColliding: boolean) => void,
 		) => {
@@ -36,8 +38,8 @@ export const handleCardDrag = (
 
 		// Checking if the Stack Type is an open one, so the cards can be moved aside
 		const nearestStackType = stacks[nearestStack.stackIndex].stackType;
-		if (nearestStackType === "front" || nearestStackType === "hand") {
-			moveCardsAside(stacks, nearestStack, cardRef, usedCards, setUsedCards, cardId)
+		if (nearestStackType === "open" || nearestStackType === "hand") {
+			moveCardsAside(controlledStacks, nearestStack, cardRef, usedCards, setUsedCards, cardId)
 		}
 
 	} else {

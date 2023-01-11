@@ -1,19 +1,18 @@
+import { MutableRefObject } from "react";
 import { getCardPositionInStack } from "./get-card-position-in-stack";
 import { getPositionAtCenter } from "./get-position-at-center";
 
 export const calculateCardPosition = (
 	card: HTMLDivElement, 
 	stackRef: HTMLDivElement, 
-	stacksObject: {
-		stackType: string, 
-		cards: number[], 
-		position: {x: number, y: number}}, 
+	stackId: number,
+	controlledStack: MutableRefObject<ControlledStacks>, 
 	cardId: number) => {
 
 	// Get Card Position in stack from id
-	const cardPositionInStack = getCardPositionInStack(cardId, stacksObject)
+	const cardPositionInStack = getCardPositionInStack(cardId, stackId, controlledStack)
 
-	const cardCount = stacksObject.cards ? Object.keys(stacksObject.cards).length : 0;
+	const cardCount = controlledStack.current[stackId] ? controlledStack.current[stackId].length : 0;
 
 	const stackCenter = getPositionAtCenter(stackRef, "stackCenter - calculate-card-position.ts 14");
 	const { width: cardWidth, height: cardHeight } = card.getBoundingClientRect();

@@ -71,53 +71,10 @@ function PlayingGame(
 	// 	}
 	// } 
 
-	const [ usedStacks, setUsedStacksState ] = useState<Stack[]>(
-		[
-			{
-				id: 0,
-				stackType: "hand",
-				cards: [],
-				position: {x: 0, y: 0},
-			},
-			{
-				id: 1,
-				stackType: "hidden",
-				cards: [],
-				position: {x: 0, y: 0},
-			}
-		]
-	)
-	const usedStacksRef = useRef<Stack[]>([
-		{
-			id: 0,
-			stackType: "hand",
-			cards: [],
-			position: {x: 0, y: 0},
-		},
-		{
-			id: 1,
-			stackType: "hidden",
-			cards: [],
-			position: {x: 0, y: 0},
-		}
-	])
-	const setUsedStacks = (usedStacks: Stack[]) => {
-		setUsedStacksState(usedStacks)
-		usedStacksRef.current = usedStacks
-	}
-	useEffect(() => {
-		console.log("🐉 [acid tang] Used Stacks updated", usedStacks)
-	}, [usedStacks])
+	// #########################################################
+	// CARDS, USED CARDS AND ALL OF THE OTHER CARD RELATED STUFF
+	// #########################################################
 
-	// TODO: Stacks generated from cards
-
-
-	const stackRef = useRef<HTMLDivElement[]>([]);
-	const stacksReference = useRef<Stack[]>([])
-	stacksReference.current = usedStacks
-	// The delta of stackindeces caused by the hand and hidden stack not being synced
-	const stackOffset = 2
-	
 	const cardRef = useRef<HTMLDivElement[]>([]);
 	const [usedCards, setUsedCardsState] = useState<UsedCard[]>([])
 	const usedCardsRef = useRef<UsedCard[]>([])
@@ -128,7 +85,61 @@ function PlayingGame(
 	useEffect(() => {
 		console.log("🐉 [acid tang] Used Cards updated", usedCards)
 	}, [usedCards])
-	
+
+
+	// #########################################################
+	// ######################## STACKS #########################
+	// #########################################################
+
+	const [ usedStacks, setUsedStacksState ] = useState<Stack[]>(
+		[
+			{
+				id: 0,
+				stackType: "hand",
+				position: {x: 0, y: 0},
+			},
+			{
+				id: 1,
+				stackType: "hidden",
+				position: {x: 0, y: 0},
+			}
+		]
+	)
+	const usedStacksRef = useRef<Stack[]>(usedStacks)
+	const setUsedStacks = (usedStacks: Stack[]) => {
+		setUsedStacksState(usedStacks)
+		usedStacksRef.current = usedStacks
+	}
+	useEffect(() => {
+		console.log("🐉 [acid tang] Used Stacks updated", usedStacks)
+	}, [usedStacks])
+
+	const controlledStacks = useRef<ControlledStacks>({})
+	useEffect(() => {
+		const tempControlledStacks: ControlledStacks = {}
+		for (let cardId = 0; cardId < usedCards.length; cardId++) {
+			const card = usedCards[cardId];
+			// tempControlledStacks[card.onStack] = tempControlledStacks[card.onStack] ? [...tempControlledStacks[card.onStack], cardId] : [cardId]
+
+			// Add cardId to tempControlledStacks if the card isnt already in it
+			if (tempControlledStacks[card.onStack] && !tempControlledStacks[card.onStack].includes(cardId)) {
+				tempControlledStacks[card.onStack] = [...tempControlledStacks[card.onStack], cardId]
+			} else if(!tempControlledStacks[card.onStack]) {
+				tempControlledStacks[card.onStack] = [cardId]
+			}
+		}
+		controlledStacks.current = tempControlledStacks
+	}, [usedCards])
+	// TODO: Stacks generated from cards
+
+
+	const stackRef = useRef<HTMLDivElement[]>([]);
+	const stacksReference = useRef<Stack[]>([])
+	stacksReference.current = usedStacks
+	// The delta of stackindeces caused by the hand and hidden stack not being synced
+	const stackOffset = 2
+
+
 	const [nearestStack, setNearestStack] = useState(null);
 	const [isColliding, setIsColliding] = useState(false);
 
@@ -178,14 +189,14 @@ function PlayingGame(
 			const cardPosition = {
 				x: stack.stackType !== "hand" && stack.stackType !== "open" 
 						? stackRef.current[stackId].getBoundingClientRect().x 
-						: calculateCardPosition(cardRef.current[cardId], stackRef.current[stackId], stack, cardId),
+						: calculateCardPosition(cardRef.current[cardId], stackRef.current[stackId], stackId, controlledStacks, cardId),
 				y: stackRef.current[stackId].getBoundingClientRect().y
 			}
 
 			const stackType = usedStacksRef.current[stackId].stackType
 			const tempUsedCards = [...usedCardsRef.current]
-			const hasShadow = usedStacksRef.current[stackId]?.cards ? usedStacksRef.current[stackId].cards.length - usedStacksRef.current[stackId].cards.indexOf(cardId) <= 10 ? true : false : false
-			const stackLength = usedStacksRef.current[stackId].cards ? usedStacksRef.current[stackId].cards.length : 0
+			const hasShadow = controlledStacks.current[stackId] ? controlledStacks.current[stackId].length - controlledStacks.current[stackId].indexOf(cardId) <= 10 ? true : false : false
+			const stackLength = controlledStacks.current[stackId] ? controlledStacks.current[stackId].length : 0
 
 			tempUsedCards[cardId] = {
 				...tempUsedCards[cardId],
@@ -205,34 +216,7 @@ function PlayingGame(
 					},
 					cardId,
 				)
-
-
-				// Filter current card out of the tempUsedStacks
-				let tempUsedStacks: Stack[] = [...usedStacksRef.current]
-				
-				const prevStackId = usedCardsRef.current[cardId].onStack
-
-				// Remove card from previous stack
-				tempUsedStacks[prevStackId] = {
-					...tempUsedStacks[prevStackId],
-					cards: tempUsedStacks[prevStackId].cards ? tempUsedStacks[prevStackId].cards.filter((_: any, cardIndex: number) => cardIndex !== cardId) : []
-				}
-				if (stackId !== 0 && stackId !== 1) {
-					setStack(tempUsedStacks[prevStackId], prevStackId-stackOffset)
-				}
-
-				// Add card to the new stack
-				tempUsedStacks[stackId] = {
-					...tempUsedStacks[stackId],
-					cards: tempUsedStacks[stackId].cards ? [...tempUsedStacks[stackId].cards, cardId] : [cardId]
-				}
-				if (stackId !== 0 && stackId !== 1) {
-					setStack(tempUsedStacks[stackId], stackId-stackOffset)
-				}
-
-				setUsedStacks(tempUsedStacks)
 			}
-
 		}
 		catch (e) {
 			console.error("🐉 [acid tang] error setting cards", e, cardId, stackId)
@@ -273,10 +257,9 @@ function PlayingGame(
 					const stackType = usedStacksRef.current[card.onStack].stackType
 
 					// Index of Card in Stack  
-					const cardIndex = usedStacksRef.current[card.onStack].cards ? usedStacksRef.current[card.onStack].cards.indexOf(cardId) : 0
-					console.log(cardIndex)
+					const cardIndex = controlledStacks.current[card.onStack] ? controlledStacks.current[card.onStack].indexOf(cardId) : 0
 					// Set const "hasShadow" to true if the card is in the top 10 cards of the stack
-					const hasShadow = usedStacksRef.current[card.onStack].cards ? usedStacksRef.current[card.onStack].cards.length - usedStacksRef.current[card.onStack].cards.indexOf(cardId) <= 10 ? true : false : false
+					const hasShadow = controlledStacks.current[card.onStack] ? controlledStacks.current[card.onStack].length - controlledStacks.current[card.onStack].indexOf(cardId) <= 10 ? true : false : false
 					
 					const tempUsedCards = [...usedCardsRef.current];
 					tempUsedCards[cardId] = {
@@ -347,7 +330,7 @@ function PlayingGame(
 									key={cardId}
 									shuffle={() => {}}
 									handleLongPress={() => {}}
-									handleCardDrag={(cardRef, cardId) => handleCardDrag(cardRef, cardId, usedCardsRef.current, setUsedCards, getNearestStack, nearestStack, setNearestStack, usedStacks, setIsColliding)} 
+									handleCardDrag={(cardRef, cardId) => handleCardDrag(cardRef, cardId, usedCardsRef.current, setUsedCards, getNearestStack, nearestStack, setNearestStack, usedStacks, controlledStacks, setIsColliding)} 
 									handleCardDrop={(data, id) => handleCardDrop(id, usedCards, setUsedCards, isColliding, nearestStack, setCards)} />
 						}) : <DebugComponent error={usedCards} />
 					}
