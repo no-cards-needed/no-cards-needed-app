@@ -8,6 +8,7 @@ type Card = {
 	symbol: string,
 	onStack: number,
 	hasPlayer: string | "none",
+	lastMoved: object
 }
 
 type NearestStack = {

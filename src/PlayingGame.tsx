@@ -9,6 +9,7 @@ import { handleCardDrag } from "./helpers/handle-card-drag";
 import { handleCardDrop } from "./helpers/handle-card-drop";
 import GameHeader from "./components/GameHeader";
 import {Toaster} from "react-hot-toast";
+import { serverTimestamp } from "firebase/database";
 
 const DebugComponent = ({error}: {error:any}) => {
 	console.log(error)
@@ -116,7 +117,7 @@ function PlayingGame(
 
 	const controlledStacks = useRef<ControlledStacks>({})
 	useEffect(() => {
-		const tempControlledStacks: ControlledStacks = {}
+		const tempControlledStacks: ControlledStacks = controlledStacks.current || {}
 		for (let cardId = 0; cardId < usedCards.length; cardId++) {
 			const card = usedCards[cardId];
 			// tempControlledStacks[card.onStack] = tempControlledStacks[card.onStack] ? [...tempControlledStacks[card.onStack], cardId] : [cardId]
@@ -164,23 +165,23 @@ function PlayingGame(
 		cardRef.current[cardId] = ref;
 	}
 
-	const resetCardZIndex = (shuffledCards: UsedCard[]) => {
-		// Re-Set zIndex of the shuffled cards
-		shuffledCards.forEach((card: UsedCard, cardId: number) => {
-			const tempUsedCards = usedCards
-			tempUsedCards[cardId].zIndex = cardId
-			tempUsedCards[cardId].animation = "shuffle"
-			setUsedCards(tempUsedCards)
-		})
-		const timeout = setTimeout(() => {
-			shuffledCards.forEach((card: UsedCard, cardId: number) => {
-				const tempUsedCards = usedCards
-				tempUsedCards[cardId].animation = "none"
-				setUsedCards(tempUsedCards)
-			})
-			clearTimeout(timeout)
-		}, 300)
-	}
+	// const resetCardZIndex = (shuffledCards: UsedCard[]) => {
+	// 	// Re-Set zIndex of the shuffled cards
+	// 	shuffledCards.forEach((card: UsedCard, cardId: number) => {
+	// 		const tempUsedCards = usedCards
+	// 		tempUsedCards[cardId].zIndex = cardId
+	// 		tempUsedCards[cardId].animation = "shuffle"
+	// 		setUsedCards(tempUsedCards)
+	// 	})
+	// 	const timeout = setTimeout(() => {
+	// 		shuffledCards.forEach((card: UsedCard, cardId: number) => {
+	// 			const tempUsedCards = usedCards
+	// 			tempUsedCards[cardId].animation = "none"
+	// 			setUsedCards(tempUsedCards)
+	// 		})
+	// 		clearTimeout(timeout)
+	// 	}, 300)
+	// }
 
 	const setCards = (cardId: number, stackId: number, comingFromSync: boolean = true) => {
 		try {
@@ -195,14 +196,24 @@ function PlayingGame(
 
 			const stackType = usedStacksRef.current[stackId].stackType
 			const tempUsedCards = [...usedCardsRef.current]
-			const hasShadow = controlledStacks.current[stackId] ? controlledStacks.current[stackId].length - controlledStacks.current[stackId].indexOf(cardId) <= 10 ? true : false : false
-			const stackLength = controlledStacks.current[stackId] ? controlledStacks.current[stackId].length : 0
+			const hasShadow = controlledStacks.current[stackId] 
+								? Object.values(controlledStacks.current[stackId]).length - Object.values(controlledStacks.current[stackId]).indexOf(cardId) 
+								<= 10 
+									? true 
+									: false 
+								: false
+			const stackLength = controlledStacks.current[stackId] 
+									? Object.values(controlledStacks.current[stackId]).length 
+									: 0
+			const positionInStack = controlledStacks.current[stackId] 
+										? Object.values(controlledStacks.current[stackId]).indexOf(cardId) 
+										: stackLength
 
 			tempUsedCards[cardId] = {
 				...tempUsedCards[cardId],
 				onStack: stackId,
 				controlledPosition: cardPosition,
-				zIndex: stackLength,
+				zIndex: positionInStack,
 				onStackType: stackType,
 				hasShadow,
 			} 
@@ -212,7 +223,8 @@ function PlayingGame(
 					{
 						symbol: usedCards[cardId].symbol,
 						onStack: nearestStack.stackIndex === 0 ? 1 : nearestStack.stackIndex,
-						hasPlayer: stackId === 0 || stackId === 1 ? userId : "none"
+						hasPlayer: stackId === 0 || stackId === 1 ? userId : "none",
+						lastMoved: serverTimestamp()
 					},
 					cardId,
 				)
@@ -257,9 +269,16 @@ function PlayingGame(
 					const stackType = usedStacksRef.current[card.onStack].stackType
 
 					// Index of Card in Stack  
-					const cardIndex = controlledStacks.current[card.onStack] ? controlledStacks.current[card.onStack].indexOf(cardId) : 0
+					const cardIndex = controlledStacks.current[card.onStack] 
+										? Object.values(controlledStacks.current[card.onStack]).indexOf(cardId) 
+										: 0
 					// Set const "hasShadow" to true if the card is in the top 10 cards of the stack
-					const hasShadow = controlledStacks.current[card.onStack] ? controlledStacks.current[card.onStack].length - controlledStacks.current[card.onStack].indexOf(cardId) <= 10 ? true : false : false
+					const hasShadow = controlledStacks.current[card.onStack] 
+										? Object.values(controlledStacks.current[card.onStack]).length - Object.values(controlledStacks.current[card.onStack]).indexOf(cardId) 
+										<= 10 
+											? true 
+											: false 
+										: false
 					
 					const tempUsedCards = [...usedCardsRef.current];
 					tempUsedCards[cardId] = {
@@ -269,7 +288,8 @@ function PlayingGame(
 						animation: card ? card.animation ? card.animation : "none" : "none",
 						movedAside: "none",
 						onStackType: stackType,
-						hasShadow
+						hasShadow,
+						lastMoved: card.lastMoved ? card.lastMoved : serverTimestamp(),
 					}
 					setUsedCards(tempUsedCards)
 				} catch(e: any) {
@@ -310,7 +330,6 @@ function PlayingGame(
                 <div className="playingArea criticalMaxWidth">
 				{
 					usedStacks.map((stack: Stack, stackId: number) => {
-						console.log("RERENDERING STACKS")
 						if(stack.stackType !== "hand" && stack.stackType !== "hidden") {
 							return (
 								<Stack key={stack.id} stackType={stack.stackType} stackRef={(el: HTMLDivElement) => stackRef.current[stackId] = el}/>
