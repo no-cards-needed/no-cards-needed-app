@@ -65,6 +65,25 @@ import {ReactComponent as ACE_S} from "../assets/cards/AS.svg"
 
 import { ReactComponent as BACK } from "../assets/cards/zBack.svg";
 
+//Mini Cards for Settings
+import {ReactComponent as MiniD2} from '../assets/cards-small/D2.svg'
+import {ReactComponent as MiniD6} from '../assets/cards-small/D6.svg'
+import {ReactComponent as MiniD7} from '../assets/cards-small/D7.svg'
+import {ReactComponent as MiniD9} from '../assets/cards-small/D9.svg'
+import {ReactComponent as MiniBack} from '../assets/cards-small/Back.svg';
+import {ReactComponent as MiniCA} from '../assets/cards-small/CA.svg';
+import {ReactComponent as MiniJoker} from '../assets/cards-small/Joker.svg';
+
+export const miniCards = {
+  d2: <MiniD2 />,
+  d6: <MiniD6 />,
+  d7: <MiniD7 />,
+  d9: <MiniD9 />,
+  back: <MiniBack />,
+  ca: <MiniCA />,
+  joker: <MiniJoker />
+}
+
 export const cards = [
   {
     name: "2C",

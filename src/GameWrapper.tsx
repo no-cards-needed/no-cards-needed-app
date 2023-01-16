@@ -10,13 +10,34 @@ import { setDefaultStacks, setDefaultUsedCards } from "./helpers/mp";
 import CreateGame from "./components/CreateGame.js"
 import PlayingGame from "./PlayingGame"
 
-
+import { miniCards } from "./helpers/Cards";
 
 export const GameWrapper = ({app}: {app:any}) => {
 
-	
+	const dropdownContent = [
+		{
+			count: 24,
+			text: '9 to ACE',
+			src: miniCards.d9,
+		},
+		{
+			count: 32,
+			text: '6 to ACE',
+			src: miniCards.d6,
+		},
+		{
+			count: 36,
+			text: '7 to ACE',
+			src: miniCards.d7,
+		},
+		{
+			count: 52,
+			text: '2 to ACE',
+			src: miniCards.d2,
+		},
+	]
 
-	const [deckCards, setDeckCards] = useState("dropdownContent[3].text)")
+	const [deckCards, setDeckCards] = useState(dropdownContent[0])
     const [joker, setJoker] = useState(0)
     const [decks, setDecks] = useState(1)
     const [hand, setHand] = useState(5)

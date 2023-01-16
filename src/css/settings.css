@@ -133,7 +133,7 @@
     width: 40px;
     border-radius: 5px;
     background-color: var(--vg-0);
-    margin-left: 0;
+    margin-right: 0;
 
   }
 
@@ -142,11 +142,11 @@
     width: 40px;
     border-radius: 5px;
     background-color: var(--vg-0);
-    margin-left: -32px;
+    margin-right: -32px;
   }
 
   .cardRow {
     
     display: flex;
-    flex-direction: row-reverse;
+    flex-direction: row;
   }
