@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import {
   BrowserRouter,
   Routes,
@@ -32,12 +32,10 @@ import StartScreen from "./components/startScreen.js"
 import CreateGame from "./components/CreateGame.js"
 import Imprint from "./components/Imprint.js"
 import About from "./components/About.js"
-import ContextMenu from "./components/ContextMenu.js"
 
 import reportWebVitals from './reportWebVitals';
 import { GameWrapper } from './GameWrapper';
 import { initializeApp } from 'firebase/app';
-import { getAnalytics } from 'firebase/analytics';
 
 // TODO: Add SDKs for Firebase products that you want to usea
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -59,7 +57,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app.current);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
