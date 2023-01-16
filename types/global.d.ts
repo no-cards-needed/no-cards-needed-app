@@ -28,7 +28,8 @@ type Stack = {
 	/**
 	 * Position of stack in Stack-Grid
 	 */
-	position: {x: number, y: number}
+	position: {x: number, y: number},
+	cards?: number[],
 }
 
 interface UsedCard extends Card {

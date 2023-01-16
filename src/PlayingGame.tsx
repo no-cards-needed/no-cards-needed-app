@@ -117,6 +117,19 @@ function PlayingGame(
 
 	const controlledStacks = useRef<ControlledStacks>({})
 	useEffect(() => {
+
+		const syncStacks = (card: UsedCard) => {
+			// synchronizing new controlled stacks
+			// This is potentially a very expensive operation bandwidth wise
+			// as this gets called 3 times on every card drop due to syncing
+			setStack({
+				id: card.onStack,
+				position: usedStacks[card.onStack].position,
+				stackType: usedStacks[card.onStack].stackType,
+				cards: tempControlledStacks[card.onStack]
+			}, card.onStack)
+		}
+
 		const tempControlledStacks: ControlledStacks = controlledStacks.current || {}
 		for (let cardId = 0; cardId < usedCards.length; cardId++) {
 			const card = usedCards[cardId];
@@ -125,11 +138,17 @@ function PlayingGame(
 			// Add cardId to tempControlledStacks if the card isnt already in it
 			if (tempControlledStacks[card.onStack] && !tempControlledStacks[card.onStack].includes(cardId)) {
 				tempControlledStacks[card.onStack] = [...tempControlledStacks[card.onStack], cardId]
+
+				syncStacks(card)
 			} else if(!tempControlledStacks[card.onStack]) {
 				tempControlledStacks[card.onStack] = [cardId]
+
+				syncStacks(card)
 			}
 		}
 		controlledStacks.current = tempControlledStacks
+
+
 	}, [usedCards])
 	// TODO: Stacks generated from cards
 
@@ -163,6 +182,16 @@ function PlayingGame(
 	const setCardRef = (cardId: number, ref: HTMLDivElement) => {
 		console.log("Setting Card Ref")
 		cardRef.current[cardId] = ref;
+	}
+
+	const redrawCardZIndexes = () => {
+		// Redraw Card ZIndexes
+		usedCardsRef.current.forEach((card: UsedCard, cardId: number) => {
+			const tempUsedCards = usedCardsRef.current
+			// Get zIndex from controlledStacks
+			tempUsedCards[cardId].zIndex = controlledStacks.current[card.onStack].indexOf(cardId) || 0
+			setUsedCards(tempUsedCards)
+		})
 	}
 
 	// const resetCardZIndex = (shuffledCards: UsedCard[]) => {
@@ -244,12 +273,16 @@ function PlayingGame(
 			syncedStacks.forEach((stack: Stack, stackId: number) => {
 				// Adding "2" to the stackId to avoid overwriting the first two stacks
 				// (Hand and Hidden stack)
-				tempStacks[stackId + stackOffset] = {
-					...syncedStacks[stackId],
+				const { cards, ...syncedStack } = syncedStacks[stack.id]
+				tempStacks[stack.id] = {
+					...syncedStack,
+					// ...syncedStacks[stackId],
 				}
+				controlledStacks.current[stack.id] = cards
 			})
 
 			setUsedStacks(tempStacks)
+			redrawCardZIndexes()
 		} 
 		
 	}, [syncedStacks])
