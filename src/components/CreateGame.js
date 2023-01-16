@@ -16,17 +16,43 @@ import share from '../assets/iconsWhite/share.svg';
 
 import miniBack from '../assets/cards-small/Back.svg';
 import miniCA from '../assets/cards-small/CA.svg';
-import miniD2 from '../assets/cards-small/D2.svg';
-import miniD6 from '../assets/cards-small/D6.svg';
-import miniD7 from '../assets/cards-small/D7.svg';
-import miniD9 from '../assets/cards-small/D9.svg';
+
+
+
+import miniD2 from '../assets/cards-small/D2.svg'
+import miniD6 from '../assets/cards-small/D6.svg'
+import miniD7 from '../assets/cards-small/D7.svg'
+import miniD9 from '../assets/cards-small/D9.svg'
+
 import miniJoker from '../assets/cards-small/Joker.svg';
 
 
-
-
-function Menu( {deckCards, setDeckCards, joker, setJoker, decks, setDecks, hand, setHand, pile, setPile, dropdownContent, players, startGame, setStartGame, gameId} ) {
+function Menu( {deckCards, setDeckCards, joker, setJoker, decks, setDecks, hand, setHand, pile, setPile, players, startGame, setStartGame, gameId} ) {
   
+
+  const dropdownContent = [
+		{
+			count: 24,
+			text: '9 to ACE',
+			src: miniD9,
+		},
+		{
+			count: 32,
+			text: '6 to ACE',
+			src: miniD6,
+		},
+		{
+			count: 36,
+			text: '7 to ACE',
+			src: miniD7,
+		},
+		{
+			count: 52,
+			text: '2 to ACE',
+			src: miniD2,
+		},
+	]
+
 
   const [ active, setActive ] = useState(true)
   const [ displaySettings, setDisplaySettings ] = useState( 'none' )
@@ -55,7 +81,8 @@ function Menu( {deckCards, setDeckCards, joker, setJoker, decks, setDecks, hand,
     }
 
     useEffect(() => {
-      setTotalCards((deckCards[0] + joker) * decks)
+      setTotalCards((deckCards.count + joker) * decks)
+      console.log(deckCards)
 
       setCardsInDrawPile(totalCards - (Object.values(players).length * hand))
 
@@ -112,13 +139,11 @@ function Menu( {deckCards, setDeckCards, joker, setJoker, decks, setDecks, hand,
                 <div className="multiCardBox">
                   <div className="cardRow">
                     <div className="miniCards" id="basicDrop"></div>
-                    <img src={miniCA} className="miniCards" id="basicDrop" alt=""></img>
+                    <img src={dropdownContent} className="miniCards" id="basicDrop" alt=""></img>
                   </div>
                   <p>...</p>                      
                   <div className="cardRow">
-                    <img src={miniCA
-                    
-                    } className="miniCards" id="basicDrop" style={{zIndex: "1"}}></img>
+                    <img src={deckCards.src} className="miniCards" id="basicDrop" style={{zIndex: "1"}}></img>
                     <div className="miniCards" id="basicDrop"></div>
                   </div>
                 </div>

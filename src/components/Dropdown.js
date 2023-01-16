@@ -26,14 +26,14 @@ function Dropdown( props ) {
         <div className="Dropdown">
             <div className="dropdown" id="dropSmall" style={{borderBottomRightRadius: active ? "0px" : "12px", borderBottomLeftRadius: active ? "0px" : "12px",}}>
                 <div className="dropdownHead" onClick={toggleDisplay}>
-                    <p>{deckCards}</p>
+                    <p>{deckCards.text}</p>
                     <img src={active ? chevronUp : chevronDown} alt=""></img>
                 </div>
 
                 <div className="dropdownUnfolded" style={{display:display}}>
                     {options.map((option, index) => (
                         <div className="dropdownItem" key={index} onClick={ () => { setSelection(option); toggleDisplay() }}>
-                            <p>{option}</p>
+                            <p>{option.text}</p>
                         </div>
                     ))}
 

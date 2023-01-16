@@ -8,18 +8,15 @@ import { useLocation } from "react-router-dom";
 import { setDefaultStacks, setDefaultUsedCards } from "./helpers/mp";
 
 import CreateGame from "./components/CreateGame.js"
-import PlayingGame from "./PlayingGame";
+import PlayingGame from "./PlayingGame"
+
+
 
 export const GameWrapper = ({app}: {app:any}) => {
 
-	const dropdownContent = [
-		[24, " Cards, 9–Ace"],
-		[32, " Cards, 7–Ace"],
-		[36, " Cards, 6-Ace"],
-		[52, " Cards, 2–Ace"],
-	  ]
+	
 
-	const [deckCards, setDeckCards] = useState(dropdownContent[0])
+	const [deckCards, setDeckCards] = useState("dropdownContent[3].text)")
     const [joker, setJoker] = useState(0)
     const [decks, setDecks] = useState(1)
     const [hand, setHand] = useState(5)
