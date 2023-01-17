@@ -117,7 +117,20 @@ export const GameWrapper = ({app}: {app:any}) => {
 		// Stack Value Change in FireBase Realtime Database
 		onValue(stacksRef.current, (snapshot) => {
 			console.log("👁️ [gamewrapper] recieved new stacks: ", snapshot.val());
-			setStacksState(snapshot.val());
+			const newStacks = snapshot.val()
+			
+			if(newStacks) {
+
+				for (let i = 0; i < newStacks.length; i++) {
+					const stack = newStacks[i];
+					if (!stack.cards) {
+						newStacks[i].cards = [];
+					}
+				}
+	
+				setStacksState(newStacks);
+
+			}
 		})
 
 		// Add the new player to the "allPlayers" state
@@ -156,7 +169,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 	const setStack = (stack: Stack, stackId: number) => {
 		const stackRef = ref(getDatabase(app.current), `game/${gameId}/stacks/${stackId}`)
 
-		console.log("👁️ [gamewrapper] setting user requested stacks with stackpath: ", stackRef);
+		console.log("👁️ [gamewrapper] setting user requested stacks with stackpath: ", stackRef, " and stack: ", stack);
 		set(stackRef, stack)
 			.then(() => console.log("👁️ [gamewrapper] stack set", stack, stackId))
 			.catch((e) => console.log("👁️ [gamewrapper] Encountered error setting the stack", e))

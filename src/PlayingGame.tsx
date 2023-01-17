@@ -116,18 +116,22 @@ function PlayingGame(
 	}, [usedStacks])
 
 	const controlledStacks = useRef<ControlledStacks>({})
+	const [cardMoveAuthor, setCardMoveAuthor] = useState<"CLIENT" | "SYNC">("SYNC")
 	useEffect(() => {
 
 		const syncStacks = (card: UsedCard) => {
 			// synchronizing new controlled stacks
 			// This is potentially a very expensive operation bandwidth wise
 			// as this gets called 3 times on every card drop due to syncing
-			setStack({
-				id: card.onStack,
-				position: usedStacks[card.onStack].position,
-				stackType: usedStacks[card.onStack].stackType,
-				cards: tempControlledStacks[card.onStack]
-			}, card.onStack)
+			if (cardMoveAuthor === "CLIENT") {
+				console.log("🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨")
+				setStack({
+					id: card.onStack,
+					position: usedStacksRef.current[card.onStack].position || {x: 0, y: 0},
+					stackType: usedStacksRef.current[card.onStack].stackType,
+					cards: tempControlledStacks[card.onStack]
+				}, card.onStack)
+			}
 		}
 
 		const tempControlledStacks: ControlledStacks = controlledStacks.current || {}
@@ -246,8 +250,8 @@ function PlayingGame(
 				onStackType: stackType,
 				hasShadow,
 			} 
-			setUsedCards(tempUsedCards)
 			if(!comingFromSync) {
+				setCardMoveAuthor("CLIENT")
 				setCard(
 					{
 						symbol: usedCards[cardId].symbol,
@@ -258,6 +262,7 @@ function PlayingGame(
 					cardId,
 				)
 			}
+			setUsedCards(tempUsedCards)
 		}
 		catch (e) {
 			console.error("🐉 [acid tang] error setting cards", e, cardId, stackId)
@@ -273,7 +278,10 @@ function PlayingGame(
 			syncedStacks.forEach((stack: Stack, stackId: number) => {
 				// Adding "2" to the stackId to avoid overwriting the first two stacks
 				// (Hand and Hidden stack)
-				const { cards, ...syncedStack } = syncedStacks[stack.id]
+				const unhandledSyncedStack: Stack = {cards: [], ...syncedStacks[stack.id]}
+				unhandledSyncedStack.cards ||= []
+			
+				const { cards, ...syncedStack } = unhandledSyncedStack
 				tempStacks[stack.id] = {
 					...syncedStack,
 					// ...syncedStacks[stackId],
@@ -342,10 +350,12 @@ function PlayingGame(
 		}
 	useEffect(() => {
 		if(syncedCards) {
+			setCardMoveAuthor("SYNC")
 			if(usedCardsRef.current.length === 0) {
 				// Set a timeout to wait for the stacks to be added
 				const timeout = setTimeout(() => {
 					updateCards()
+					redrawCardZIndexes()
 					clearTimeout(timeout)
 				}, 1000)
 			} else {
