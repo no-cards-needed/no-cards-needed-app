@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
-import MenuHeader from "./MenuHeader.js"
-import Counter from './Counter.js';
-import Dropdown from "./Dropdown.js";
-import Toggle from "./Toggle.js";
-import PlayerCards from "./PlayerCards.js";
+import MenuHeader from "./MenuHeader"
+import Counter from './Counter';
+import Dropdown from "./Dropdown";
+import Toggle from "./Toggle";
+import PlayerCards from "./PlayerCards";
 
 import chevronDown from '../assets/iconsBlack/chevron/down.svg';
 import chevronUp from '../assets/iconsBlack/chevron/up.svg';
@@ -16,12 +16,67 @@ import share from '../assets/iconsWhite/share.svg';
 
 import { miniCards } from "../helpers/Cards";
 
-function Menu( {deckCards, setDeckCards, joker, setJoker, decks, setDecks, hand, setHand, pile, setPile, players, startGame, setStartGame, gameId, dropdownContent} ) {
+type Props = {
+	deckCards: {
+		count: number;
+		text: string;
+		src: JSX.Element;
+	}, 
+	setDeckCards: (cards: {
+		count: number;
+		text: string;
+		src: JSX.Element;
+	}) => void, 
 	
+	joker: number, 
+	setJoker: (joker: number) => void, 
 
+	decks: number, 
+	setDecks: (decks: number) => void, 
+
+	hand: number, 
+	setHand: (hand: number) => void, 
+
+	pile: boolean, 
+	setPile: (pile: boolean) => void, 
+
+	players: {
+		[id: string]: {
+			name: string;
+			id: string;
+		};
+	},
+
+	startGame: boolean, 
+	setStartGame: (start: boolean) => void, 
+
+	gameId: string, 
+	dropdownContent: {
+		count: number;
+		text: string;
+		src: JSX.Element;
+	}[]
+}
+
+function Menu( 
+	{
+		deckCards, 
+		setDeckCards, 
+		joker, 
+		setJoker, 
+		decks, 
+		setDecks, 
+		hand, 
+		setHand, 
+		pile, 
+		setPile, 
+		players, 
+		startGame, 
+		setStartGame, 
+		gameId, 
+		dropdownContent
+	} : Props) {
 	
-
-
 	const [ active, setActive ] = useState(true)
 	const [ displaySettings, setDisplaySettings ] = useState( 'none' )
 	const [ isHost, setIsHost ] = useState(true)
@@ -130,7 +185,7 @@ function Menu( {deckCards, setDeckCards, joker, setJoker, decks, setDecks, hand,
 							<div className="tagCardBox">
 									<div className="cardRow">
 										<div className="miniCards" id="basicDrop"></div>
-										<div className="miniCards" id="basicDrop" alt="">{miniCards.joker}</div>
+										<div className="miniCards" id="basicDrop">{miniCards.joker}</div>
 									</div>
 								
 								<div className="countTag">
@@ -146,11 +201,11 @@ function Menu( {deckCards, setDeckCards, joker, setJoker, decks, setDecks, hand,
 							</div>
 							<div className="tagCardBox">
 									<div className="cardRow">
-										<div className="miniCards" id="basicDrop" alt="">{miniCards.back}</div>
-										<div className="miniCards" id="basicDrop" alt="">{miniCards.back}</div>
-										<div className="miniCards" id="basicDrop" alt="">{miniCards.back}</div>
-										<div className="miniCards" id="basicDrop" alt="">{miniCards.back}</div>
-										<div className="miniCards" id="basicDrop" alt="">{miniCards.back}</div>
+										<div className="miniCards" id="basicDrop">{miniCards.back}</div>
+										<div className="miniCards" id="basicDrop">{miniCards.back}</div>
+										<div className="miniCards" id="basicDrop">{miniCards.back}</div>
+										<div className="miniCards" id="basicDrop">{miniCards.back}</div>
+										<div className="miniCards" id="basicDrop">{miniCards.back}</div>
 									</div>
 								
 								<div className="countTag">

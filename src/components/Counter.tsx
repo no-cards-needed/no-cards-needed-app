@@ -1,11 +1,9 @@
 import plus from '../assets/iconsWhite/plus.svg';
 import minus from '../assets/iconsWhite/minus.svg';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
-function Counter( props ) {
+function Counter( {value, setValue, minValue, maxValue, disabled} : {value: number, setValue: (newValue: number) => void, minValue: number, maxValue: number, disabled: boolean} ) {
 
-
-    const {value, setValue, minValue, maxValue, disabled} = props
   
     function countDown() {
       if (value > minValue && disabled === false) setValue(value - 1) 

@@ -22,7 +22,7 @@
 		"acceptance-tests",
 		"webpack",
 		"jest",
-		"src/setupTests.ts"
+		"src/setupTests.js"
 	],
 	"types": [
 		"typePatches"

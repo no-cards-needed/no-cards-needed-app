@@ -1,8 +1,8 @@
 import Image from '../assets/no_cards_needed.svg';
-import { useState } from 'react';
+import { KeyboardEvent, useState } from 'react';
 import {useNavigate} from "react-router-dom";
 import {generateLobbyString} from "../helpers/words";
-import Tutorial from "./TutorialModal.js"
+import Tutorial from "./TutorialModal"
 import { Link } from "react-router-dom";
 import { getItem } from '../helpers/localStorageHelper';
 
@@ -64,7 +64,7 @@ function StartScreen() {
     setDisplayName( 'flex' )
   }
 
-  function handleKey(e) {
+  function handleKey(e: KeyboardEvent<HTMLInputElement>) {
     console.log(e)
     if (e.key === 'Enter'){
       nextKey()
@@ -111,7 +111,7 @@ function StartScreen() {
           <div className="modal" id="basicDrop" style={{display:displayName}}>
             <div className="headline"style={{textAlign: "center", letterSpacing: "0.01em"}}>  Choose your Nickname! </div>
 
-            <input type="text" id="name" required minLength="3" maxLength="20" placeholder="Enter Your Name" onChange={(e) => setName(e.target.value)} value={name} onKeyDown={(e) => name !== "" ? handleKey(e) : null }/>
+            <input type="text" id="name" required minLength={3} maxLength={20} placeholder="Enter Your Name" onChange={(e) => setName(e.target.value)} value={name} onKeyDown={(e) => name !== "" ? handleKey(e) : null }/>
 
             <div className="buttonContainer">
               <div className="btn medium Secondary noselect" id="basicDrop" style={{width: "100%"}} onClick={discardName}>
@@ -126,7 +126,7 @@ function StartScreen() {
           <div className="modal" id="basicDrop" style={{display:displayKey}}>
             <div className="headline" style={{textAlign: "center", letterSpacing: "0.01em"}}>  Which Lobby do you <br />want to Join? </div>
 
-            <input type="text" id="key" required minLength="3" maxLength="20" placeholder="Enter Access Code" onChange={(e) => setGameId(e.target.value)} value={gameId}/>
+            <input type="text" id="key" required minLength={3} maxLength={20} placeholder="Enter Access Code" onChange={(e) => setGameId(e.target.value)} value={gameId}/>
 
             <div className="buttonContainer">
               <div className="btn medium Secondary noselect" id="basicDrop" style={{width: "100%"}} onClick={discardKey}>

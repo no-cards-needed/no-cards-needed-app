@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { setDefaultStacks, setDefaultUsedCards } from "./helpers/mp";
 
-import CreateGame from "./components/CreateGame.js"
+import CreateGame from "./components/CreateGame"
 import PlayingGame from "./PlayingGame"
 
 import { miniCards } from "./helpers/Cards";
@@ -65,7 +65,12 @@ export const GameWrapper = ({app}: {app:any}) => {
 	const playerRef = useRef(null);
 
 	const allPlayersRef = useRef(null);
-	const [allPlayers, setAllPlayers] = useState({});
+	const [allPlayers, setAllPlayers] = useState<{
+		[id: string]: {
+			name: string;
+			id: string;
+		}
+	}>({});
 	
 	const cardsRef = useRef(null);
 	const [cardsState, setCardsState] = useState<Card[]>([]);
