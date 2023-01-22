@@ -118,7 +118,6 @@ function PlayingGame(
 	const controlledStacks = useRef<ControlledStacks>({})
 	const [cardMoveAuthor, setCardMoveAuthor] = useState<"CLIENT" | "SYNC">("SYNC")
 	useEffect(() => {
-
 		const syncStacks = (card: UsedCard) => {
 			// synchronizing new controlled stacks
 			// This is potentially a very expensive operation bandwidth wise
@@ -198,24 +197,6 @@ function PlayingGame(
 		})
 	}
 
-	// const resetCardZIndex = (shuffledCards: UsedCard[]) => {
-	// 	// Re-Set zIndex of the shuffled cards
-	// 	shuffledCards.forEach((card: UsedCard, cardId: number) => {
-	// 		const tempUsedCards = usedCards
-	// 		tempUsedCards[cardId].zIndex = cardId
-	// 		tempUsedCards[cardId].animation = "shuffle"
-	// 		setUsedCards(tempUsedCards)
-	// 	})
-	// 	const timeout = setTimeout(() => {
-	// 		shuffledCards.forEach((card: UsedCard, cardId: number) => {
-	// 			const tempUsedCards = usedCards
-	// 			tempUsedCards[cardId].animation = "none"
-	// 			setUsedCards(tempUsedCards)
-	// 		})
-	// 		clearTimeout(timeout)
-	// 	}, 300)
-	// }
-
 	const setCards = (cardId: number, stackId: number, comingFromSync: boolean = true) => {
 		try {
 			const stack: Stack = usedStacksRef.current[stackId]
@@ -278,8 +259,11 @@ function PlayingGame(
 			syncedStacks.forEach((stack: Stack, stackId: number) => {
 				// Adding "2" to the stackId to avoid overwriting the first two stacks
 				// (Hand and Hidden stack)
-				const unhandledSyncedStack: Stack = {cards: [], ...syncedStacks[stack.id]}
-				unhandledSyncedStack.cards ||= []
+
+				// Get synced Stack by property id
+				const filteredSyncedStack = syncedStacks.filter((syncedStack: Stack) => stack.id === syncedStack.id) 
+
+				const unhandledSyncedStack: Stack = {cards: [], ...filteredSyncedStack[0]}
 			
 				const { cards, ...syncedStack } = unhandledSyncedStack
 				tempStacks[stack.id] = {
@@ -288,11 +272,10 @@ function PlayingGame(
 				}
 				controlledStacks.current[stack.id] = cards
 			})
-
+			console.log("🚨⚠️🚨⚠️🚨⚠️🚨⚠️🚨⚠️🚨⚠️🚨⚠️ Setting used Cards", tempStacks)
 			setUsedStacks(tempStacks)
 			redrawCardZIndexes()
-		} 
-		
+		}
 	}, [syncedStacks])
 
 	const updateCards = () => {
