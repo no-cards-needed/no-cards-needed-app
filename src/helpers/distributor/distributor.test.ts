@@ -174,5 +174,12 @@ describe("Shuffle Card Array", () => {
 	
 	test("Array should have the same content", () => {
 		expect(shuffledArray).toContainEqual(startArray[0])
+		expect(shuffledArray).toContainEqual(startArray[1])
+		expect(shuffledArray).toContainEqual(startArray[2])
+		expect(shuffledArray).toContainEqual(startArray[3])
+		expect(shuffledArray).toContainEqual(startArray[4])
+		expect(shuffledArray).toContainEqual(startArray[5])
+		expect(shuffledArray).toContainEqual(startArray[6])
+		expect(shuffledArray).toContainEqual(startArray[7])
 	})
 })

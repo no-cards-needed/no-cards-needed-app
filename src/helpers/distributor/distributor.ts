@@ -65,14 +65,10 @@ export const distributeCards = (cardsPerDeck: {from: number, to: number}, jokers
 }
 
 export const shuffleCards: (cards: Card[]) => Card[] = (cards: Card[]) => {
-	const tempArray: Card[] = []
-	
-	for (let i = cards.length - 1; i > 0; i--) {
-		const j = Math.floor(Math.random() * (i + 1));
-		const temp = cards[i];
-		tempArray[i] = cards[j];
-		tempArray[j] = temp;
-	}
-	
-	return tempArray
+	let shuffled = cards
+		.map(value => ({ value, sort: Math.random() }))
+		.sort((a, b) => a.sort - b.sort)
+		.map(({ value }) => value)
+
+	return shuffled
 }
