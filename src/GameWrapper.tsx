@@ -125,16 +125,12 @@ export const GameWrapper = ({app}: {app:any}) => {
 			const newStacks = snapshot.val()
 			
 			if(newStacks) {
-
 				for (let i = 0; i < newStacks.length; i++) {
-					const stack = newStacks[i];
-					if (!stack.cards) {
+					if (!newStacks[i].cards) {
 						newStacks[i].cards = [];
 					}
 				}
-	
 				setStacksState(newStacks);
-
 			}
 		})
 

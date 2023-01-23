@@ -129,7 +129,7 @@ function PlayingGame(
 					position: usedStacksRef.current[card.onStack].position || {x: 0, y: 0},
 					stackType: usedStacksRef.current[card.onStack].stackType,
 					cards: tempControlledStacks[card.onStack]
-				}, card.onStack)
+				}, (card.onStack - stackOffset))
 			}
 		}
 
@@ -279,58 +279,53 @@ function PlayingGame(
 	}, [syncedStacks])
 
 	const updateCards = () => {
-			// Update usedCards with syncedCards
-			console.log("🐉 [acid tang] Synced Cards", syncedCards)
-				
-	
-			syncedCards.forEach((card: UsedCard, cardId: number) => {
-				// Get Stack Type
-				try {
-					if(!usedStacksRef.current[card.onStack]){
-						throw new Error("Stack not found with id: " + card.onStack)
-					}
-					
-					const stackType = usedStacksRef.current[card.onStack].stackType
-
-					// Index of Card in Stack  
-					const cardIndex = controlledStacks.current[card.onStack] 
-										? Object.values(controlledStacks.current[card.onStack]).indexOf(cardId) 
-										: 0
-					// Set const "hasShadow" to true if the card is in the top 10 cards of the stack
-					const hasShadow = controlledStacks.current[card.onStack] 
-										? Object.values(controlledStacks.current[card.onStack]).length - Object.values(controlledStacks.current[card.onStack]).indexOf(cardId) 
-										<= 10 
-											? true 
-											: false 
-										: false
-					
-					const tempUsedCards = [...usedCardsRef.current];
-					tempUsedCards[cardId] = {
-						...syncedCards[cardId],
-						controlledPosition: card ? card.controlledPosition ? card.controlledPosition : {x: 0, y: 0} : {x: 0, y: 0},
-						zIndex: card ? card.zIndex ? card.zIndex : cardIndex : 0,
-						animation: card ? card.animation ? card.animation : "none" : "none",
-						movedAside: "none",
-						onStackType: stackType,
-						hasShadow,
-						lastMoved: card.lastMoved ? card.lastMoved : serverTimestamp(),
-					}
-					setUsedCards(tempUsedCards)
-				} catch(e: any) {
-					if (e instanceof Error) {
-						console.error("🐉 [acid tang] Error updating cards", e, cardId, card)
-						console.log(usedStacksRef.current[card.onStack])
-					}
+		// Update usedCards with syncedCards
+		console.log("🐉 [acid tang] Synced Cards", syncedCards)
+		
+		for (let cardId = 0; cardId < syncedCards.length; cardId++) {
+			const card = syncedCards[cardId];			
+			// Get Stack Type
+			try {
+				if(!usedStacksRef.current[card.onStack]){
+					console.error("Stack not found with id: " + card.onStack)
+					console.log("syncedStacks", syncedStacks)
+					break;
 				}
-			})
-
-			for (let i = 0; i < syncedCards.length; i++) {
-				const cardId = i
-				const card = syncedCards[i];
 				
+				const stackType = usedStacksRef.current[card.onStack].stackType
+
+				// Index of Card in Stack  
+				const cardIndex = controlledStacks.current[card.onStack] 
+									? Object.values(controlledStacks.current[card.onStack]).indexOf(cardId) 
+									: 0
+				// Set const "hasShadow" to true if the card is in the top 10 cards of the stack
+				const hasShadow = controlledStacks.current[card.onStack] 
+									? Object.values(controlledStacks.current[card.onStack]).length - Object.values(controlledStacks.current[card.onStack]).indexOf(cardId) 
+									<= 10 
+										? true 
+										: false 
+									: false
+				
+				const tempUsedCards = [...usedCardsRef.current];
+				tempUsedCards[cardId] = {
+					...syncedCards[cardId],
+					controlledPosition: {x: 0, y: 0},
+					zIndex: cardIndex || 0,
+					animation: "none",
+					movedAside: "none",
+					onStackType: stackType,
+					hasShadow,
+				}
+				setUsedCards(tempUsedCards)
 				setCards(cardId, card.onStack, true)
+			} catch(e: any) {
+				if (e instanceof Error) {
+					console.error("🐉 [acid tang] Error updating cards", e, cardId, card)
+					console.log(usedStacksRef.current[card.onStack])
+				}
 			}
 		}
+	}
 	useEffect(() => {
 		if(syncedCards) {
 			setCardMoveAuthor("SYNC")
