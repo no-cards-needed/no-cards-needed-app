@@ -274,11 +274,12 @@ export const GameWrapper = ({app}: {app:any}) => {
 				startGame={gameStarted}
 				setStartGame={startGame}
 				gameId={gameId}
+				gameStatus={gameStatusState}
+				userId={userId}
 			/> : <PlayingGame 
 				gameStatus={gameStatusState}
 				setGameStatus={setGameStatus}
 				userId={userId}
-
 				syncedCards={cardsState}
 				setCard={setCard}
 				
