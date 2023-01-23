@@ -91,19 +91,29 @@
   
   }
 
-
+/* 
   .avatarContainer {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
     gap: 8px;
-  }
+  } */
 
   .avatar {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     border-radius: 6px;
     background: var(--vg-0);
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  
+
+  .avatarHost {
+    border: 2px solid #7741EA;
   }
 
 

@@ -45,6 +45,7 @@ type Props = {
 		[id: string]: {
 			name: string;
 			id: string;
+			avatar: 1 | 2 | 3 | 4 | 5;
 		};
 	},
 
@@ -59,6 +60,9 @@ type Props = {
 	}[],
 	gameStatus: GameStatus,
 	userId: string,
+	avatars: {
+		src: string
+	}[]
 
 }
 
@@ -80,7 +84,8 @@ function Menu(
 		gameId, 
 		dropdownContent,
 		gameStatus,
-		userId
+		userId,
+		avatars
 	} : Props) {
 	
 	const [ active, setActive ] = useState(true)
@@ -133,7 +138,7 @@ function Menu(
 
 					<div className="labelItemGroup">
 						<label>Players</label>
-						<PlayerCards names={players} />
+						<PlayerCards players={players} gameStatus={gameStatus} avatars={avatars}/>
 					</div>
 
 					<div style={{display: "flex", flexDirection: "row", alignItems: "flex-start", gap: "16px", width: "100%", maxWidth: "394px"}}>

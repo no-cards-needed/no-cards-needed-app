@@ -37,6 +37,24 @@ export const GameWrapper = ({app}: {app:any}) => {
 		},
 	]
 
+	const avatars = [
+		{
+			src: '../assets/avatars/avatar-1.svg'
+		},
+		{
+			src: '../assets/avatars/avatar-2.svg'
+		},
+		{
+			src: '../assets/avatars/avatar-3.svg'
+		},
+		{
+			src: '../assets/avatars/avatar-4.svg'
+		},
+		{
+			src: '../assets/avatars/avatar-5.svg'
+		},
+	]
+
 	const [deckCards, setDeckCards] = useState(dropdownContent[0])
     const [joker, setJoker] = useState(0)
     const [decks, setDecks] = useState(1)
@@ -70,6 +88,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 		[id: string]: {
 			name: string;
 			id: string;
+			avatar: 1 | 2 | 3 | 4 | 5;
 		}
 	}>({});
 	
@@ -213,6 +232,8 @@ export const GameWrapper = ({app}: {app:any}) => {
 					id: user.uid,
 					name: name || "Player",
 					cards: [],
+					// Random int from 1 to 5 as avatar id
+					avatar: Math.ceil(Math.random() * 5)
 				})
 				setUserId(user.uid);
 
@@ -257,6 +278,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 				gameId={"jkhasjghf"}
 				gameStatus={gameStatusState}
 				userId={userId}
+				avatars={avatars}
 			/> : <PlayingGame 
 				gameStatus={gameStatusState}
 				setGameStatus={setGameStatus}
