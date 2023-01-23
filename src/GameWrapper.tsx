@@ -57,7 +57,8 @@ export const GameWrapper = ({app}: {app:any}) => {
 		return {
 			host: userId,
 			created: serverTimestamp(),
-			currentGameState: "lobby"
+			currentGameState: "lobby",
+			timestamp: serverTimestamp(),
 		}
 	}
 
@@ -156,24 +157,41 @@ export const GameWrapper = ({app}: {app:any}) => {
 
 	// Updater Function for the Cards
 	// recieves a *SINGLE* Card object and sets it in the Firebase Database
-	const setCard = (card: Card, cardId: number) => {
+	const setCard = (card: Card, cardId: number, timestamp: number) => {
 		const cardRef = ref(getDatabase(app.current), `game/${gameId}/cards/${cardId}`)
+		console.log("👁️ [gamewrapper] setting user requested cards with path: ", cardRef, "and the timestamps: ", timestamp, gameStatusState.timestamp);
 
-		console.log("👁️ [gamewrapper] setting user requested cards with path: ", cardRef);
-		set(cardRef, card)
-			.then(() => console.log("👁️ [gamewrapper] card set", card, cardId))
-			.catch((e) => console.log("👁️ [gamewrapper] Encountered error setting the card", e))
+		// Check if timestamp is newer than the latest server timestamp
+		if (gameStatusState.timestamp && timestamp > gameStatusState.timestamp) {
+			updateGameStatusTimestamp()
+			set(cardRef, card)
+				.then(() => console.log("👁️ [gamewrapper] card set", card, cardId))
+				.catch((e) => console.log("👁️ [gamewrapper] Encountered error setting the card", e))
+		} else {
+			updateGameStatusTimestamp()
+		}
 	}
 
 	// Updater Function for the Cards
 	// recieves a *SINGLE* Stack object and sets it in the Firebase Database
-	const setStack = (stack: Stack, stackId: number) => {
+	const setStack = (stack: Stack, stackId: number, timestamp: number) => {
 		const stackRef = ref(getDatabase(app.current), `game/${gameId}/stacks/${stackId}`)
-
 		console.log("👁️ [gamewrapper] setting user requested stacks with stackpath: ", stackRef, " and stack: ", stack);
-		set(stackRef, stack)
-			.then(() => console.log("👁️ [gamewrapper] stack set", stack, stackId))
-			.catch((e) => console.log("👁️ [gamewrapper] Encountered error setting the stack", e))
+
+		// Check if timestamp is newer than the latest server timestamp
+		if (gameStatusState.timestamp && timestamp > gameStatusState.timestamp) {
+			updateGameStatusTimestamp()
+			set(stackRef, stack)
+				.then(() => console.log("👁️ [gamewrapper] stack set", stack, stackId))
+				.catch((e) => console.log("👁️ [gamewrapper] Encountered error setting the stack", e))
+		} else {
+			updateGameStatusTimestamp()
+		}
+	}
+
+	const updateGameStatusTimestamp = () => {
+		const updatedGameStatus: GameStatus = {...gameStatusState, timestamp: serverTimestamp()}
+		setGameStatus(updatedGameStatus)
 	}
 
 	// Page Load

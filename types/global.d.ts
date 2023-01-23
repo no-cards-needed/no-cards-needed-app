@@ -1,14 +1,14 @@
 type GameStatus = {
 	host: string,
 	created: object,
-	currentGameState: "lobby" | "game"
+	currentGameState: "lobby" | "game",
+	timestamp: number | object,
 } 
 
 type Card = {
 	symbol: string,
 	onStack: number,
 	hasPlayer: string | "none",
-	lastMoved: object
 }
 
 type NearestStack = {
