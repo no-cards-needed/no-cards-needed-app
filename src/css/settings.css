@@ -112,6 +112,7 @@
     border-radius: 4px;
     padding: 2px 8px;
     height: fit-content;
+    margin-left: 40px;
   }
 
   .multiCardBox {
@@ -121,20 +122,12 @@
     align-items: center;
   }
 
-  .tagCardBox {
-    display: flex;
-    flex-direction: row;
-    gap: 8px;
-    align-items: center;
-  }
-
   .miniCards:last-child {
     height: 56px;
     width: 40px;
     border-radius: 5px;
     background-color: var(--vg-0);
     margin-right: 0;
-
   }
 
   .miniCards {
@@ -146,7 +139,8 @@
   }
 
   .cardRow {
-    
+    height: 56px;
     display: flex;
     flex-direction: row;
+    align-items: center;
   }
