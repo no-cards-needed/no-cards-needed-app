@@ -8,8 +8,7 @@ import { getDistanceBetweenTwoElements } from "./helpers/get-distance-between-tw
 import { handleCardDrag } from "./helpers/handle-card-drag";
 import { handleCardDrop } from "./helpers/handle-card-drop";
 import GameHeader from "./components/GameHeader";
-import {Toaster} from "react-hot-toast";
-import { serverTimestamp } from "firebase/database";
+import { Toaster } from "react-hot-toast";
 
 const DebugComponent = ({error}: {error:any}) => {
 	console.log(error)
@@ -22,10 +21,10 @@ type PlayingGameProps = {
 	userId: string,
 
 	syncedCards: Card[], 
-	setCard: (card: Card, cardId: number) => void,
+	setCard: (card: Card, cardId: number, timestamp: number) => void,
 	
 	syncedStacks: Stack[], 
-	setStack: (stack: Stack, stackId: number) => void	
+	setStack: (stack: Stack, stackId: number, timestamp: number) => void	
 }
 
 function PlayingGame(
@@ -117,6 +116,7 @@ function PlayingGame(
 
 	const controlledStacks = useRef<ControlledStacks>({})
 	const [cardMoveAuthor, setCardMoveAuthor] = useState<"CLIENT" | "SYNC">("SYNC")
+	const latestClientTimestamp = useRef<number>(Date.now())
 	useEffect(() => {
 		const syncStacks = (card: UsedCard) => {
 			// synchronizing new controlled stacks
@@ -128,7 +128,9 @@ function PlayingGame(
 					position: usedStacksRef.current[card.onStack].position || {x: 0, y: 0},
 					stackType: usedStacksRef.current[card.onStack].stackType,
 					cards: tempControlledStacks[card.onStack]
-				}, (card.onStack - stackOffset))
+				}, 
+				(card.onStack - stackOffset),
+				latestClientTimestamp.current)
 			}
 		}
 
@@ -237,14 +239,15 @@ function PlayingGame(
 			} 
 			if(!comingFromSync) {
 				setCardMoveAuthor("CLIENT")
+				latestClientTimestamp.current = Date.now()
 				setCard(
 					{
 						symbol: usedCards[cardId].symbol,
 						onStack: nearestStack.stackIndex === 0 ? 1 : nearestStack.stackIndex,
 						hasPlayer: stackId === 0 || stackId === 1 ? userId : "none",
-						lastMoved: serverTimestamp()
 					},
 					cardId,
+					latestClientTimestamp.current
 				)
 			}
 			setUsedCards(tempUsedCards)

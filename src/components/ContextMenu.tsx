@@ -6,8 +6,6 @@ import dealAgain from '../assets/iconsBlack/dealAgain.svg';
 
 
 function ContextMenu() {
-
-
     return (
       <div className="conpMenu noselect" id="transpBlur">
           <div className="conpMenuItem">
