@@ -122,8 +122,7 @@ function PlayingGame(
 			// synchronizing new controlled stacks
 			// This is potentially a very expensive operation bandwidth wise
 			// as this gets called 3 times on every card drop due to syncing
-			if (cardMoveAuthor === "CLIENT") {
-				console.log("🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨")
+			if (cardMoveAuthor === "CLIENT" && card.onStack > 1) { // Check of the move is authered by the client and if the card is on a stack which is not client only
 				setStack({
 					id: card.onStack,
 					position: usedStacksRef.current[card.onStack].position || {x: 0, y: 0},
@@ -199,33 +198,38 @@ function PlayingGame(
 
 	const setCards = (cardId: number, stackId: number, comingFromSync: boolean = true) => {
 		try {
-			const stack: Stack = usedStacksRef.current[stackId]
+			const tempUsedCards = [...usedCardsRef.current]
+			const calculatedStackId = stackId <= 1 
+				? tempUsedCards[cardId].hasPlayer === userId || !comingFromSync ? 0 : 1
+				: stackId
+
+			console.log(calculatedStackId, tempUsedCards[cardId], userId)
+			const stack: Stack = usedStacksRef.current[calculatedStackId]
 	
 			const cardPosition = {
 				x: stack.stackType !== "hand" && stack.stackType !== "open" 
-						? stackRef.current[stackId].getBoundingClientRect().x 
-						: calculateCardPosition(cardRef.current[cardId], stackRef.current[stackId], stackId, controlledStacks, cardId),
-				y: stackRef.current[stackId].getBoundingClientRect().y
+						? stackRef.current[calculatedStackId].getBoundingClientRect().x 
+						: calculateCardPosition(cardRef.current[cardId], stackRef.current[calculatedStackId], calculatedStackId, controlledStacks, cardId),
+				y: stackRef.current[calculatedStackId].getBoundingClientRect().y
 			}
 
-			const stackType = usedStacksRef.current[stackId].stackType
-			const tempUsedCards = [...usedCardsRef.current]
-			const hasShadow = controlledStacks.current[stackId] 
-								? Object.values(controlledStacks.current[stackId]).length - Object.values(controlledStacks.current[stackId]).indexOf(cardId) 
+			const stackType = usedStacksRef.current[calculatedStackId].stackType
+			const hasShadow = controlledStacks.current[calculatedStackId] 
+								? Object.values(controlledStacks.current[calculatedStackId]).length - Object.values(controlledStacks.current[calculatedStackId]).indexOf(cardId) 
 								<= 10 
 									? true 
 									: false 
 								: false
-			const stackLength = controlledStacks.current[stackId] 
-									? Object.values(controlledStacks.current[stackId]).length 
+			const stackLength = controlledStacks.current[calculatedStackId] 
+									? Object.values(controlledStacks.current[calculatedStackId]).length 
 									: 0
-			const positionInStack = controlledStacks.current[stackId] 
-										? Object.values(controlledStacks.current[stackId]).indexOf(cardId) 
+			const positionInStack = controlledStacks.current[calculatedStackId] 
+										? Object.values(controlledStacks.current[calculatedStackId]).indexOf(cardId) 
 										: stackLength
 
 			tempUsedCards[cardId] = {
 				...tempUsedCards[cardId],
-				onStack: stackId,
+				onStack: calculatedStackId,
 				controlledPosition: cardPosition,
 				zIndex: positionInStack,
 				onStackType: stackType,
