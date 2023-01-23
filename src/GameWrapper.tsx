@@ -21,14 +21,14 @@ export const GameWrapper = ({app}: {app:any}) => {
 			src: miniCards.d9,
 		},
 		{
-			count: 32,
-			text: '6 to ACE',
-			src: miniCards.d6,
-		},
-		{
 			count: 36,
 			text: '7 to ACE',
 			src: miniCards.d7,
+		},
+		{
+			count: 32,
+			text: '6 to ACE',
+			src: miniCards.d6,
 		},
 		{
 			count: 52,
@@ -237,11 +237,12 @@ export const GameWrapper = ({app}: {app:any}) => {
 				startGame={startGame}
 				setStartGame={setStartGame}
 				gameId={"jkhasjghf"}
+				gameStatus={gameStatusState}
+				userId={userId}
 			/> : <PlayingGame 
 				gameStatus={gameStatusState}
 				setGameStatus={setGameStatus}
 				userId={userId}
-
 				syncedCards={cardsState}
 				setCard={setCard}
 				

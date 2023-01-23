@@ -56,7 +56,10 @@ type Props = {
 		count: number;
 		text: string;
 		src: JSX.Element;
-	}[]
+	}[],
+	gameStatus: GameStatus,
+	userId: string,
+
 }
 
 function Menu( 
@@ -75,7 +78,9 @@ function Menu(
 		startGame, 
 		setStartGame, 
 		gameId, 
-		dropdownContent
+		dropdownContent,
+		gameStatus,
+		userId
 	} : Props) {
 	
 	const [ active, setActive ] = useState(true)
@@ -106,7 +111,7 @@ function Menu(
 
 		useEffect(() => {
 			setTotalCards((deckCards.count + joker) * decks)
-			console.log(deckCards.src)
+			console.log(gameStatus)
 
 			setCardsInDrawPile(totalCards - (Object.values(players).length * hand))
 
@@ -148,20 +153,20 @@ function Menu(
 					</div>
 				</div>
 
-				<div className="settingsContainer noselect" id="basicDrop" style={{display: isHost ? 'flex' : 'none'}}>
+				<div className="settingsContainer noselect" id="basicDrop" style={{display: gameStatus && userId === gameStatus?.host ? 'none' : 'flex'}}>
 					<div className="settingsLabel">
 						<p>Used Cards</p>
 					</div>
 					<div style={{display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "16px", flexWrap: "wrap", width: "100%", maxWidth: "668px"}}>
-						<div style={{display: "flex", flexDirection: "row", width: '100%'}}>
-							<div className="labelItemGroup">
+						<div style={{display: "flex", flexDirection: "row", width: '100%', flexWrap: 'wrap', rowGap: '16px'}}>
+							<div className="labelItemGroup" style={{width: '60%'}}>
 								<div className="labelIconCombo">
 									<img src={cardIcon} className="iconContainer" alt=""></img>
 									<label>cards in deck</label>
 								</div>
 								<div className="multiCardBox">
 									<div className="cardRow">
-										<div className="miniCards" id="basicDrop" style={{zIndex: 2}}>{deckCards.src}</div>
+										<div className="miniCards" id="basicDrop" style={{zIndex: 0}}>{deckCards.src}</div>
 										<div className="miniCards" id="basicDrop"></div>
 										<p style={{marginLeft: '40px'}}>...</p> 
 									</div>
@@ -176,7 +181,7 @@ function Menu(
 								</div>
 							</div>
 						
-							<div className="labelItemGroup">
+							<div className="labelItemGroup" style={{minWidth: '120px', width: '40%'}}>
 								<div className="labelIconCombo">
 									<img src={jokerIcon} className="iconContainer" alt=""></img>
 									<label>Jokers</label>
@@ -200,9 +205,9 @@ function Menu(
 										</AnimatePresence>
 									</div>	
 								</div>
-						</div>
-						<div style={{display: "flex", flexDirection: "row", width: '100%'}}>	
-							<div className="labelItemGroup">
+							</div>
+						<div style={{display: "flex", flexDirection: "row", width: '100%', rowGap: '16px', justifyItems: 'stretch'}}>	
+							<div className="labelItemGroup" style={{width: '60%'}}>
 								<div className="labelIconCombo">
 									<img src={handIcon} className="iconContainer" alt=""></img>
 									<label>Cards on Hand</label>
@@ -227,8 +232,8 @@ function Menu(
 								</div>
 							</div>
 
-							<div className="labelItemGroup" style={{display: pile ? 'flex' : 'none'}}>
-								<div className="labelIconCombo">
+							<div className="labelItemGroup" style={{minWidth: '120px', width: '40%', display: pile ? 'flex' : 'none'}}>
+								<div className="labelIconCombo" >
 									<img src={cardIcon} className="iconContainer" alt=""></img>
 									<label>Draw Pile</label>
 								</div>
@@ -240,19 +245,24 @@ function Menu(
 					</div>
 				</div>
 
-				<div className="settingsContainer noselect" id="basicDrop" style={{display: isHost ? 'flex' : 'none'}}>
+				<div className="settingsContainer noselect" id="basicDrop" style={{display: gameStatus && userId === gameStatus?.host ? 'flex' : 'none'}}>
 
 					<div className="settingsLabel" onClick={toggleDisplay}>
 						<p>Game Settings</p>
 						<img src={active ? chevronDown : chevronUp} className="iconContainer" style={{margin: "16px", transform: "translateX(16px)", cursor: "pointer"}} alt=""></img>
 					</div>
+					<motion.div 
+					layout 
+					animate={{ opacity: 1 }}
+					transition={{
+						opacity: { ease: "linear" },
+						layout: { duration: 0.0 }
+					}}
+					className="settingsContent" style={{display:displaySettings, flexDirection: "column", flexWrap: "wrap"}}>
 
-					<div className="settingsContent" style={{display:displaySettings, flexDirection: "column", flexWrap: "wrap"}}>
+						<div style={{display: "flex", flexDirection: "row", width: '100%', flexWrap: 'wrap', rowGap: '16px', alignItems: 'end' }}>
 
-
-						<div style={{display: "flex", flexDirection: "row", alignItems: "flex-start", gap: "16px", flexWrap: "wrap", width: "100%", maxWidth: "668px"}}>
-
-							<div className="labelItemGroup" style={{width: "250px"}}>
+							<div className="labelItemGroup" style={{width: "50%", minWidth: '150px'}}>
 								<div className="labelIconCombo">
 									<img src={cardIcon} className="iconContainer" alt=""></img>
 									<label>cards per deck</label>
@@ -260,28 +270,98 @@ function Menu(
 								<Dropdown options={dropdownContent} setSelection={setDeckCards} deckCards={deckCards}/>
 							</div>
 
-							<div style={{display: "flex", flexDirection: "row", alignItems: "flex-start", gap: "16px", flexWrap: "wrap", width: "394px"}}>
-								<div className="labelItemGroup" style={{maxWidth: "197px"}}>
-									<div className="labelIconCombo">
-										<img src={jokerIcon} className="iconContainer" alt=""></img>
-										<label>jokers per deck</label>
+							<div className="labelItemGroup" style={{width: '50%'}}>
+								<div className="multiCardBox">
+									<div className="cardRow">
+										<div className="miniCards" id="basicDrop" style={{zIndex: 0}}>{deckCards.src}</div>
+										<div className="miniCards" id="basicDrop"></div>
+										<p style={{marginLeft: '40px'}}>...</p> 
 									</div>
-									<Counter value={joker} setValue={setJoker} minValue={0} maxValue={10} disabled={false}/>
-								</div>
-								<div className="labelItemGroup" style={{maxWidth: "197px"}}>
-									<div className="labelIconCombo">
-										<img src={deckIcon} className="iconContainer" alt=""></img>
-										<label>number of decks</label>
+															
+									<div className="cardRow">
+										<div className="miniCards" id="basicDrop"></div>
+										<div className="miniCards" id="basicDrop">{miniCards.ca}</div>
 									</div>
-									<Counter value={decks} setValue={setDecks} minValue={1} maxValue={10} disabled={false}/>
 								</div>
 							</div>
+						
+						</div>
+
+						<div style={{display: "flex", flexDirection: "row", width: '100%', flexWrap: 'wrap', rowGap: '16px', alignItems: 'end' }}>
+									
+							<div className="labelItemGroup" style={{minWidth: '130px', width: '50%'}}>
+								<div className="labelIconCombo">
+									<img src={jokerIcon} className="iconContainer" alt=""></img>
+									<label>jokers per deck</label>
+								</div>
+								<Counter value={joker} setValue={setJoker} minValue={0} maxValue={10} disabled={false}/>
+							</div>
+							
+							<div className="labelItemGroup" style={{width: '50%'}}>
+								<div className="cardRow">
+									<AnimatePresence>
+										{
+											[...Array(joker).keys()].map((_, i) => {
+												return i < 3 ? <motion.div 
+													key={i}
+													initial={{ scale: 0 }}
+													animate={{ scale: 1 }}
+													exit={{ scale: 0 }}
+													transition={{duration: 0.2}}
+													className="miniCards" id="basicDrop">{miniCards.joker}</motion.div> : null
+											})
+										}
+										<motion.div transition={{duration: 0.2}} layout className="countTag">
+											<p>{joker}×</p>
+										</motion.div>
+									</AnimatePresence>
+								</div>	
+							</div>
+	
+							
+
+
+								
+						</div>
+
+						<div style={{display: "flex", flexDirection: "row", width: '100%', flexWrap: 'wrap', rowGap: '16px', alignItems: 'end'}}>
+
+							<div className="labelItemGroup" style={{minWidth: '130px', width: "50%"}}>
+								<div className="labelIconCombo">
+									<img src={deckIcon} className="iconContainer" alt=""></img>
+									<label>number of decks</label>
+								</div>
+								<Counter value={decks} setValue={setDecks} minValue={1} maxValue={10} disabled={false}/>
+							</div>
+
+							<div className="labelItemGroup" style={{width: '50%', display: pile ? 'flex' : 'none'}}>
+								
+								<div className="cardRow">
+								<AnimatePresence>
+										{
+											[...Array(decks).keys()].map((_, i) => {
+												return i < 3 ? <motion.div 
+													key={i}
+													initial={{ scale: 0 }}
+													animate={{ scale: 1 }}
+													exit={{ scale: 0 }}
+													transition={{duration: 0.2}}
+													className="miniCards" id="basicDrop">{miniCards.back}</motion.div> : null
+											})
+										}
+										<motion.div transition={{duration: 0.2}} layout className="countTag">
+											<p>{decks}×</p>
+										</motion.div>
+									</AnimatePresence>
+								</div>
+							</div>
+							
 						</div>
 
 						<div className="hairline"></div>
 
-						<div style={{display: "flex", flexDirection: "row", alignItems: "flex-end", gap: "16px", flexWrap: "wrap"}}>
-							<div className="labelItemGroup">
+						<div style={{display: "flex", flexDirection: "row", width: '100%', flexWrap: 'wrap', rowGap: '16px',alignItems: 'end'}}>
+							<div className="labelItemGroup" style={{minWidth: '130px', width: '50%'}}>
 									<div className="labelIconCombo">
 											<img src={handIcon} className="iconContainer" alt=""></img>
 											<label>Hand Cards</label>
@@ -290,6 +370,27 @@ function Menu(
 									<Counter value={hand} setValue={setHand} minValue={0} maxValue={maxValue} disabled={split ? true : false} />
 								</div>
 							</div> 
+
+							<div className="labelItemGroup" style={{width: '50%'}}>
+								<div className="cardRow">
+									<AnimatePresence>
+										{
+											[...Array(hand).keys()].map((_, i) => {
+												return i < 5 ? <motion.div 
+													key={i}
+													initial={{ scale: 0 }}
+													animate={{ scale: 1 }}
+													exit={{ scale: 0 }}
+													transition={{duration: 0.2}}
+													className="miniCards" id="basicDrop">{miniCards.back}</motion.div> : null
+											})
+										}
+										<motion.div transition={{duration: 0.2}} layout className="countTag">
+											<p>{hand}×</p>
+										</motion.div>
+									</AnimatePresence>
+								</div>
+							</div>
 						</div>
 
 						<div className="labelItemGroupContainer">
@@ -317,7 +418,7 @@ function Menu(
 								<label>{cardsInDrawPile} cards in draw pile</label>
 							</div>
 						</div>
-					</div>    
+					</motion.div> 
 				</div> 
 
 				<div className="btnBig Primary" id="basicDrop" onClick={() => setStartGame(true)} style={{display: isHost ? 'flex' : 'none'}}>
