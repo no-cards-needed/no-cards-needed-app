@@ -18,16 +18,9 @@ import share from '../assets/iconsWhite/share.svg';
 import { miniCards } from "../helpers/Cards";
 
 type Props = {
-	deckCards: {
-		count: number;
-		text: string;
-		src: JSX.Element;
-	}, 
-	setDeckCards: (cards: {
-		count: number;
-		text: string;
-		src: JSX.Element;
-	}) => void, 
+	deckCards: DropdownContent, 
+
+	setDeckCards: (deckCards: DropdownContent) => void, 
 	
 	joker: number, 
 	setJoker: (joker: number) => void, 
@@ -49,14 +42,10 @@ type Props = {
 	},
 
 	startGame: boolean, 
-	setStartGame: (start: boolean) => void, 
+	setStartGame: () => void, 
 
 	gameId: string, 
-	dropdownContent: {
-		count: number;
-		text: string;
-		src: JSX.Element;
-	}[]
+	dropdownContent: DropdownContent[]
 }
 
 function Menu( 
@@ -320,7 +309,7 @@ function Menu(
 					</div>    
 				</div> 
 
-				<div className="btnBig Primary" id="basicDrop" onClick={() => setStartGame(true)} style={{display: isHost ? 'flex' : 'none'}}>
+				<div className="btnBig Primary" id="basicDrop" onClick={() => setStartGame()} style={{display: isHost ? 'flex' : 'none'}}>
 					<div className="headline">Start Game</div>
 				</div>
 

@@ -11,29 +11,46 @@ import CreateGame from "./components/CreateGame"
 import PlayingGame from "./PlayingGame"
 
 import { miniCards } from "./helpers/Cards";
+import { distributeCards, shuffleCards } from "./helpers/distributor/distributor";
 
 export const GameWrapper = ({app}: {app:any}) => {
 
-	const dropdownContent = [
+	const dropdownContent: DropdownContent[] = [
 		{
 			count: 24,
 			text: '9 to ACE',
 			src: miniCards.d9,
+			boundries: {
+				from: 9,
+				to: 14
+			}
 		},
 		{
 			count: 32,
 			text: '6 to ACE',
 			src: miniCards.d6,
+			boundries: {
+				from: 6,
+				to: 14
+			}
 		},
 		{
 			count: 36,
 			text: '7 to ACE',
 			src: miniCards.d7,
+			boundries: {
+				from: 7,
+				to: 14
+			}
 		},
 		{
 			count: 52,
 			text: '2 to ACE',
 			src: miniCards.d2,
+			boundries: {
+				from: 2,
+				to: 14
+			}
 		},
 	]
 
@@ -42,7 +59,7 @@ export const GameWrapper = ({app}: {app:any}) => {
     const [decks, setDecks] = useState(1)
     const [hand, setHand] = useState(5)
     const [pile, setPile] = useState(true)
-	const [startGame, setStartGame] = useState(false)
+	const [gameStarted, setGameStarted] = useState(false)
 
 	// TODO: Generate Random room name
 	const [gameId] = useState("auth")
@@ -96,15 +113,6 @@ export const GameWrapper = ({app}: {app:any}) => {
 				set(gameStatusRef.current, gameStatus)
 					.then(() => console.log("👁️ [gamewrapper] game status set", gameStatus))
 					.catch((error) => console.log("👁️ [gamewrapper] Encountered error setting game status", error));
-				
-				// Temporatilly setting stacks and cards
-				// TODO: Get correct cards from CreateGame.js
-				set(cardsRef.current, setDefaultUsedCards())
-					.then(() => console.log("👁️ [gamewrapper] cards set"))
-					.catch((error) => console.log("👁️ [gamewrapper] Encountered error setting cards", error));
-				set(stacksRef.current, setDefaultStacks())
-					.then(() => console.log("👁️ [gamewrapper] stacks set"))
-					.catch((error) => console.log("👁️ [gamewrapper] Encountered error setting stacks", error));
 			}
 		})
 
@@ -194,6 +202,17 @@ export const GameWrapper = ({app}: {app:any}) => {
 		setGameStatus(updatedGameStatus)
 	}
 
+	const startGame = () => {
+		set(cardsRef.current, shuffleCards(distributeCards(deckCards.boundries, joker, decks, 2)))
+			.then(() => console.log("👁️ [gamewrapper] cards set"))
+			.catch((error) => console.log("👁️ [gamewrapper] Encountered error setting cards", error));
+		set(stacksRef.current, setDefaultStacks())
+			.then(() => console.log("👁️ [gamewrapper] stacks set"))
+			.catch((error) => console.log("👁️ [gamewrapper] Encountered error setting stacks", error));
+
+		setGameStarted(true);
+	}
+
 	// Page Load
 	useEffect(() => {
 		// Connect to Firebase
@@ -239,7 +258,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 
 	return (
 		<>
-			{!startGame ? <CreateGame 
+			{!gameStarted ? <CreateGame 
 				deckCards={deckCards} 
 				setDeckCards={setDeckCards} 
 				joker={joker} 
@@ -252,9 +271,9 @@ export const GameWrapper = ({app}: {app:any}) => {
 				setPile={setPile} 
 				dropdownContent={dropdownContent} 
 				players={allPlayers} 
-				startGame={startGame}
-				setStartGame={setStartGame}
-				gameId={"jkhasjghf"}
+				startGame={gameStarted}
+				setStartGame={startGame}
+				gameId={gameId}
 			/> : <PlayingGame 
 				gameStatus={gameStatusState}
 				setGameStatus={setGameStatus}

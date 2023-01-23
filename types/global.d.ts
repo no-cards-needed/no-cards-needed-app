@@ -11,6 +11,16 @@ type Card = {
 	hasPlayer: string | "none",
 }
 
+type DropdownContent = {
+	count: number,
+	text: string,
+	src: JSX.Element,
+	boundries: {
+		from: number,
+		to: number
+	}
+}
+
 type NearestStack = {
 	nearestStack: HTMLDivElement,
 	distanceToCard: number,
