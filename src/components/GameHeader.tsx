@@ -92,12 +92,12 @@ function GameHeader() {
 
         <div className="modalBackground" style={{display:displayModal, transform: "translateX(-28px)"}}>
           <div className="modal" id="basicDrop">
-            <p style={{pAlign: "center", letterSpacing: "0.01em"}}>  Do You Really Want to <br/> Leave This Game? </p>
+            <p style={{textAlign: "center", letterSpacing: "0.01em"}}>  Do You Really Want to <br/> Leave This Game? </p>
             <div className="buttonContainer">
               <div className="btn medium Secondary noselect" id="basicDrop" style={{width: "100%"}} onClick={toggleModal}>
                 <p>No</p>
               </div>
-              <div type="submit" className="btn medium Primary noselect" id="basicDrop" style={{width: "100%"}}>
+              <div className="btn medium Primary noselect" id="basicDrop" style={{width: "100%"}}>
                 <p>Yes</p>
               </div>
             </div>

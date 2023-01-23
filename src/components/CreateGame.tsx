@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from "framer-motion" 
 
-import MenuHeader from "./MenuHeader.js"
-import Counter from './Counter.js';
-import Dropdown from "./Dropdown.js";
-import Toggle from "./Toggle.js";
-import PlayerCards from "./PlayerCards.js";
+import MenuHeader from "./MenuHeader"
+import Counter from './Counter';
+import Dropdown from "./Dropdown";
+import Toggle from "./Toggle";
+import PlayerCards from "./PlayerCards";
 
 import chevronDown from '../assets/iconsBlack/chevron/down.svg';
 import chevronUp from '../assets/iconsBlack/chevron/up.svg';
@@ -17,8 +17,67 @@ import share from '../assets/iconsWhite/share.svg';
 
 import { miniCards } from "../helpers/Cards";
 
-function Menu( {deckCards, setDeckCards, joker, setJoker, decks, setDecks, hand, setHand, pile, setPile, players, startGame, setStartGame, gameId, dropdownContent} ) {
+type Props = {
+	deckCards: {
+		count: number;
+		text: string;
+		src: JSX.Element;
+	}, 
+	setDeckCards: (cards: {
+		count: number;
+		text: string;
+		src: JSX.Element;
+	}) => void, 
+	
+	joker: number, 
+	setJoker: (joker: number) => void, 
 
+	decks: number, 
+	setDecks: (decks: number) => void, 
+
+	hand: number, 
+	setHand: (hand: number) => void, 
+
+	pile: boolean, 
+	setPile: (pile: boolean) => void, 
+
+	players: {
+		[id: string]: {
+			name: string;
+			id: string;
+		};
+	},
+
+	startGame: boolean, 
+	setStartGame: (start: boolean) => void, 
+
+	gameId: string, 
+	dropdownContent: {
+		count: number;
+		text: string;
+		src: JSX.Element;
+	}[]
+}
+
+function Menu( 
+	{
+		deckCards, 
+		setDeckCards, 
+		joker, 
+		setJoker, 
+		decks, 
+		setDecks, 
+		hand, 
+		setHand, 
+		pile, 
+		setPile, 
+		players, 
+		startGame, 
+		setStartGame, 
+		gameId, 
+		dropdownContent
+	} : Props) {
+	
 	const [ active, setActive ] = useState(true)
 	const [ displaySettings, setDisplaySettings ] = useState( 'none' )
 	const [ isHost, setIsHost ] = useState(true)
@@ -132,7 +191,7 @@ function Menu( {deckCards, setDeckCards, joker, setJoker, decks, setDecks, hand,
 														animate={{ scale: 1 }}
 														exit={{ scale: 0 }}
 														transition={{duration: 0.2}}
-														className="miniCards" id="basicDrop" alt="">{miniCards.joker}</motion.div> : null
+														className="miniCards" id="basicDrop">{miniCards.joker}</motion.div> : null
 												})
 											}
 											<motion.div transition={{duration: 0.2}} layout className="countTag">
@@ -158,7 +217,7 @@ function Menu( {deckCards, setDeckCards, joker, setJoker, decks, setDecks, hand,
 													animate={{ scale: 1 }}
 													exit={{ scale: 0 }}
 													transition={{duration: 0.2}}
-													className="miniCards" id="basicDrop" alt="">{miniCards.back}</motion.div> : null
+													className="miniCards" id="basicDrop">{miniCards.back}</motion.div> : null
 											})
 										}
 										<motion.div transition={{duration: 0.2}} layout className="countTag">

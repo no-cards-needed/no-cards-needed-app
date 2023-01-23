@@ -116,18 +116,20 @@ function PlayingGame(
 	}, [usedStacks])
 
 	const controlledStacks = useRef<ControlledStacks>({})
+	const [cardMoveAuthor, setCardMoveAuthor] = useState<"CLIENT" | "SYNC">("SYNC")
 	useEffect(() => {
-
 		const syncStacks = (card: UsedCard) => {
 			// synchronizing new controlled stacks
 			// This is potentially a very expensive operation bandwidth wise
 			// as this gets called 3 times on every card drop due to syncing
-			setStack({
-				id: card.onStack,
-				position: usedStacks[card.onStack].position,
-				stackType: usedStacks[card.onStack].stackType,
-				cards: tempControlledStacks[card.onStack]
-			}, card.onStack)
+			if (cardMoveAuthor === "CLIENT" && card.onStack > 1) { // Check of the move is authered by the client and if the card is on a stack which is not client only
+				setStack({
+					id: card.onStack,
+					position: usedStacksRef.current[card.onStack].position || {x: 0, y: 0},
+					stackType: usedStacksRef.current[card.onStack].stackType,
+					cards: tempControlledStacks[card.onStack]
+				}, (card.onStack - stackOffset))
+			}
 		}
 
 		const tempControlledStacks: ControlledStacks = controlledStacks.current || {}
@@ -194,60 +196,47 @@ function PlayingGame(
 		})
 	}
 
-	// const resetCardZIndex = (shuffledCards: UsedCard[]) => {
-	// 	// Re-Set zIndex of the shuffled cards
-	// 	shuffledCards.forEach((card: UsedCard, cardId: number) => {
-	// 		const tempUsedCards = usedCards
-	// 		tempUsedCards[cardId].zIndex = cardId
-	// 		tempUsedCards[cardId].animation = "shuffle"
-	// 		setUsedCards(tempUsedCards)
-	// 	})
-	// 	const timeout = setTimeout(() => {
-	// 		shuffledCards.forEach((card: UsedCard, cardId: number) => {
-	// 			const tempUsedCards = usedCards
-	// 			tempUsedCards[cardId].animation = "none"
-	// 			setUsedCards(tempUsedCards)
-	// 		})
-	// 		clearTimeout(timeout)
-	// 	}, 300)
-	// }
-
 	const setCards = (cardId: number, stackId: number, comingFromSync: boolean = true) => {
 		try {
-			const stack: Stack = usedStacksRef.current[stackId]
+			const tempUsedCards = [...usedCardsRef.current]
+			const calculatedStackId = stackId <= 1 
+				? tempUsedCards[cardId].hasPlayer === userId || !comingFromSync ? 0 : 1
+				: stackId
+
+			console.log(calculatedStackId, tempUsedCards[cardId], userId)
+			const stack: Stack = usedStacksRef.current[calculatedStackId]
 	
 			const cardPosition = {
 				x: stack.stackType !== "hand" && stack.stackType !== "open" 
-						? stackRef.current[stackId].getBoundingClientRect().x 
-						: calculateCardPosition(cardRef.current[cardId], stackRef.current[stackId], stackId, controlledStacks, cardId),
-				y: stackRef.current[stackId].getBoundingClientRect().y
+						? stackRef.current[calculatedStackId].getBoundingClientRect().x 
+						: calculateCardPosition(cardRef.current[cardId], stackRef.current[calculatedStackId], calculatedStackId, controlledStacks, cardId),
+				y: stackRef.current[calculatedStackId].getBoundingClientRect().y
 			}
 
-			const stackType = usedStacksRef.current[stackId].stackType
-			const tempUsedCards = [...usedCardsRef.current]
-			const hasShadow = controlledStacks.current[stackId] 
-								? Object.values(controlledStacks.current[stackId]).length - Object.values(controlledStacks.current[stackId]).indexOf(cardId) 
+			const stackType = usedStacksRef.current[calculatedStackId].stackType
+			const hasShadow = controlledStacks.current[calculatedStackId] 
+								? Object.values(controlledStacks.current[calculatedStackId]).length - Object.values(controlledStacks.current[calculatedStackId]).indexOf(cardId) 
 								<= 10 
 									? true 
 									: false 
 								: false
-			const stackLength = controlledStacks.current[stackId] 
-									? Object.values(controlledStacks.current[stackId]).length 
+			const stackLength = controlledStacks.current[calculatedStackId] 
+									? Object.values(controlledStacks.current[calculatedStackId]).length 
 									: 0
-			const positionInStack = controlledStacks.current[stackId] 
-										? Object.values(controlledStacks.current[stackId]).indexOf(cardId) 
+			const positionInStack = controlledStacks.current[calculatedStackId] 
+										? Object.values(controlledStacks.current[calculatedStackId]).indexOf(cardId) 
 										: stackLength
 
 			tempUsedCards[cardId] = {
 				...tempUsedCards[cardId],
-				onStack: stackId,
+				onStack: calculatedStackId,
 				controlledPosition: cardPosition,
 				zIndex: positionInStack,
 				onStackType: stackType,
 				hasShadow,
 			} 
-			setUsedCards(tempUsedCards)
 			if(!comingFromSync) {
+				setCardMoveAuthor("CLIENT")
 				setCard(
 					{
 						symbol: usedCards[cardId].symbol,
@@ -258,6 +247,7 @@ function PlayingGame(
 					cardId,
 				)
 			}
+			setUsedCards(tempUsedCards)
 		}
 		catch (e) {
 			console.error("🐉 [acid tang] error setting cards", e, cardId, stackId)
@@ -273,79 +263,81 @@ function PlayingGame(
 			syncedStacks.forEach((stack: Stack, stackId: number) => {
 				// Adding "2" to the stackId to avoid overwriting the first two stacks
 				// (Hand and Hidden stack)
-				const { cards, ...syncedStack } = syncedStacks[stack.id]
+
+				// Get synced Stack by property id
+				const filteredSyncedStack = syncedStacks.filter((syncedStack: Stack) => stack.id === syncedStack.id) 
+
+				const unhandledSyncedStack: Stack = {cards: [], ...filteredSyncedStack[0]}
+			
+				const { cards, ...syncedStack } = unhandledSyncedStack
 				tempStacks[stack.id] = {
 					...syncedStack,
 					// ...syncedStacks[stackId],
 				}
 				controlledStacks.current[stack.id] = cards
 			})
-
+			console.log("🚨⚠️🚨⚠️🚨⚠️🚨⚠️🚨⚠️🚨⚠️🚨⚠️ Setting used Cards", tempStacks)
 			setUsedStacks(tempStacks)
 			redrawCardZIndexes()
-		} 
-		
+		}
 	}, [syncedStacks])
 
 	const updateCards = () => {
-			// Update usedCards with syncedCards
-			console.log("🐉 [acid tang] Synced Cards", syncedCards)
-				
-	
-			syncedCards.forEach((card: UsedCard, cardId: number) => {
-				// Get Stack Type
-				try {
-					if(!usedStacksRef.current[card.onStack]){
-						throw new Error("Stack not found with id: " + card.onStack)
-					}
-					
-					const stackType = usedStacksRef.current[card.onStack].stackType
-
-					// Index of Card in Stack  
-					const cardIndex = controlledStacks.current[card.onStack] 
-										? Object.values(controlledStacks.current[card.onStack]).indexOf(cardId) 
-										: 0
-					// Set const "hasShadow" to true if the card is in the top 10 cards of the stack
-					const hasShadow = controlledStacks.current[card.onStack] 
-										? Object.values(controlledStacks.current[card.onStack]).length - Object.values(controlledStacks.current[card.onStack]).indexOf(cardId) 
-										<= 10 
-											? true 
-											: false 
-										: false
-					
-					const tempUsedCards = [...usedCardsRef.current];
-					tempUsedCards[cardId] = {
-						...syncedCards[cardId],
-						controlledPosition: card ? card.controlledPosition ? card.controlledPosition : {x: 0, y: 0} : {x: 0, y: 0},
-						zIndex: card ? card.zIndex ? card.zIndex : cardIndex : 0,
-						animation: card ? card.animation ? card.animation : "none" : "none",
-						movedAside: "none",
-						onStackType: stackType,
-						hasShadow,
-						lastMoved: card.lastMoved ? card.lastMoved : serverTimestamp(),
-					}
-					setUsedCards(tempUsedCards)
-				} catch(e: any) {
-					if (e instanceof Error) {
-						console.error("🐉 [acid tang] Error updating cards", e, cardId, card)
-						console.log(usedStacksRef.current[card.onStack])
-					}
+		// Update usedCards with syncedCards
+		console.log("🐉 [acid tang] Synced Cards", syncedCards)
+		
+		for (let cardId = 0; cardId < syncedCards.length; cardId++) {
+			const card = syncedCards[cardId];			
+			// Get Stack Type
+			try {
+				if(!usedStacksRef.current[card.onStack]){
+					console.error("Stack not found with id: " + card.onStack)
+					console.log("syncedStacks", syncedStacks)
+					break;
 				}
-			})
-
-			for (let i = 0; i < syncedCards.length; i++) {
-				const cardId = i
-				const card = syncedCards[i];
 				
+				const stackType = usedStacksRef.current[card.onStack].stackType
+
+				// Index of Card in Stack  
+				const cardIndex = controlledStacks.current[card.onStack] 
+									? Object.values(controlledStacks.current[card.onStack]).indexOf(cardId) 
+									: 0
+				// Set const "hasShadow" to true if the card is in the top 10 cards of the stack
+				const hasShadow = controlledStacks.current[card.onStack] 
+									? Object.values(controlledStacks.current[card.onStack]).length - Object.values(controlledStacks.current[card.onStack]).indexOf(cardId) 
+									<= 10 
+										? true 
+										: false 
+									: false
+				
+				const tempUsedCards = [...usedCardsRef.current];
+				tempUsedCards[cardId] = {
+					...syncedCards[cardId],
+					controlledPosition: {x: 0, y: 0},
+					zIndex: cardIndex || 0,
+					animation: "none",
+					movedAside: "none",
+					onStackType: stackType,
+					hasShadow,
+				}
+				setUsedCards(tempUsedCards)
 				setCards(cardId, card.onStack, true)
+			} catch(e: any) {
+				if (e instanceof Error) {
+					console.error("🐉 [acid tang] Error updating cards", e, cardId, card)
+					console.log(usedStacksRef.current[card.onStack])
+				}
 			}
 		}
+	}
 	useEffect(() => {
 		if(syncedCards) {
+			setCardMoveAuthor("SYNC")
 			if(usedCardsRef.current.length === 0) {
 				// Set a timeout to wait for the stacks to be added
 				const timeout = setTimeout(() => {
 					updateCards()
+					redrawCardZIndexes()
 					clearTimeout(timeout)
 				}, 1000)
 			} else {

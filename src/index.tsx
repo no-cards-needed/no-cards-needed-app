@@ -1,10 +1,10 @@
-import React from 'react';
+import * as React from 'react';
 import {
   BrowserRouter,
   Routes,
   Route,
 } from "react-router-dom";
-import ReactDOM from 'react-dom/client';
+import * as  ReactDOM from 'react-dom/client';
 import './css/index.css';
 import './css/App.css';
 import './css/btn.css';
@@ -28,10 +28,10 @@ import App from './PlayingGame';
 // Menu Development
 // import App from './App';
 
-import StartScreen from "./components/startScreen.js"
-import CreateGame from "./components/CreateGame.js"
-import Imprint from "./components/Imprint.js"
-import About from "./components/About.js"
+import StartScreen from "./components/startScreen"
+import CreateGame from "./components/CreateGame"
+import Imprint from "./components/Imprint"
+import About from "./components/About"
 
 import reportWebVitals from './reportWebVitals';
 import { GameWrapper } from './GameWrapper';
@@ -64,10 +64,7 @@ root.render(
 		<BrowserRouter>
 			<Routes>
 				<Route path="/" element={<StartScreen />} />
-				<Route path="auth/" element={<GameWrapper app={app} />} />
-				<Route path="game/:gameId" element={<App />} />
-				{/* <Route path="gametest" element={<Game />} /> */}
-				<Route path="game/lobby" element={<CreateGame />} />
+				<Route path=":gameId/" element={<GameWrapper app={app} />} />
 				<Route path="imprint" element={<Imprint />} />
 				<Route path="about" element={<About />} />
 			</Routes>

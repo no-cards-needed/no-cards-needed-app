@@ -7,7 +7,7 @@
 		"lib": ["es6", "dom", "es2017", "es2016", "DOM.Iterable"],
 		"sourceMap": true,
 		"allowJs": true,
-		"jsx": "react-jsx",
+		"jsx": "preserve",
 		"moduleResolution": "node",
 		"rootDir": "src",
 		"noImplicitReturns": false,
@@ -22,7 +22,7 @@
 		"acceptance-tests",
 		"webpack",
 		"jest",
-		"src/setupTests.ts"
+		"src/setupTests.js"
 	],
 	"types": [
 		"typePatches"

@@ -3,9 +3,9 @@ import chevronLeft from '../assets/iconsBlack/chevron/left.svg';
 import chevronUp from '../assets/iconsWhite/chevron/up.svg';
 import chevronDown from '../assets/iconsWhite/chevron/down.svg';
 import showRemovedCards from '../assets/iconsWhite/showRemovedCards.svg';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
-import GameHeader from "./GameHeader.js"
+import GameHeader from "./GameHeader"
 
 
 function Game() {
