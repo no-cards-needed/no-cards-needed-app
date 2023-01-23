@@ -119,7 +119,9 @@ export const GameWrapper = ({app}: {app:any}) => {
 		// Game Status Value Change in FireBase Realtime Database
 		onValue(gameStatusRef.current, (snapshot) => {
 			console.log("👁️ [gamewrapper] recieved a new game status: ", snapshot.val())
-			setGameStatusState(snapshot.val())
+			const newGameStatus: GameStatus = snapshot.val()
+			setGameStatusState(newGameStatus)
+			setGameStarted(newGameStatus.currentGameState === "game")
 		})
 
 		// Card Value Change in FireBase Realtime Database
@@ -209,6 +211,11 @@ export const GameWrapper = ({app}: {app:any}) => {
 		set(stacksRef.current, setDefaultStacks())
 			.then(() => console.log("👁️ [gamewrapper] stacks set"))
 			.catch((error) => console.log("👁️ [gamewrapper] Encountered error setting stacks", error));
+
+		setGameStatus({
+			...gameStatusState,
+			currentGameState: "game"
+		})
 
 		setGameStarted(true);
 	}

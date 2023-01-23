@@ -66,9 +66,9 @@ export const distributeCards = (cardsPerDeck: {from: number, to: number}, jokers
 
 export const shuffleCards: (cards: Card[]) => Card[] = (cards: Card[]) => {
 	let shuffled = cards
-    .map(value => ({ value, sort: Math.random() }))
-    .sort((a, b) => a.sort - b.sort)
-    .map(({ value }) => value)
+		.map(value => ({ value, sort: Math.random() }))
+		.sort((a, b) => a.sort - b.sort)
+		.map(({ value }) => value)
 
 	return shuffled
 }
