@@ -9,6 +9,7 @@ import { handleCardDrag } from "./helpers/handle-card-drag";
 import { handleCardDrop } from "./helpers/handle-card-drop";
 import GameHeader from "./components/GameHeader";
 import { Toaster } from "react-hot-toast";
+import { useWindowDimension } from "./helpers/hooks/useWindowDimensions";
 
 const DebugComponent = ({error}: {error:any}) => {
 	console.log(error)
@@ -137,7 +138,9 @@ function PlayingGame(
 		const tempControlledStacks: ControlledStacks = controlledStacks.current || {}
 		for (let cardId = 0; cardId < usedCards.length; cardId++) {
 			const card = usedCards[cardId];
-			// tempControlledStacks[card.onStack] = tempControlledStacks[card.onStack] ? [...tempControlledStacks[card.onStack], cardId] : [cardId]
+			
+			// Check if card has moved or if its on the same position
+
 
 			// Add cardId to tempControlledStacks if the card isnt already in it
 			if (tempControlledStacks[card.onStack] && !tempControlledStacks[card.onStack].includes(cardId)) {
@@ -154,7 +157,6 @@ function PlayingGame(
 
 
 	}, [usedCards])
-	// TODO: Stacks generated from cards
 
 
 	const stackRef = useRef<HTMLDivElement[]>([]);
@@ -350,6 +352,15 @@ function PlayingGame(
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [syncedCards])
  
+	const [windowHeight, windowWidth] = useWindowDimension()
+	useEffect(() => {
+		console.log("🐉 [acid tang] Window Dimension", windowHeight, windowWidth)
+		for (let i = 0; i < usedCardsRef.current.length; i++) {
+			const element = usedCardsRef.current[i];
+			setCards(i, element.onStack, true)
+		}
+	}, [windowHeight, windowWidth])
+
 	return (
 		<div>
 			<div style={{background: "#DEDBE5", position: "fixed"}}>
