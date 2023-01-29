@@ -123,7 +123,9 @@ function PlayingGame(
 			// synchronizing new controlled stacks
 			// This is potentially a very expensive operation bandwidth wise
 			// as this gets called 3 times on every card drop due to syncing
+			console.log("🐉 [acid tang] Syncing stacks", card, cardMoveAuthor)
 			if (cardMoveAuthor === "CLIENT" && card.onStack > 1) { // Check of the move is authered by the client and if the card is on a stack which is not client only
+				console.log("yup, really setting it")
 				setStack({
 					id: card.onStack,
 					position: usedStacksRef.current[card.onStack].position || {x: 0, y: 0},
@@ -154,7 +156,6 @@ function PlayingGame(
 			}
 		}
 		controlledStacks.current = tempControlledStacks
-
 
 	}, [usedCards])
 
@@ -201,13 +202,14 @@ function PlayingGame(
 	}
 
 	const setCards = (cardId: number, stackId: number, comingFromSync: boolean = true) => {
+		console.log("coming from sync: ",comingFromSync)
+		if (!comingFromSync) setCardMoveAuthor("CLIENT")
 		try {
 			const tempUsedCards = [...usedCardsRef.current]
 			const calculatedStackId = stackId <= 1 
 				? tempUsedCards[cardId].hasPlayer === userId || !comingFromSync ? 0 : 1
 				: stackId
 
-			console.log(calculatedStackId, tempUsedCards[cardId], userId)
 			const stack: Stack = usedStacksRef.current[calculatedStackId]
 	
 			const cardPosition = {
