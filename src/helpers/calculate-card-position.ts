@@ -3,8 +3,8 @@ import { getCardPositionInStack } from "./get-card-position-in-stack";
 import { getPositionAtCenter } from "./get-position-at-center";
 
 export const calculateCardPosition = (
-	card: HTMLDivElement, 
-	stackRef: HTMLDivElement, 
+	card: MutableRefObject<HTMLDivElement[]>, 
+	stackRef: MutableRefObject<HTMLDivElement[]>, 
 	stackId: number,
 	controlledStack: MutableRefObject<ControlledStacks>, 
 	cardId: number) => {
@@ -14,9 +14,9 @@ export const calculateCardPosition = (
 
 	const cardCount = controlledStack.current[stackId] ? controlledStack.current[stackId].length : 0;
 
-	const stackCenter = getPositionAtCenter(stackRef, "stackCenter - calculate-card-position.ts 14");
-	const { width: cardWidth, height: cardHeight } = card.getBoundingClientRect();
-
+	const stackCenter = getPositionAtCenter(stackRef.current[stackId], "stackCenter - calculate-card-position.ts 14");
+	// const { width: cardWidth } = card.current[cardId].getBoundingClientRect();
+const cardWidth = 80
 	const overlap = cardWidth / 2
 	
 	//X - position of first card (most left, bottom of stack)

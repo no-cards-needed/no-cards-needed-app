@@ -138,7 +138,6 @@ function PlayingGame(
 			// synchronizing new controlled stacks
 			// This is potentially a very expensive operation bandwidth wise
 			// as this gets called 3 times on every card drop due to syncing
-			console.log("🐉 [acid tang] Syncing stacks", card, cardMoveAuthor)
 			if (cardMoveAuthor === "CLIENT" && card.onStack > 1) { // Check of the move is authered by the client and if the card is on a stack which is not client only
 				console.log("yup, really setting it")
 				setStack({
@@ -181,7 +180,6 @@ function PlayingGame(
 
 			// Update the position of the cards in open type stacks
 			const currentStackType = usedStacksRef.current[card.onStack].stackType
-			console.log(currentStackType)
 			if (currentStackType === "open" || currentStackType === "hand") {
 				console.log("✋ Hand needs to be updated")
 				console.log("✋ tempControlledStacks[card.onStack]", tempControlledStacks[card.onStack])
@@ -252,7 +250,7 @@ function PlayingGame(
 			const cardPosition = {
 				x: stack.stackType !== "hand" && stack.stackType !== "open" 
 						? stackRef.current[calculatedStackId].getBoundingClientRect().x 
-						: calculateCardPosition(cardRef.current[cardId], stackRef.current[calculatedStackId], calculatedStackId, controlledStacks, cardId),
+						: calculateCardPosition(cardRef, stackRef, calculatedStackId, controlledStacks, cardId),
 				y: stackRef.current[calculatedStackId].getBoundingClientRect().y
 			}
 
@@ -328,6 +326,8 @@ function PlayingGame(
 		}
 	}, [syncedStacks])
 
+	
+
 	const updateCards = () => {
 		// Update usedCards with syncedCards
 		console.log("🐉 [acid tang] Synced Cards", syncedCards)
@@ -386,7 +386,7 @@ function PlayingGame(
 					updateCards()
 					redrawCardZIndexes()
 					clearTimeout(timeout)
-				}, 1000)
+				}, 10)
 			} else {
 				updateCards()
 			}
@@ -396,12 +396,23 @@ function PlayingGame(
  
 	const [windowHeight, windowWidth] = useWindowDimension()
 	useEffect(() => {
-		console.log("🐉 [acid tang] Window Dimension", windowHeight, windowWidth)
 		for (let i = 0; i < usedCardsRef.current.length; i++) {
 			const element = usedCardsRef.current[i];
 			setCards(i, element.onStack, true)
 		}
 	}, [windowHeight, windowWidth])
+
+	useEffect(() => {
+		const timeout = setTimeout(() => {
+			for (let i = 0; i < usedCardsRef.current.length; i++) {
+				const element = usedCardsRef.current[i];
+				setCards(i, element.onStack, true)
+			}
+
+			clearTimeout(timeout)
+		}, 20)
+		return () => clearTimeout(timeout)
+	}, [])
 
 	return (
 		<div>
