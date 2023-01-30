@@ -7,8 +7,30 @@ import leave from '../assets/iconsWhite/leave.svg';
 
 import { useState } from 'react';
 
+import { ReactComponent as AVATAR_1 } from "../assets/avatars/avatar-1.svg";
+import { ReactComponent as AVATAR_2 } from "../assets/avatars/avatar-2.svg";
+import { ReactComponent as AVATAR_3 } from "../assets/avatars/avatar-3.svg";
+import { ReactComponent as AVATAR_4 } from "../assets/avatars/avatar-4.svg";
+import { ReactComponent as AVATAR_5 } from "../assets/avatars/avatar-5.svg";
 
-function GameHeader() {
+function GameHeader(
+  {
+		players, 
+		gameStatus,
+		avatars
+	}: {
+		players: {
+			[id: string]: {
+				name: string,
+				id: string,
+				avatar: 1 | 2 | 3 | 4 | 5
+			}
+		},
+		gameStatus: GameStatus,
+		avatars: {
+			src: string
+		}[]
+	}) {
 
   const [ display, setDisplay ] = useState( 'none' )
   const [ lastAction, setLastAction ] = useState( 'none' )
@@ -58,10 +80,18 @@ function GameHeader() {
       <div className="gameHeader criticalMaxWidth" id="basicDrop">
             <div className="gameHeaderContent">
                 <div className="avatarContainer">
-                  <div className="avatar"></div>
-                  <div className="avatar"></div>
-                  <div className="avatar"></div>
-                  <div className="avatar"></div>
+                {Object.values(players).map((player, index) => (
+                    <div key="index" className={`avatar ${gameStatus && player.id === gameStatus?.host ? 'avatarHost' : null} `}>
+                    {
+                      player.avatar === 1 ? <AVATAR_1 />
+                      : player.avatar === 2 ? <AVATAR_2 />
+                      : player.avatar === 3 ? <AVATAR_3 />
+                      : player.avatar === 4 ? <AVATAR_4 />
+                      : <AVATAR_5 />
+                    }
+                    </div>
+
+                ))}
                 </div>
                 <label>{lastAction}</label>
             </div>
