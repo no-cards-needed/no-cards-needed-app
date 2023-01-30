@@ -227,13 +227,15 @@ function PlayingGame(
 
 	const redrawCardZIndexes = () => {
 		// Redraw Card ZIndexes
+		const tempUsedCards = usedCardsRef.current
 		usedCardsRef.current.forEach((card: UsedCard, cardId: number) => {
-			const tempUsedCards = usedCardsRef.current
 			const index = controlledStacks.current[card.onStack].indexOf(cardId)
 			// Get zIndex from controlledStacks
-			tempUsedCards[cardId].zIndex = index === -1 ? cardId : index || 0
-			setUsedCards(tempUsedCards)
+			tempUsedCards[cardId].zIndex = index === -1 
+				? cardId 
+				: index || 0
 		})
+		setUsedCards(tempUsedCards)
 	}
 
 	const setCards = (cardId: number, stackId: number, comingFromSync: boolean = true) => {
@@ -261,19 +263,12 @@ function PlayingGame(
 									? true 
 									: false 
 								: false
-			const stackLength = controlledStacks.current[calculatedStackId] 
-									? Object.values(controlledStacks.current[calculatedStackId]).length 
-									: 0
-			const indexOfCard = controlledStacks.current[calculatedStackId] ? Object.values(controlledStacks.current[calculatedStackId]).indexOf(cardId) : stackLength
-			const positionInStack = indexOfCard === -1
-										? cardId
-										: indexOfCard
 
 			tempUsedCards[cardId] = {
 				...tempUsedCards[cardId],
 				onStack: calculatedStackId,
 				controlledPosition: cardPosition,
-				zIndex: positionInStack,
+				zIndex: calculateZIndex(calculatedStackId, cardId),
 				onStackType: stackType,
 				hasShadow,
 			} 
@@ -326,7 +321,14 @@ function PlayingGame(
 		}
 	}, [syncedStacks])
 
-	
+	const calculateZIndex = (stackId: number, cardId: number) => {
+		const indexOfCard = controlledStacks.current[stackId]  ? Object.values(controlledStacks.current[stackId]).indexOf(cardId) : 0
+		const cardIndex = indexOfCard === -1
+								? cardId
+								: indexOfCard
+
+		return cardIndex
+	}	
 
 	const updateCards = () => {
 		// Update usedCards with syncedCards
@@ -344,11 +346,6 @@ function PlayingGame(
 				
 				const stackType = usedStacksRef.current[card.onStack].stackType
 
-				// Index of Card in Stack  
-				const indexOfCard = controlledStacks.current[card.onStack]  ? Object.values(controlledStacks.current[card.onStack]).indexOf(cardId) : 0
-				const cardIndex = indexOfCard === -1
-										? cardId
-										: indexOfCard
 				// Set const "hasShadow" to true if the card is in the top 10 cards of the stack
 				const hasShadow = controlledStacks.current[card.onStack] 
 									? Object.values(controlledStacks.current[card.onStack]).length - Object.values(controlledStacks.current[card.onStack]).indexOf(cardId) 
@@ -361,7 +358,7 @@ function PlayingGame(
 				tempUsedCards[cardId] = {
 					...syncedCards[cardId],
 					controlledPosition: {x: 0, y: 0},
-					zIndex: cardIndex || 0,
+					zIndex: calculateZIndex(card.onStack, cardId) || 0,
 					animation: "none",
 					movedAside: "none",
 					onStackType: stackType,
@@ -410,7 +407,7 @@ function PlayingGame(
 			}
 
 			clearTimeout(timeout)
-		}, 20)
+		}, 100)
 		return () => clearTimeout(timeout)
 	}, [])
 
