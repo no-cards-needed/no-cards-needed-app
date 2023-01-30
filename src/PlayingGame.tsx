@@ -118,6 +118,7 @@ function PlayingGame(
 	const controlledStacks = useRef<ControlledStacks>({})
 	const [cardMoveAuthor, setCardMoveAuthor] = useState<"CLIENT" | "SYNC">("SYNC")
 	const latestClientTimestamp = useRef<number>(Date.now())
+	const prevHandCards = useRef<number>(0)
 	useEffect(() => {
 		const syncStacks = (card: UsedCard) => {
 			// synchronizing new controlled stacks
@@ -141,8 +142,17 @@ function PlayingGame(
 		for (let cardId = 0; cardId < usedCards.length; cardId++) {
 			const card = usedCards[cardId];
 			
-			// Check if card has moved or if its on the same position
-
+			// Check if card is on stack other that card.onStack
+			for (let stackIndex = 0; stackIndex < Object.keys(tempControlledStacks).length; stackIndex++) {
+				const [stackIdString, stack] = Object.entries(tempControlledStacks)[stackIndex];
+				const stackId = parseInt(stackIdString)
+				if (stackId !== card.onStack) {
+					if (stack.includes(cardId)) {
+						// Remove cardId from controlledStacks
+						tempControlledStacks[stackId] = stack.filter((stackCardId) => stackCardId !== cardId)
+					}
+				}
+			}
 
 			// Add cardId to tempControlledStacks if the card isnt already in it
 			if (tempControlledStacks[card.onStack] && !tempControlledStacks[card.onStack].includes(cardId)) {
@@ -154,9 +164,21 @@ function PlayingGame(
 
 				syncStacks(card)
 			}
+
+			// Update the position of the cards in open type stacks
+			const currentStackType = usedStacksRef.current[card.onStack].stackType
+			console.log(currentStackType)
+			if (currentStackType === "open" || currentStackType === "hand") {
+				console.log("✋ Hand needs to be updated")
+				console.log("✋ tempControlledStacks[card.onStack]", tempControlledStacks[card.onStack])
+				console.log("✋ controlledStacks.current[card.onStack]", controlledStacks.current[card.onStack])
+				// If that stack has a different length then the old card state, update all the cards in it
+				if (tempControlledStacks[card.onStack].length !== controlledStacks.current[card.onStack]?.length) {
+					setCards(cardId, card.onStack, true)
+				}
+			}
 		}
 		controlledStacks.current = tempControlledStacks
-
 	}, [usedCards])
 
 
@@ -230,12 +252,10 @@ function PlayingGame(
 			const stackLength = controlledStacks.current[calculatedStackId] 
 									? Object.values(controlledStacks.current[calculatedStackId]).length 
 									: 0
-			const indexofCard = Object.values(controlledStacks.current[calculatedStackId]).indexOf(cardId)
-			const positionInStack = controlledStacks.current[calculatedStackId] 
-										? indexofCard === -1
-											? cardId
-											: indexofCard
-										: stackLength
+			const indexOfCard = controlledStacks.current[calculatedStackId] ? Object.values(controlledStacks.current[calculatedStackId]).indexOf(cardId) : stackLength
+			const positionInStack = indexOfCard === -1
+										? cardId
+										: indexOfCard
 
 			tempUsedCards[cardId] = {
 				...tempUsedCards[cardId],
@@ -310,12 +330,10 @@ function PlayingGame(
 				const stackType = usedStacksRef.current[card.onStack].stackType
 
 				// Index of Card in Stack  
-				const indexOfCard = Object.values(controlledStacks.current[card.onStack]).indexOf(cardId) 
-				const cardIndex = controlledStacks.current[card.onStack] 
-									? indexOfCard === -1
+				const indexOfCard = controlledStacks.current[card.onStack]  ? Object.values(controlledStacks.current[card.onStack]).indexOf(cardId) : 0
+				const cardIndex = indexOfCard === -1
 										? cardId
 										: indexOfCard
-									: 0
 				// Set const "hasShadow" to true if the card is in the top 10 cards of the stack
 				const hasShadow = controlledStacks.current[card.onStack] 
 									? Object.values(controlledStacks.current[card.onStack]).length - Object.values(controlledStacks.current[card.onStack]).indexOf(cardId) 

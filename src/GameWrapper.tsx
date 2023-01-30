@@ -134,11 +134,13 @@ export const GameWrapper = ({app}: {app:any}) => {
 				// Check if the game is already started by comparing the gamestatus timestamp with servertimestamp()
 				// If the game is already started, then the game is already set up
 				// If the game is not started, then set up the game
-				if (gameStatusState && gameStatusState.timestamp < gameStatus.timestamp) {
+				if (!gameStatusState || gameStatusState.timestamp < gameStatus.timestamp) {
 					// Setting the game status to the initial values
 					set(gameStatusRef.current, gameStatus)
 						.then(() => console.log("👁️ [gamewrapper] game status set", gameStatus))
 						.catch((error) => console.log("👁️ [gamewrapper] Encountered error setting game status", error));
+				} else {
+					console.log("👁️ [gamewrapper] game already started, skipping setup", gameStatusState, gameStatus)
 				}
 			}
 		})
@@ -148,7 +150,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 			// console.log("👁️ [gamewrapper] recieved a new game status: ", snapshot.val())
 			const newGameStatus: GameStatus = snapshot.val()
 			setGameStatusState(newGameStatus)
-			setGameStarted(newGameStatus.currentGameState === "game")
+			setGameStarted(newGameStatus?.currentGameState === "game")
 		})
 
 		// Card Value Change in FireBase Realtime Database
