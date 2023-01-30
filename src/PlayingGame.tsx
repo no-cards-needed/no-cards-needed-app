@@ -195,8 +195,9 @@ function PlayingGame(
 		// Redraw Card ZIndexes
 		usedCardsRef.current.forEach((card: UsedCard, cardId: number) => {
 			const tempUsedCards = usedCardsRef.current
+			const index = controlledStacks.current[card.onStack].indexOf(cardId)
 			// Get zIndex from controlledStacks
-			tempUsedCards[cardId].zIndex = controlledStacks.current[card.onStack].indexOf(cardId) || 0
+			tempUsedCards[cardId].zIndex = index === -1 ? cardId : index || 0
 			setUsedCards(tempUsedCards)
 		})
 	}
@@ -229,8 +230,11 @@ function PlayingGame(
 			const stackLength = controlledStacks.current[calculatedStackId] 
 									? Object.values(controlledStacks.current[calculatedStackId]).length 
 									: 0
+			const indexofCard = Object.values(controlledStacks.current[calculatedStackId]).indexOf(cardId)
 			const positionInStack = controlledStacks.current[calculatedStackId] 
-										? Object.values(controlledStacks.current[calculatedStackId]).indexOf(cardId) 
+										? indexofCard === -1
+											? cardId
+											: indexofCard
 										: stackLength
 
 			tempUsedCards[cardId] = {
@@ -306,8 +310,11 @@ function PlayingGame(
 				const stackType = usedStacksRef.current[card.onStack].stackType
 
 				// Index of Card in Stack  
+				const indexOfCard = Object.values(controlledStacks.current[card.onStack]).indexOf(cardId) 
 				const cardIndex = controlledStacks.current[card.onStack] 
-									? Object.values(controlledStacks.current[card.onStack]).indexOf(cardId) 
+									? indexOfCard === -1
+										? cardId
+										: indexOfCard
 									: 0
 				// Set const "hasShadow" to true if the card is in the top 10 cards of the stack
 				const hasShadow = controlledStacks.current[card.onStack] 
