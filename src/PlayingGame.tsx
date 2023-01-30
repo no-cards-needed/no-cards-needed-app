@@ -285,6 +285,7 @@ function PlayingGame(
 				setCard(
 					{
 						symbol: usedCards[cardId].symbol,
+						cardId: cardId,
 						onStack: nearestStack.stackIndex === 0 ? 1 : nearestStack.stackIndex,
 						hasPlayer: stackId === 0 || stackId === 1 ? userId : "none",
 					},

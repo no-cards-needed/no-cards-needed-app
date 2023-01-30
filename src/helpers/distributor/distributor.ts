@@ -1,74 +1,112 @@
-import { cards } from "../Cards"
+import { cards as cardsHelper } from "../Cards"
 
-export class Stacks {
-	private stacks: Map<string, Stack> = new Map<string, Stack>();
-	private stackNames: string[] = [];
-
-	public addStack(stack: Stack): void {
-
-	}
-
-	public getStack(stackName: string): Stack {
-		return this.stacks.get(stackName);
-	}
-
-	public getStackNames(): string[] {
-		return this.stackNames;
-	}
-}
-
-export const setDefaultStacks = () => {
-	return [
+export class Distributor {
+	public stacks: Stack[] = [
 		{
 			id: 2,
 			stackType: "back",
-			cards: [
-				0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51
-			],
-			position: {x: 0, y: 0}
+			cards: [],
+			position: { x: 0, y: 0 }
 		},
 		{
 			id: 3,
 			stackType: "front",
-			cards: {},
-			position: {x: 0, y: 0}
+			cards: [],
+			position: { x: 0, y: 0 }
 		},
-	]
-}
+	];
+	public cards: Card[] = [];
 
-export const distributeCards = (cardsPerDeck: {from: number, to: number}, jokersPerDeck: number, numberOfDecks: number, onStack: number) => {
-	const cardArray: Card[] = []
-	// Adding the deck cards
-	for (let index = 0; index < cards.length; index++) {
-		const card = cards[index];
-		if (card.value >= cardsPerDeck.from && card.value <= cardsPerDeck.to) {
-			for (let i = 0; i < numberOfDecks; i++) {
-				cardArray.push({
-					symbol: card.name,
-					onStack: onStack,
-					hasPlayer: null
-				})
+	// default stack to place the cards
+	private defaultStack = 2
+
+	constructor(
+		cardsPerDeck: { from: number, to: number },
+		jokersPerDeck: number,
+		numberOfDecks: number,
+		onStack: number
+		) {
+
+		// Adding the deck cards
+		let cardId = 0
+		for (let index = 0; index < cardsHelper.length; index++) {
+			const card = cardsHelper[index];
+			if (card.value >= cardsPerDeck.from && card.value <= cardsPerDeck.to) {
+				for (let i = 0; i < numberOfDecks; i++) {
+					this.cards.push({
+						cardId: cardId,
+						symbol: card.name,
+						onStack: onStack,
+						hasPlayer: null
+					})
+					this.addCardToStack(cardId, onStack)
+
+					cardId++
+				}
 			}
+		}
+
+		// Adding the jokers
+		for (let index = 0; index < jokersPerDeck; index++) {
+			this.cards.push({
+				cardId: cardId,
+				symbol: "Joker",
+				onStack: onStack,
+				hasPlayer: null
+			})
+			this.addCardToStack(cardId, onStack)
+
+			cardId++
 		}
 	}
 
-	// Adding the jokers
-	for (let index = 0; index < jokersPerDeck; index++) {
-		cardArray.push({
-			symbol: "Joker",
-			onStack: onStack,
-			hasPlayer: null
-		})
+	public shuffleCards: () => void = () => {
+		let temp = this.cards
+		let shuffled = temp
+			.map(value => ({ value, sort: Math.random() }))
+			.sort((a, b) => a.sort - b.sort)
+			.map(({ value }) => value)
+
+		this.cards = shuffled
 	}
 
-	return cardArray
-}
+	public distributeCards: (handCards: number, players: ListOfPlayers) => void = (handCards, players) => {
+		const playerIds = Object.keys(players)
+		const totalCardAmount = this.cards.length
+		const handcardsForPlayers = handCards * playerIds.length
+		
+		// If there are not enough cards to distribute
+		if(totalCardAmount < handcardsForPlayers) {
+			throw new Error(`Not enough cards to distribute to players`)
+		}
+		
+		// Distribute the cards
+		let playerIndex = 0
+		let cardIndex = 1
 
-export const shuffleCards: (cards: Card[]) => Card[] = (cards: Card[]) => {
-	let shuffled = cards
-		.map(value => ({ value, sort: Math.random() }))
-		.sort((a, b) => a.sort - b.sort)
-		.map(({ value }) => value)
+		for (let index = 0; index < handcardsForPlayers; index++) {
+			const card = this.cards[index]
+			const player = players[playerIds[playerIndex]]
+			
+			if(cardIndex >= handCards) {
+				cardIndex = 0
+				playerIndex++
+			}
+			card.hasPlayer = player.id
+			card.onStack = 1
+			cardIndex++
 
-	return shuffled
+			// Filter out the current card from the stacks
+
+			// find stack by id
+			const stack = this.stacks.find(stack => stack.id === this.defaultStack)
+
+			stack.cards = stack?.cards.filter(cardId => cardId !== card.cardId)
+		}
+	}
+
+	private addCardToStack: (cardId: number, stackId: number) => void = (cardId, stackId) => {
+		const stack = this.stacks.find(stack => stack.id === stackId)
+		stack.cards.push(cardId)
+	}
 }
