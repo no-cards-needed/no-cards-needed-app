@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, NavigateFunction } from 'react-router-dom';
+import { setItem, getItem } from '../helpers/localStorageHelper';
 
 function ModaleEnter( {
   setDisplayModal,
@@ -94,7 +95,7 @@ function ModaleEnter( {
       <div className="modal" id="basicDrop" style={{display:displayName}}>
         <div className="headline"style={{textAlign: "center", letterSpacing: "0.01em"}}>  Choose your Nickname! </div>
 
-        <input ref={inputElement} type="text" id="name" required minLength={3} maxLength={20} placeholder="Enter Your Name" onChange={(e) => setName(e.target.value)} value={name} onKeyDown={(e) => name !== "" ? handleKey(e) : null }/>
+        <input ref={inputElement} type="text" id="name" required minLength={3} maxLength={20} placeholder="Enter Your Name" onChange={(e) => {setItem('name', `${e.target.value}`); setName(e.target.value)}} value={name} onKeyDown={(e) => name !== "" ? handleKey(e) : null }/>
 
         <div className="buttonContainer">
           <div className="btn medium Secondary noselect" id="basicDrop" style={{width: "100%"}} onClick={discardName}>

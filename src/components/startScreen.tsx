@@ -1,6 +1,5 @@
 import Image from '../assets/no_cards_needed.svg';
-import { KeyboardEvent, useState, useRef } from 'react';
-import {useNavigate} from "react-router-dom";
+import { useState} from 'react';
 import {generateLobbyString} from "../helpers/words";
 import Tutorial from "./TutorialModal"
 import ModalEnter from "./ModalEnter"
@@ -33,7 +32,7 @@ function StartScreen() {
     setDisplayName( 'flex' )
   } 
 
-  const [name, setName] = useState("")
+  const [name, setName] = useState(localStorage.getItem("name"))
   const [gameId, setGameId] = useState("")
 
 
