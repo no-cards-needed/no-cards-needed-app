@@ -3,21 +3,25 @@
     src: url('/src/font/Heebo/Heebo-VariableFont_wght.ttf') format("truetype-variations");
 }
 
+@font-face {
+    font-family: 'Heebo-bold';
+    src: url('/src/font/Heebo/static/Heebo-Bold.ttf') format("truetype");
+}
+
 /* Headline / H1 */
 .headline {
-    font-family: 'Heebo';
+    font-family: 'Heebo-bold';
     font-style: normal;
-    font-weight: 600;
     font-size: 20px;
     line-height: 120%;
     letter-spacing: 5%;
 }
+
 /* Body */
 p {
     margin: 0;
-    font-family: 'Heebo';
+    font-family: 'Heebo-bold';
     font-style: normal;
-    font-weight: 600;
     font-size: 16px;
     line-height: 24px;
     letter-spacing: 2%;
@@ -35,7 +39,6 @@ label {
     font-size: 12px;
     line-height: 18px;
     text-transform: uppercase;
-
     padding: 0px 2px;
 }
 
