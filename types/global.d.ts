@@ -1,3 +1,13 @@
+type ListOfPlayers = {
+	[playerId: string]: Player
+}
+
+type Player = {
+	name: string;
+	id: string;
+	avatar: 1 | 2 | 3 | 4 | 5;
+}
+
 type GameStatus = {
 	host: string,
 	created: object,
@@ -6,6 +16,7 @@ type GameStatus = {
 } 
 
 type Card = {
+	cardId: number,
 	symbol: string,
 	onStack: number,
 	hasPlayer: string | "none",

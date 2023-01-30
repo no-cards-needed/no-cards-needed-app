@@ -11,7 +11,7 @@ import CreateGame from "./components/CreateGame"
 import PlayingGame from "./PlayingGame"
 
 import { miniCards } from "./helpers/Cards";
-import { distributeCards, shuffleCards } from "./helpers/distributor/distributor";
+import { Distributor } from "./helpers/distributor/distributor";
 
 export const GameWrapper = ({app}: {app:any}) => {
 
@@ -101,13 +101,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 	const playerRef = useRef(null);
 
 	const allPlayersRef = useRef(null);
-	const [allPlayers, setAllPlayers] = useState<{
-		[id: string]: {
-			name: string;
-			id: string;
-			avatar: 1 | 2 | 3 | 4 | 5;
-		}
-	}>({});
+	const [allPlayers, setAllPlayers] = useState<ListOfPlayers>({});
 	
 	const cardsRef = useRef(null);
 	const [cardsState, setCardsState] = useState<Card[]>([]);
@@ -234,10 +228,15 @@ export const GameWrapper = ({app}: {app:any}) => {
 	}
 
 	const startGame = () => {
-		set(cardsRef.current, shuffleCards(distributeCards(deckCards.boundries, joker, decks, 2)))
+		const distributor = new Distributor(deckCards.boundries, joker, decks, 2);
+		distributor.shuffleCards();
+
+		distributor.distributeCards(hand, allPlayers)
+
+		set(cardsRef.current, distributor.cards)
 			.then(() => console.log("👁️ [gamewrapper] cards set"))
 			.catch((error) => console.log("👁️ [gamewrapper] Encountered error setting cards", error));
-		set(stacksRef.current, setDefaultStacks())
+		set(stacksRef.current, distributor.stacks)
 			.then(() => console.log("👁️ [gamewrapper] stacks set"))
 			.catch((error) => console.log("👁️ [gamewrapper] Encountered error setting stacks", error));
 
