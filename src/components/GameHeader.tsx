@@ -81,7 +81,7 @@ function GameHeader(
             <div className="gameHeaderContent">
                 <div className="avatarContainer">
                 {Object.values(players).map((player, index) => (
-                    <div key="index" className={`avatar ${gameStatus && player.id === gameStatus?.host ? 'avatarHost' : null} `}>
+                    <div key={index} className={`avatar ${gameStatus && player.id === gameStatus?.host ? 'avatarHost' : null} `}>
                     {
                       player.avatar === 1 ? <AVATAR_1 />
                       : player.avatar === 2 ? <AVATAR_2 />
