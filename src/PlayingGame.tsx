@@ -25,7 +25,17 @@ type PlayingGameProps = {
 	setCard: (card: Card, cardId: number, timestamp: number) => void,
 	
 	syncedStacks: Stack[], 
-	setStack: (stack: Stack, stackId: number, timestamp: number) => void	
+	setStack: (stack: Stack, stackId: number, timestamp: number) => void
+	players: {
+		[id: string]: {
+			name: string,
+			id: string,
+			avatar: 1 | 2 | 3 | 4 | 5
+		}
+	},
+	avatars: {
+		src: string
+	}[]
 }
 
 function PlayingGame(
@@ -39,7 +49,11 @@ function PlayingGame(
 
 			syncedStacks, 
 			setStack,
+
+			players,
+			avatars,
 		}: PlayingGameProps) {
+
 
 	// const [ lashTextTricks, setLashTextTricks ] = useState( 'Show Tricks' )
 	// const [ lashTextRemoved, setLashTextRemoved ] = useState( 'Show Removed Cards' )
@@ -421,7 +435,7 @@ function PlayingGame(
 					}
 				</div>
 
-                <GameHeader />
+                <GameHeader players={players} gameStatus={gameStatus} avatars={avatars}/>
 
                 <div className="hand criticalMaxWidth" id="basicDrop">
 					<Stack key={"handStack"} stackType={usedStacks[0].stackType} stackRef={(el: HTMLDivElement) => stackRef.current[0] = el}/>

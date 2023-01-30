@@ -65,7 +65,7 @@ function Game() {
                 </div>
 
 
-                <GameHeader />
+                {/* <GameHeader /> */}
                 <div className="gameHeaderUnderBox criticalMaxWidth">
                     <div className={ activeRemoved ? "removedCards" : "removedCards removedCardsUnder"}>
                         <div className="tricks">

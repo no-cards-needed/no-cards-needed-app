@@ -324,6 +324,8 @@ export const GameWrapper = ({app}: {app:any}) => {
 				
 				syncedStacks={stacksState}
 				setStack={setStack}
+				players={allPlayers} 
+				avatars={avatars}
 			/>}
 		</>
 	)
