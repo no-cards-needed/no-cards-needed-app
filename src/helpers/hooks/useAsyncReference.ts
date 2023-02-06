@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 
 export default function useAsyncReference<t>(value: t, isProp = false) {
-	const ref = useRef(value);
+	const ref = useRef<t>(value);
 	const [, forceRender] = useState(false);
 
 	function updateState(newState: any) {

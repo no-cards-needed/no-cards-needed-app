@@ -1,4 +1,11 @@
-import useAsyncReference from "./helpers/hooks/useAsyncReference"
+import { useRef, useState } from "react"
+import Card from "./components/Card"
+import { DebugComponent } from "./components/Debug"
+import GameHeader from "./components/GameHeader"
+import { Stack } from "./components/Stack"
+import { handleCardDrag } from "./helpers/handle-card-drag"
+import { handleCardDrop } from "./helpers/handle-card-drop"
+import useStateRef from "./helpers/hooks/useStateRef"
 
 type PlayingGameProps = {
 	gameStatus: GameStatus,
@@ -32,16 +39,24 @@ function PlayingGame({
 
 		syncedStacks, 
 		setStack,
+
+		players,
+		avatars,
 	}: PlayingGameProps) {
 
-		const usedCards = useAsyncReference<UsedCard[]>([])
-		const usedStacks = useAsyncReference<Stack[]>([])
+		const [usedCards, setUsedCards, usedCardsRef] = useStateRef<UsedCard[]>([])
+		const cardsDomRef = useRef<HTMLDivElement[]>([])
+		const [usedStacks, setUsedStacks, usedStacksRef] = useStateRef<Stack[]>([])
+		const stacksDomRef = useRef<HTMLDivElement[]>([])
 
-		const placeCard = (cardId: number, stackId: number, userInitiated: Boolean = false) => {
+		const [nearestStack, setNearestStack] = useState<NearestStack>(null);
+		const [isColliding, setIsColliding] = useState<boolean>(false);
+
+		const placeCard = (cardId: number, stackId: number, userInitiated: boolean = false) => {
 
 
 			if (userInitiated) {
-				sendCard(usedCards.current[cardId], cardId, Date.now())
+				sendCard(usedCardsRef.current[cardId], cardId)
 			}
 		}
 		const recieveCards = () => {
@@ -61,14 +76,13 @@ function PlayingGame({
 	return (
 		<div>
 			<div style={{background: "#DEDBE5", position: "fixed"}}>
-				<div><Toaster /></div>
 				<div className='backgroundElement'></div>
 				<div className="playingArea criticalMaxWidth">
 				{
 					usedStacks.map((stack: Stack, stackId: number) => {
 						if(stack.stackType !== "hand" && stack.stackType !== "hidden") {
 							return (
-								<Stack key={stack.id} stackType={stack.stackType} stackRef={(el: HTMLDivElement) => stackRef.current[stackId] = el}/>
+								<Stack key={stack.id} stackType={stack.stackType} stackRef={(el: HTMLDivElement) => stacksDomRef.current[stackId] = el}/>
 							)
 						} else return null
 					})
@@ -79,25 +93,25 @@ function PlayingGame({
 					{
 						typeof usedCards[Symbol.iterator] === 'function' ? usedCards?.map((card: UsedCard, cardId: number) => {
 							return <Card 
-									setRef={setCardRef} 
+									setRef={(cardRef: HTMLDivElement) => cardsDomRef.current[cardId] = cardRef} 
 									card={card} 
 									cardId={cardId}
 									key={cardId}
 									shuffle={() => {}}
 									handleLongPress={() => {}}
-									handleCardDrag={(cardRef, cardId) => handleCardDrag(cardRef, cardId, usedCardsRef.current, setUsedCards, getNearestStack, nearestStack, setNearestStack, usedStacks, controlledStacks, setIsColliding)} 
-									handleCardDrop={(data, id) => handleCardDrop(id, usedCards, setUsedCards, isColliding, nearestStack, setCards)} />
+									handleCardDrag={(cardRef, cardId) => handleCardDrag(cardRef, cardId, usedCardsRef.current, setUsedCards, nearestStack, setNearestStack, usedStacksRef, stacksDomRef, setIsColliding)} 
+									handleCardDrop={(data, id) => handleCardDrop(id, usedCards, setUsedCards, isColliding, nearestStack, placeCard)} />
 						}) : <DebugComponent error={usedCards} />
 					}
 				</div>
 
-				<GameHeader />
+				<GameHeader players={players} gameStatus={gameStatus} avatars={avatars} />
 
 				<div className="hand criticalMaxWidth" id="basicDrop">
-					<Stack key={"handStack"} stackType={usedStacks[0].stackType} stackRef={(el: HTMLDivElement) => stackRef.current[0] = el}/>
+					<Stack key={"handStack"} stackType={usedStacks[0].stackType} stackRef={(el: HTMLDivElement) => stacksDomRef.current[0] = el}/>
 				</div>
 
-				<Stack key={"hiddenStack"} stackType={usedStacks[1].stackType} stackRef={(el: HTMLDivElement) => stackRef.current[1] = el}/>
+				<Stack key={"hiddenStack"} stackType={usedStacks[1].stackType} stackRef={(el: HTMLDivElement) => stacksDomRef.current[1] = el}/>
 			</div>
 		</div>
 	);

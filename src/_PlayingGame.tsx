@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { RefObject, useEffect, useRef, useState } from "react";
 import './css/App.css';
 
@@ -12,11 +11,6 @@ import GameHeader from "./components/GameHeader";
 import { Toaster } from "react-hot-toast";
 import { useWindowDimension } from "./helpers/hooks/useWindowDimensions";
 
-const DebugComponent = ({error}: {error:any}) => {
-	console.log(error)
-	return <></>
-}
-
 type PlayingGameProps = {
 	gameStatus: GameStatus,
 	setGameStatus: (gameStatus: GameStatus) => void,
@@ -26,7 +20,17 @@ type PlayingGameProps = {
 	setCard: (card: Card, cardId: number, timestamp: number) => void,
 	
 	syncedStacks: Stack[], 
-	setStack: (stack: Stack, stackId: number, timestamp: number) => void	
+	setStack: (stack: Stack, stackId: number, timestamp: number) => void
+	players: {
+		[id: string]: {
+			name: string,
+			id: string,
+			avatar: 1 | 2 | 3 | 4 | 5
+		}
+	},
+	avatars: {
+		src: string
+	}[]
 }
 
 function PlayingGame(
@@ -40,7 +44,11 @@ function PlayingGame(
 
 			syncedStacks, 
 			setStack,
+
+			players,
+			avatars,
 		}: PlayingGameProps) {
+
 
 	// const [ lashTextTricks, setLashTextTricks ] = useState( 'Show Tricks' )
 	// const [ lashTextRemoved, setLashTextRemoved ] = useState( 'Show Removed Cards' )
@@ -119,12 +127,14 @@ function PlayingGame(
 	const controlledStacks = useRef<ControlledStacks>({})
 	const [cardMoveAuthor, setCardMoveAuthor] = useState<"CLIENT" | "SYNC">("SYNC")
 	const latestClientTimestamp = useRef<number>(Date.now())
+	const prevHandCards = useRef<number>(0)
 	useEffect(() => {
 		const syncStacks = (card: UsedCard) => {
 			// synchronizing new controlled stacks
 			// This is potentially a very expensive operation bandwidth wise
 			// as this gets called 3 times on every card drop due to syncing
 			if (cardMoveAuthor === "CLIENT" && card.onStack > 1) { // Check of the move is authered by the client and if the card is on a stack which is not client only
+				console.log("yup, really setting it")
 				setStack({
 					id: card.onStack,
 					position: usedStacksRef.current[card.onStack].position || {x: 0, y: 0},
@@ -140,8 +150,17 @@ function PlayingGame(
 		for (let cardId = 0; cardId < usedCards.length; cardId++) {
 			const card = usedCards[cardId];
 			
-			// Check if card has moved or if its on the same position
-
+			// Check if card is on stack other that card.onStack
+			for (let stackIndex = 0; stackIndex < Object.keys(tempControlledStacks).length; stackIndex++) {
+				const [stackIdString, stack] = Object.entries(tempControlledStacks)[stackIndex];
+				const stackId = parseInt(stackIdString)
+				if (stackId !== card.onStack) {
+					if (stack.includes(cardId)) {
+						// Remove cardId from controlledStacks
+						tempControlledStacks[stackId] = stack.filter((stackCardId) => stackCardId !== cardId)
+					}
+				}
+			}
 
 			// Add cardId to tempControlledStacks if the card isnt already in it
 			if (tempControlledStacks[card.onStack] && !tempControlledStacks[card.onStack].includes(cardId)) {
@@ -153,10 +172,20 @@ function PlayingGame(
 
 				syncStacks(card)
 			}
+
+			// Update the position of the cards in open type stacks
+			const currentStackType = usedStacksRef.current[card.onStack].stackType
+			if (currentStackType === "open" || currentStackType === "hand") {
+				console.log("✋ Hand needs to be updated")
+				console.log("✋ tempControlledStacks[card.onStack]", tempControlledStacks[card.onStack])
+				console.log("✋ controlledStacks.current[card.onStack]", controlledStacks.current[card.onStack])
+				// If that stack has a different length then the old card state, update all the cards in it
+				if (tempControlledStacks[card.onStack].length !== controlledStacks.current[card.onStack]?.length) {
+					setCards(cardId, card.onStack, true)
+				}
+			}
 		}
 		controlledStacks.current = tempControlledStacks
-
-
 	}, [usedCards])
 
 
@@ -193,28 +222,32 @@ function PlayingGame(
 
 	const redrawCardZIndexes = () => {
 		// Redraw Card ZIndexes
+		const tempUsedCards = usedCardsRef.current
 		usedCardsRef.current.forEach((card: UsedCard, cardId: number) => {
-			const tempUsedCards = usedCardsRef.current
+			const index = controlledStacks.current[card.onStack].indexOf(cardId)
 			// Get zIndex from controlledStacks
-			tempUsedCards[cardId].zIndex = controlledStacks.current[card.onStack].indexOf(cardId) || 0
-			setUsedCards(tempUsedCards)
+			tempUsedCards[cardId].zIndex = index === -1 
+				? cardId 
+				: index || 0
 		})
+		setUsedCards(tempUsedCards)
 	}
 
 	const setCards = (cardId: number, stackId: number, comingFromSync: boolean = true) => {
+		console.log("coming from sync: ",comingFromSync)
+		if (!comingFromSync) setCardMoveAuthor("CLIENT")
 		try {
 			const tempUsedCards = [...usedCardsRef.current]
 			const calculatedStackId = stackId <= 1 
 				? tempUsedCards[cardId].hasPlayer === userId || !comingFromSync ? 0 : 1
 				: stackId
 
-			console.log(calculatedStackId, tempUsedCards[cardId], userId)
 			const stack: Stack = usedStacksRef.current[calculatedStackId]
 	
 			const cardPosition = {
 				x: stack.stackType !== "hand" && stack.stackType !== "open" 
 						? stackRef.current[calculatedStackId].getBoundingClientRect().x 
-						: calculateCardPosition(cardRef.current[cardId], stackRef.current[calculatedStackId], calculatedStackId, controlledStacks, cardId),
+						: calculateCardPosition(cardRef, stackRef, calculatedStackId, controlledStacks, cardId),
 				y: stackRef.current[calculatedStackId].getBoundingClientRect().y
 			}
 
@@ -225,18 +258,12 @@ function PlayingGame(
 									? true 
 									: false 
 								: false
-			const stackLength = controlledStacks.current[calculatedStackId] 
-									? Object.values(controlledStacks.current[calculatedStackId]).length 
-									: 0
-			const positionInStack = controlledStacks.current[calculatedStackId] 
-										? Object.values(controlledStacks.current[calculatedStackId]).indexOf(cardId) 
-										: stackLength
 
 			tempUsedCards[cardId] = {
 				...tempUsedCards[cardId],
 				onStack: calculatedStackId,
 				controlledPosition: cardPosition,
-				zIndex: positionInStack,
+				zIndex: calculateZIndex(calculatedStackId, cardId),
 				onStackType: stackType,
 				hasShadow,
 			} 
@@ -246,6 +273,7 @@ function PlayingGame(
 				setCard(
 					{
 						symbol: usedCards[cardId].symbol,
+						cardId: cardId,
 						onStack: nearestStack.stackIndex === 0 ? 1 : nearestStack.stackIndex,
 						hasPlayer: stackId === 0 || stackId === 1 ? userId : "none",
 					},
@@ -288,6 +316,15 @@ function PlayingGame(
 		}
 	}, [syncedStacks])
 
+	const calculateZIndex = (stackId: number, cardId: number) => {
+		const indexOfCard = controlledStacks.current[stackId]  ? Object.values(controlledStacks.current[stackId]).indexOf(cardId) : 0
+		const cardIndex = indexOfCard === -1
+								? cardId
+								: indexOfCard
+
+		return cardIndex
+	}	
+
 	const updateCards = () => {
 		// Update usedCards with syncedCards
 		console.log("🐉 [acid tang] Synced Cards", syncedCards)
@@ -304,10 +341,6 @@ function PlayingGame(
 				
 				const stackType = usedStacksRef.current[card.onStack].stackType
 
-				// Index of Card in Stack  
-				const cardIndex = controlledStacks.current[card.onStack] 
-									? Object.values(controlledStacks.current[card.onStack]).indexOf(cardId) 
-									: 0
 				// Set const "hasShadow" to true if the card is in the top 10 cards of the stack
 				const hasShadow = controlledStacks.current[card.onStack] 
 									? Object.values(controlledStacks.current[card.onStack]).length - Object.values(controlledStacks.current[card.onStack]).indexOf(cardId) 
@@ -320,7 +353,7 @@ function PlayingGame(
 				tempUsedCards[cardId] = {
 					...syncedCards[cardId],
 					controlledPosition: {x: 0, y: 0},
-					zIndex: cardIndex || 0,
+					zIndex: calculateZIndex(card.onStack, cardId) || 0,
 					animation: "none",
 					movedAside: "none",
 					onStackType: stackType,
@@ -345,22 +378,33 @@ function PlayingGame(
 					updateCards()
 					redrawCardZIndexes()
 					clearTimeout(timeout)
-				}, 1000)
+				}, 10)
 			} else {
 				updateCards()
 			}
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [syncedCards])
  
 	const [windowHeight, windowWidth] = useWindowDimension()
 	useEffect(() => {
-		console.log("🐉 [acid tang] Window Dimension", windowHeight, windowWidth)
 		for (let i = 0; i < usedCardsRef.current.length; i++) {
 			const element = usedCardsRef.current[i];
 			setCards(i, element.onStack, true)
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [windowHeight, windowWidth])
+
+	useEffect(() => {
+		const timeout = setTimeout(() => {
+			for (let i = 0; i < usedCardsRef.current.length; i++) {
+				const element = usedCardsRef.current[i];
+				setCards(i, element.onStack, true)
+			}
+
+			clearTimeout(timeout)
+		}, 100)
+		return () => clearTimeout(timeout)
+	}, [])
 
 	return (
 		<div>
@@ -395,7 +439,7 @@ function PlayingGame(
 					}
 				</div>
 
-                <GameHeader />
+                <GameHeader players={players} gameStatus={gameStatus} avatars={avatars}/>
 
                 <div className="hand criticalMaxWidth" id="basicDrop">
 					<Stack key={"handStack"} stackType={usedStacks[0].stackType} stackRef={(el: HTMLDivElement) => stackRef.current[0] = el}/>

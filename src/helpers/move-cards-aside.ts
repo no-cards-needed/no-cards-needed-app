@@ -2,18 +2,18 @@ import { MutableRefObject } from "react";
 import { cardDimensions } from "./card-dimensions"
 
 export const moveCardsAside = (
-	controlledStacks: MutableRefObject<ControlledStacks>, 
+	usedStacksRef: MutableRefObject<Stack[]>, 
 	nearestStack: NearestStack, 
 	currentCardRef: React.MutableRefObject<HTMLElement>, 
 	usedCards: UsedCard[],
 	setUsedCards: (usedCards: UsedCard[]) => void,
 	cardId: number) => {
 
-	const controlledStack = controlledStacks.current[nearestStack.stackIndex]
+	const controlledStack = usedStacksRef.current[nearestStack.stackIndex]
 
 	// Moving the Cards in the open Stack aside
 	if(controlledStack) {
-		for (let loopedCardId = 0; loopedCardId < controlledStack.length; loopedCardId++) {
+		for (let loopedCardId = 0; loopedCardId < controlledStack.cards.length; loopedCardId++) {
 
 			if (loopedCardId !== cardId) {
 				// Get Position of currently dragged card

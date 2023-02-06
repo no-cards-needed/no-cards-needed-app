@@ -15,7 +15,7 @@ type CardProps = {
 	handleCardDrop: (nodeRef: any, cardId: number) => void,
 	card: UsedCard,
 	cardId: number,
-	setRef: (cardId: number, ref: HTMLDivElement) => void,
+	setRef: (ref: HTMLDivElement) => void,
 	shuffle: () => void,
 	handleLongPress: (cardId: number) => void,
 }
@@ -182,7 +182,7 @@ function Card({
 	const [defaultPosition, setDefaultPosition] = useState({x: 0, y: 0})
 
 	useEffect(() => {
-		setRef(cardId, nodeRef.current)
+		setRef(nodeRef.current)
 		
 		setDefaultPosition({
 			x: window.innerWidth / 2 - 40,
