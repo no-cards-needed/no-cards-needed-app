@@ -11,7 +11,7 @@ import CreateGame from "./components/CreateGame"
 import PlayingGame from "./_PlayingGame"
 
 import { miniCards } from "./helpers/Cards";
-import { distributeCards, shuffleCards } from "./helpers/distributor/distributor";
+import { Distributor } from "./helpers/distributor/distributor";
 
 export const GameWrapper = ({app}: {app:any}) => {
 
@@ -101,13 +101,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 	const playerRef = useRef(null);
 
 	const allPlayersRef = useRef(null);
-	const [allPlayers, setAllPlayers] = useState<{
-		[id: string]: {
-			name: string;
-			id: string;
-			avatar: 1 | 2 | 3 | 4 | 5;
-		}
-	}>({});
+	const [allPlayers, setAllPlayers] = useState<ListOfPlayers>({});
 	
 	const cardsRef = useRef(null);
 	const [cardsState, setCardsState] = useState<Card[]>([]);
@@ -125,27 +119,37 @@ export const GameWrapper = ({app}: {app:any}) => {
 		// A new player connected to the game
 		onValue(allPlayersRef.current, (snapshot) => {
 			// If this is the only player, this player is starting the game instance
+
+			// TODO: When only two players are playing and one refreshes the page, this is re-triggered
 			if (snapshot.val() && Object.keys(snapshot.val()).length === 1) {
 				console.log("👁️ [gamewrapper] this is the first player, setting up the game", snapshot.val())
 				const gameStatus = defaultGameStatus(Object.keys(snapshot.val())[0])
-				// Setting the game status to the initial values
-				set(gameStatusRef.current, gameStatus)
-					.then(() => console.log("👁️ [gamewrapper] game status set", gameStatus))
-					.catch((error) => console.log("👁️ [gamewrapper] Encountered error setting game status", error));
+				
+				// Check if the game is already started by comparing the gamestatus timestamp with servertimestamp()
+				// If the game is already started, then the game is already set up
+				// If the game is not started, then set up the game
+				if (!gameStatusState || gameStatusState.timestamp < gameStatus.timestamp) {
+					// Setting the game status to the initial values
+					set(gameStatusRef.current, gameStatus)
+						.then(() => console.log("👁️ [gamewrapper] game status set", gameStatus))
+						.catch((error) => console.log("👁️ [gamewrapper] Encountered error setting game status", error));
+				} else {
+					console.log("👁️ [gamewrapper] game already started, skipping setup", gameStatusState, gameStatus)
+				}
 			}
 		})
 
 		// Game Status Value Change in FireBase Realtime Database
 		onValue(gameStatusRef.current, (snapshot) => {
-			console.log("👁️ [gamewrapper] recieved a new game status: ", snapshot.val())
+			// console.log("👁️ [gamewrapper] recieved a new game status: ", snapshot.val())
 			const newGameStatus: GameStatus = snapshot.val()
 			setGameStatusState(newGameStatus)
-			setGameStarted(newGameStatus.currentGameState === "game")
+			setGameStarted(newGameStatus?.currentGameState === "game")
 		})
 
 		// Card Value Change in FireBase Realtime Database
 		onValue(cardsRef.current, (snapshot) => {
-			console.log("👁️ [gamewrapper] recieved new cards: ", snapshot.val());
+			// console.log("👁️ [gamewrapper] recieved new cards: ", snapshot.val());
 			setCardsState(snapshot.val());
 		})
 
@@ -178,9 +182,9 @@ export const GameWrapper = ({app}: {app:any}) => {
 	// Updater Function for the Game Status
 	// recieves a GameStatus object and sets it in the Firebase Database
 	const setGameStatus = (updatedGameStatus: GameStatus) => {
-		console.log("👁️ [gamewrapper] setting user requested gameStatus");
+		// console.log("👁️ [gamewrapper] setting user requested gameStatus");
 		set(gameStatusRef.current, updatedGameStatus)
-			.then(() => console.log("👁️ [gamewrapper] game status set", updatedGameStatus))
+			// .then(() => console.log("👁️ [gamewrapper] game status set", updatedGameStatus))
 			.catch((e) => console.log("👁️ [gamewrapper] Encountered error setting game status", e))
 	}
 
@@ -188,13 +192,13 @@ export const GameWrapper = ({app}: {app:any}) => {
 	// recieves a *SINGLE* Card object and sets it in the Firebase Database
 	const setCard = (card: Card, cardId: number, timestamp: number) => {
 		const cardRef = ref(getDatabase(app.current), `game/${gameId}/cards/${cardId}`)
-		console.log("👁️ [gamewrapper] setting user requested cards with path: ", cardRef, "and the timestamps: ", timestamp, gameStatusState.timestamp);
+		// console.log("👁️ [gamewrapper] setting user requested cards with path: ", cardRef, "and the timestamps: ", timestamp, gameStatusState.timestamp);
 
 		// Check if timestamp is newer than the latest server timestamp
 		if (gameStatusState.timestamp && timestamp > gameStatusState.timestamp) {
 			updateGameStatusTimestamp()
 			set(cardRef, card)
-				.then(() => console.log("👁️ [gamewrapper] card set", card, cardId))
+				// .then(() => console.log("👁️ [gamewrapper] card set", card, cardId))
 				.catch((e) => console.log("👁️ [gamewrapper] Encountered error setting the card", e))
 		} else {
 			updateGameStatusTimestamp()
@@ -224,10 +228,15 @@ export const GameWrapper = ({app}: {app:any}) => {
 	}
 
 	const startGame = () => {
-		set(cardsRef.current, shuffleCards(distributeCards(deckCards.boundries, joker, decks, 2)))
+		const distributor = new Distributor(deckCards.boundries, joker, decks, 2);
+		distributor.shuffleCards();
+
+		distributor.distributeCards(hand, allPlayers)
+
+		set(cardsRef.current, distributor.cards)
 			.then(() => console.log("👁️ [gamewrapper] cards set"))
 			.catch((error) => console.log("👁️ [gamewrapper] Encountered error setting cards", error));
-		set(stacksRef.current, setDefaultStacks())
+		set(stacksRef.current, distributor.stacks)
 			.then(() => console.log("👁️ [gamewrapper] stacks set"))
 			.catch((error) => console.log("👁️ [gamewrapper] Encountered error setting stacks", error));
 
@@ -314,6 +323,8 @@ export const GameWrapper = ({app}: {app:any}) => {
 				
 				syncedStacks={stacksState}
 				setStack={setStack}
+				players={allPlayers} 
+				avatars={avatars}
 			/>}
 		</>
 	)

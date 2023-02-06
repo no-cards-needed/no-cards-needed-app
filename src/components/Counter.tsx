@@ -1,6 +1,5 @@
 import plus from '../assets/iconsWhite/plus.svg';
 import minus from '../assets/iconsWhite/minus.svg';
-import { useState } from 'react';
 
 function Counter( {value, setValue, minValue, maxValue, disabled} : {value: number, setValue: (newValue: number) => void, minValue: number, maxValue: number, disabled: boolean} ) {
 

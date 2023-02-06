@@ -415,7 +415,7 @@ function Menu(
 					</motion.div> 
 				</div> 
 
-				<div className="btnBig Primary" id="basicDrop" onClick={() => setStartGame()} style={{display: isHost ? 'flex' : 'none'}}>
+				<div className="btnBig Primary" id="basicDrop" onClick={() => setStartGame()} style={{display: gameStatus && userId === gameStatus?.host ? 'flex' : 'none'}}>
 					<div className="headline">Start Game</div>
 				</div>
 

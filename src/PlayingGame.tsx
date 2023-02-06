@@ -9,7 +9,17 @@ type PlayingGameProps = {
 	setCard: (card: Card, cardId: number, timestamp: number) => void,
 	
 	syncedStacks: Stack[], 
-	setStack: (stack: Stack, stackId: number, timestamp: number) => void	
+	setStack: (stack: Stack, stackId: number, timestamp: number) => void
+	players: {
+		[id: string]: {
+			name: string,
+			id: string,
+			avatar: 1 | 2 | 3 | 4 | 5
+		}
+	},
+	avatars: {
+		src: string
+	}[]
 }
 
 function PlayingGame({
@@ -47,7 +57,6 @@ function PlayingGame({
 		const sendStack = (stack: Stack, stackId: number) => {
 			setStack(stack, stackId, Date.now())
 		}
-
 
 	return (
 		<div>

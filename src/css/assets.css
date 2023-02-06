@@ -91,13 +91,13 @@
   
   }
 
-/* 
+
   .avatarContainer {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
     gap: 8px;
-  } */
+  }
 
   .avatar {
     width: 28px;
@@ -110,12 +110,9 @@
     align-items: center;
   }
 
-  
-
   .avatarHost {
     border: 2px solid #7741EA;
   }
-
 
   .iconContainer {
     width: 16px;
