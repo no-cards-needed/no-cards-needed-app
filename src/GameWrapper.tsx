@@ -8,7 +8,7 @@ import { useLocation } from "react-router-dom";
 import { setDefaultStacks, setDefaultUsedCards } from "./helpers/mp";
 
 import CreateGame from "./components/CreateGame"
-import PlayingGame from "./PlayingGame"
+import PlayingGame from "./_PlayingGame"
 
 import { miniCards } from "./helpers/Cards";
 import { distributeCards, shuffleCards } from "./helpers/distributor/distributor";

@@ -24,7 +24,7 @@ import './css/cards.css';
 // Comment out the thing you are currently not working on
 
 // Game Development
-import App from './PlayingGame';
+import App from './_PlayingGame';
 // Menu Development
 // import App from './App';
 
