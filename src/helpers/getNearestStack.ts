@@ -3,15 +3,15 @@ import { getDistanceBetweenTwoElements } from "./get-distance-between-two-elemen
 
 export const getNearestStack: (
 	cardRef: RefObject<HTMLDivElement>, 
-	usedStacksRef: React.MutableRefObject<Stack[]>,
+	usedStacksRef: React.MutableRefObject<StackMap>,
 	stacksDomRef: React.MutableRefObject<HTMLDivElement[]>
 ) => NearestStack = (
 	cardRef: RefObject<HTMLDivElement>, 
-	usedStacksRef: React.MutableRefObject<Stack[]>,
+	usedStacksRef: React.MutableRefObject<StackMap>,
 	stacksDomRef: React.MutableRefObject<HTMLDivElement[]>
 ) => {
 
-	const distances = usedStacksRef.current.map((stack: Stack, stackId: number) => {
+	const distances = Array.from(usedStacksRef.current).map(([stackId, stack]) => {
 		if (stacksDomRef.current[stackId]) {
 			return getDistanceBetweenTwoElements(stacksDomRef.current[stackId], cardRef.current)
 		} else {

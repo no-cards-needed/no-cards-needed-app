@@ -18,13 +18,7 @@ function GameHeader(
 		gameStatus,
 		avatars
 	}: {
-		players: {
-			[id: string]: {
-				name: string,
-				id: string,
-				avatar: 1 | 2 | 3 | 4 | 5
-			}
-		},
+		players: ListOfPlayers,
 		gameStatus: GameStatus,
 		avatars: {
 			src: string
@@ -79,8 +73,8 @@ function GameHeader(
       <div className="gameHeader criticalMaxWidth" id="basicDrop">
             <div className="gameHeaderContent">
                 <div className="avatarContainer">
-                {Object.values(players).map((player, index) => (
-                    <div key={index} className={`avatar ${gameStatus && player.id === gameStatus?.host ? 'avatarHost' : null} `}>
+                {Array.from(players).map(([playerId, player]) => (
+                    <div key={playerId} className={`avatar ${gameStatus && player.id === gameStatus?.host ? 'avatarHost' : null} `}>
                     {
                       player.avatar === 1 ? <AVATAR_1 />
                       : player.avatar === 2 ? <AVATAR_2 />

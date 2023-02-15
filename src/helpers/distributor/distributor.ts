@@ -1,7 +1,7 @@
 import { cards as cardsHelper } from "../Cards"
 
 export class Distributor {
-	public stacks: Stack[] = [
+	public stacks: any = [
 		{
 			id: 2,
 			stackType: "back",
@@ -70,7 +70,7 @@ export class Distributor {
 		this.cards = shuffled
 	}
 
-	public distributeCards: (handCards: number, players: ListOfPlayers) => void = (handCards, players) => {
+	public distributeCards: (handCards: number, players:{[name: string]: Player}) => void = (handCards, players) => {
 		const playerIds = Object.keys(players)
 		const totalCardAmount = this.cards.length
 		const handcardsForPlayers = handCards * playerIds.length
@@ -99,14 +99,14 @@ export class Distributor {
 			// Filter out the current card from the stacks
 
 			// find stack by id
-			const stack = this.stacks.find(stack => stack.id === this.defaultStack)
+			const stack = this.stacks.find((stack: any) => stack.id === this.defaultStack)
 
-			stack.cards = stack?.cards.filter(cardId => cardId !== card.cardId)
+			stack.cards = stack?.cards.filter((cardId: any) => cardId !== card.cardId)
 		}
 	}
 
 	private addCardToStack: (cardId: number, stackId: number) => void = (cardId, stackId) => {
-		const stack = this.stacks.find(stack => stack.id === stackId)
+		const stack = this.stacks.find((stack: any) => stack.id === stackId)
 		stack.cards.push(cardId)
 	}
 }

@@ -34,13 +34,7 @@ type Props = {
 	pile: boolean, 
 	setPile: (pile: boolean) => void, 
 
-	players: {
-		[id: string]: {
-			name: string;
-			id: string;
-			avatar: 1 | 2 | 3 | 4 | 5;
-		};
-	},
+	players: ListOfPlayers,
 
 	startGame: boolean, 
 	setStartGame: () => void, 
@@ -95,7 +89,7 @@ function Menu(
 
 		const [totalCards, setTotalCards] = useState(24)
 		const [cardsInDrawPile, setCardsInDrawPile] = useState(19)
-		const [maxValue, setMaxValue] = useState(totalCards / Object.values(players).length)
+		const [maxValue, setMaxValue] = useState(totalCards / players.size)
 
 		const URL = window.location.href
 
@@ -107,16 +101,15 @@ function Menu(
 			setTotalCards((deckCards.count + joker) * decks)
 			console.log(gameStatus)
 
-			setCardsInDrawPile(totalCards - (Object.values(players).length * hand))
+			setCardsInDrawPile(totalCards - (players.size * hand))
 
-			if (split) setHand(totalCards / Object.values(players).length)
+			if (split) setHand(totalCards / players.size)
 
-			totalCards % Object.values(players).length !== 0 ? setMaxValue(totalCards / Object.values(players).length - 1) : setMaxValue(totalCards / Object.values(players).length)
+			totalCards % players.size !== 0 ? setMaxValue(totalCards / players.size - 1) : setMaxValue(totalCards / players.size)
 
 		}, [deckCards, totalCards, joker, decks, hand, players, split, pile])
 
 		return (
-		 
 	
 			<div className="Menu maxWidth" style={{display: "flex", flexDirection: "column", gap: "24px"}}>
 				<MenuHeader />
@@ -311,15 +304,9 @@ function Menu(
 									</AnimatePresence>
 								</div>	
 							</div>
-	
-							
-
-
-								
 						</div>
 
 						<div style={{display: "flex", flexDirection: "row", width: '100%', flexWrap: 'wrap', rowGap: '16px', alignItems: 'end'}}>
-
 							<div className="labelItemGroup" style={{minWidth: '130px', width: "50%"}}>
 								<div className="labelIconCombo">
 									<img src={deckIcon} className="iconContainer" alt=""></img>
@@ -329,7 +316,6 @@ function Menu(
 							</div>
 
 							<div className="labelItemGroup" style={{width: '50%', display: pile ? 'flex' : 'none'}}>
-								
 								<div className="cardRow">
 								<AnimatePresence>
 										{
@@ -349,7 +335,6 @@ function Menu(
 									</AnimatePresence>
 								</div>
 							</div>
-							
 						</div>
 
 						<div className="hairline"></div>

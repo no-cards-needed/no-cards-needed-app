@@ -11,13 +11,7 @@ function PlayerCards(
 		gameStatus,
 		avatars
 	}: {
-		players: {
-			[id: string]: {
-				name: string,
-				id: string,
-				avatar: 1 | 2 | 3 | 4 | 5
-			}
-		},
+		players: ListOfPlayers,
 		gameStatus: GameStatus,
 		avatars: {
 			src: string
@@ -29,8 +23,8 @@ function PlayerCards(
 	return (
 		<div className="PlayerCards"> 
 			<div className="playerContainer">
-				{Object.values(players).map((player, index) => (
-				<div className="player" key={index}>
+				{Array.from(players).map(([playerId, player]) => (
+				<div className="player" key={playerId}>
 					<div className={`avatar ${gameStatus && player.id === gameStatus?.host ? 'avatarHost' : null} `}>
 					{
 						player.avatar === 1 ? <AVATAR_1 />

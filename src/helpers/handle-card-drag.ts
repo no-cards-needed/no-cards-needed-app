@@ -9,13 +9,13 @@ export const handleCardDrag = (
 		cardRef: MutableRefObject<HTMLDivElement>,
 		cardId: number, 
 
-		usedCards: UsedCard[], 
-		setUsedCards: (usedCards: UsedCard[]) => void,
+		usedCards: UsedCardsMap, 
+		setUsedCards: (usedCards: UsedCardsMap) => void,
 		
 		nearestStack: NearestStack, 
 		setNearestStack: (nearestStack: NearestStack) => void, 
 		
-		usedStacksRef: MutableRefObject<Stack[]>, 
+		usedStacksRef: MutableRefObject<StackMap>, 
 		stacksDomRef: React.MutableRefObject<HTMLDivElement[]>,
 		
 		setIsColliding: (isColliding: boolean) => void,
@@ -23,10 +23,10 @@ export const handleCardDrag = (
 
 	// Setting Z-Index of currently dragged Card to the highest
 	// Check if Card is already on top
-	if(usedCards[cardId].zIndex !== usedCards.length) {
-		console.log("🫱 updating zIndex", usedCards[cardId].zIndex, usedCards.length)
+	if(usedCards.get(cardId).zIndex !== usedCards.size) {
+		console.log("🫱 updating zIndex", usedCards.get(cardId).zIndex, usedCards.size)
 		const tempUsedCards = usedCards;
-		tempUsedCards[cardId].zIndex = usedCards.length;
+		tempUsedCards.get(cardId).zIndex = usedCards.size;
 		setUsedCards(tempUsedCards)
 	} 
 
@@ -37,7 +37,7 @@ export const handleCardDrag = (
 		setIsColliding(true)
 
 		// Checking if the Stack Type is an open one, so the cards can be moved aside
-		const nearestStackType = usedStacksRef.current[nearestStack.stackIndex].stackType;
+		const nearestStackType = usedStacksRef.current.get(nearestStack.stackIndex).stackType;
 		if (nearestStackType === "open" || nearestStackType === "hand") {
 			moveCardsAside(usedStacksRef, nearestStack, cardRef, usedCards, setUsedCards, cardId)
 		}
