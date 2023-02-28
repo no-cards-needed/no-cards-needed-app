@@ -20,6 +20,18 @@ type Card = {
 	hasPlayer: string | "none",
 }
 
+type UsedCardsMap = Map<number, UsedCard>
+
+interface UsedCard extends Card {
+	onStackType: Stack["stackType"]
+
+	controlledPosition: {x: number, y: number},
+	zIndex: number,
+	animation: string,
+	movedAside: "left" | "right" | "none",
+	hasShadow: boolean
+}
+
 type DropdownContent = {
 	count: number,
 	text: string,
@@ -51,16 +63,4 @@ type Stack = {
 	 */
 	position: {x: number, y: number},
 	cards?: Set<number>,
-}
-
-type UsedCardsMap = Map<number, UsedCard>
-
-interface UsedCard extends Card {
-	onStackType: Stack["stackType"]
-
-	controlledPosition: {x: number, y: number},
-	zIndex: number,
-	animation: string,
-	movedAside: "left" | "right" | "none",
-	hasShadow: boolean
 }

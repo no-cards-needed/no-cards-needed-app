@@ -215,10 +215,18 @@ export const GameWrapper = ({app}: {app:any}) => {
 		const cardRef = ref(getDatabase(app.current), `game/${gameId}/cards/${cardId}`)
 		// console.log("👁️ [gamewrapper] setting user requested cards with path: ", cardRef, "and the timestamps: ", timestamp, gameStatusState.timestamp);
 
+		// Convert usedCard to sync ready Card
+		const _card: Card = {
+			cardId: card.cardId,
+			symbol: card.symbol,
+			onStack: card.onStack,
+			hasPlayer: userId
+		}
+
 		// Check if timestamp is newer than the latest server timestamp
 		if (gameStatusState.timestamp && timestamp > gameStatusState.timestamp) {
 			updateGameStatusTimestamp()
-			set(cardRef, card)
+			set(cardRef, _card)
 				// .then(() => console.log("👁️ [gamewrapper] card set", card, cardId))
 				.catch((e) => console.log("👁️ [gamewrapper] Encountered error setting the card", e))
 		} else {
