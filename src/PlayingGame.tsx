@@ -95,6 +95,15 @@ function PlayingGame({
 			if (userInitiated) {
 				sendCard(usedCardsRef.current.get(cardId), cardId)
 				sendStack(_stack, userSpecificStackId)
+
+				// Remove card from previous stack
+				const _stacks = usedStacksRef.current
+				_stacks.forEach(stack => {
+					if(stack.cards && stack.cards.has(cardId) && stack.id !== userSpecificStackId) {
+						stack.cards.delete(cardId)
+						sendStack(stack, stack.id)
+					}	
+				})
 			}
 		}
 
