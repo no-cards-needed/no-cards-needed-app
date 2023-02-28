@@ -3,126 +3,124 @@ import { useNavigate, NavigateFunction } from 'react-router-dom';
 import { setItem, getItem } from '../helpers/localStorageHelper';
 
 function ModaleEnter( {
-  setDisplayModal,
-  displayName, 
-  setDisplayName,
-  processCreate,
-  setProcessCreate,
-  processJoin,
-  setProcessJoin,
-  name,
-  setName, 
-  setDisplayKey,
-  displayKey,
-  gameId,
-  setGameId
-} : {
-  setDisplayModal: (displayModal: boolean) => void, 
-  displayName: string, 
-  setDisplayName: (displayName: string) => void, 
-  processCreate: boolean,
-  setProcessCreate: (processCreate: boolean) => void,
-  processJoin: boolean,
-  setProcessJoin: (processJoin: boolean) => void,
-  name: string,
-  setName: (newName: string) => void, 
-  displayKey: string,
-  setDisplayKey: (displayKey: string) => void,
-  gameId: string,
-  setGameId: (newID: string) => void,
-  
-  
-  } ) {
+	processCreate,
+	setProcessCreate,
+	processJoin,
+	setProcessJoin,
+	gameId,
+	setGameId,
+	setLoading,
+	setName
+	} : {
+	processCreate: boolean,
+	setProcessCreate: (processCreate: boolean) => void,
+	processJoin: boolean,
+	setProcessJoin: (processJoin: boolean) => void,
+	gameId: string,
+	setGameId: (newID: string) => void,
+	setLoading?: (loading: boolean) => void,
+	setName?: (name: string) => void
 
-    const navigate = useNavigate()
+} ) {
 
-    function discardName() {
-      if (processCreate) {
-        setProcessCreate(false) 
-        setDisplayModal( false )
-        setDisplayName( 'none' )
-      } else if (processJoin) {
-        setDisplayModal( false )
-        setDisplayName( 'none' )
-      }
-    } 
-  
-    function nextName() {
-      console.log(name)
-      if (processCreate) {
-        setProcessCreate(false) 
-        setDisplayModal( false )
-        setDisplayName( 'none' )
-        navigate('/auth', {state: {name: name}})
-      } else if (processJoin) {
-        setDisplayKey( 'flex' )
-        setDisplayName( 'none' )
-      }
-    } 
-  
-    function discardKey() {
-      setDisplayKey( 'none' )
-      setDisplayName( 'flex' )
-    }
-  
-    function handleKey(e: React.KeyboardEvent<HTMLInputElement>) {
-      if (e.key === 'Enter'){
-        nextKey()
-      }
-        else {
-      }
-    }
-  
-    function nextKey() {
-      setProcessJoin(false) 
-      setDisplayModal( false )
-      setDisplayKey( 'none' )
-      navigate('/auth', {state: {name: name, gameId: gameId}})
-    }
+	const navigate = useNavigate()
+	const [localName, setLocalName] = useState(localStorage.getItem("name"))
 
-    const inputElement = useRef(null)
+	const [ displayName, setDisplayName ] = useState( true )
+	const [ displayKey, setDisplayKey ] = useState( false )
 
-    useEffect(() => {
-      console.log("should focus now")
-      const timeout = setTimeout(() => {
-        inputElement.current.focus()
-        clearTimeout(timeout)
-      }, 1)
-    }, [])
+	function discardName() {
+		if (processCreate) {
+			setProcessCreate(false) 
+			setDisplayName(false)
+			setDisplayName( true )
+		} else if (processJoin) {
+			setDisplayName(false)
+			setProcessJoin(false) 
+		}
+	} 
 
-    return (
-      <div className="modalBackground">
-      <div className="modal" id="basicDrop" style={{display:displayName}}>
-        <div className="headline"style={{textAlign: "center", letterSpacing: "0.01em"}}>  Choose your Nickname! </div>
+	function nextName() {
+		if (processCreate) {
+				setProcessCreate(false) 
+				setDisplayName( false )
+				if(typeof(setLoading) === "function") {
+					setName(localName)
+					setLoading(false)
+				} else {
+					navigate('/auth', {state: {name: localName}})
+				}
+				console.log('start game')
+		} else if (processJoin) {
+			setDisplayKey( true )
+			setDisplayName( false )
+		}
+	} 
 
-        <input ref={inputElement} type="text" id="name" required minLength={3} maxLength={20} placeholder="Enter Your Name" onChange={(e) => {setItem('name', `${e.target.value}`); setName(e.target.value)}} value={name} onKeyDown={(e) => name !== "" ? handleKey(e) : null }/>
+	function discardKey() {
+		setDisplayKey( false )
+		setDisplayName( true )
+	}
 
-        <div className="buttonContainer">
-          <div className="btn medium Secondary noselect" id="basicDrop" style={{width: "100%"}} onClick={discardName}>
-            <p>Discard</p>
-          </div>
-          <div className="btn medium Primary noselect" id="basicDrop" style={{width: "100%"}} onClick={() => name !== "" ? nextName() : null }>
-            <p>Next</p>
-          </div>
-        </div>
-      </div>
+	function handleKey(e: React.KeyboardEvent<HTMLInputElement>) {
+		if (e.key === 'Enter'){
+			nextKey()
+		}
+			else {
+		}
+	}
 
-      <div className="modal" id="basicDrop" style={{display:displayKey}}>
-        <div className="headline" style={{textAlign: "center", letterSpacing: "0.01em"}}>  Which Lobby do you <br />want to Join? </div>
+	function nextKey() {
+		setProcessJoin(false) 
+		setDisplayKey( false )
+		navigate('/auth', {state: {name: localName, gameId: gameId}})
+	}
 
-        <input type="text" id="key" required minLength={3} maxLength={20} placeholder="Enter Access Code" onChange={(e) => setGameId(e.target.value)} value={gameId}/>
+	const inputElement = useRef(null)
 
-        <div className="buttonContainer">
-          <div className="btn medium Secondary noselect" id="basicDrop" style={{width: "100%"}} onClick={discardKey}>
-            <p>Back</p>
-          </div>
-          <div className="btn medium Primary noselect" id="basicDrop" style={{width: "100%"}} onClick={() => gameId !== "" ? nextKey() : null}>
-            <p>Next</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    );
-  }   
 
-  export default ModaleEnter
+	useEffect(() => {
+		const timeout = setTimeout(() => {
+			inputElement.current.focus()
+			clearTimeout(timeout)
+		}, 1)
+	}, [])
+
+	return (
+	<div className="modalBackground">
+		{ displayName ? <div className="modal" id="basicDrop" style={{display: 'flex'}}>
+		<div className="headline"style={{textAlign: "center", letterSpacing: "0.01em"}}>  Choose your Nickname! </div>
+
+		<input ref={inputElement} type="text" id="name" required minLength={3} maxLength={20} placeholder="Enter Your Name" onChange={(e) => {setItem('name', `${e.target.value}`); setLocalName(e.target.value)}} value={localName} onKeyDown={(e) => localName !== "" ? handleKey(e) : null }/>
+
+		<div className="buttonContainer">
+			<div className="btn medium Secondary noselect" id="basicDrop" style={{width: "100%"}} onClick={discardName}>
+			<p>Discard</p>
+			</div>
+			<div className="btn medium Primary noselect" id="basicDrop" style={{width: "100%"}} onClick={() => localName !== "" ? nextName() : null}>
+			<p>Next</p>
+			</div>
+		</div>
+		</div> : null }
+
+
+		{ displayKey ? <div className="modal" id="basicDrop" style={{display: 'flex'}}>
+		<div className="headline" style={{textAlign: "center", letterSpacing: "0.01em"}}>  Which Lobby do you <br />want to Join? </div>
+
+			<input type="text" id="key" required minLength={3} maxLength={20} placeholder="Enter Access Code" onChange={(e) => setGameId(e.target.value)} value={gameId}/>
+
+			<div className="buttonContainer">
+				<div className="btn medium Secondary noselect" id="basicDrop" style={{width: "100%"}} onClick={discardKey}>
+					<p>Back</p>
+				</div>
+				<div className="btn medium Primary noselect" id="basicDrop" style={{width: "100%"}} onClick={() => gameId !== "" ? nextKey() : null}>
+					<p>Next</p>
+				</div>
+			</div>
+		</div>  : null }
+
+	</div>
+	);
+}   
+
+export default ModaleEnter

@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from "framer-motion" 
 
+import Rive from '@rive-app/react-canvas';
+import useSound from 'use-sound';
+
 import MenuHeader from "./MenuHeader"
 import Counter from './Counter';
 import Dropdown from "./Dropdown";
@@ -105,7 +108,6 @@ function Menu(
 
 		useEffect(() => {
 			setTotalCards((deckCards.count + joker) * decks)
-			console.log(gameStatus)
 
 			setCardsInDrawPile(totalCards - (Object.values(players).length * hand))
 
@@ -122,9 +124,10 @@ function Menu(
 				<MenuHeader />
 
 				<div className="settingsContainer" style={{marginTop: "104px", gap: "32px"}} id="basicDrop">
-
-					<label>Wating for players ...</label>
-
+					<div style={{alignItems: 'center', height: '32px', marginLeft: '-10px'}} className="labelIconCombo">
+						<Rive style={{width: '40px', height: '40px', overflow: 'visible'}} src="/anim/shufflecards.riv" />
+						<label style={{marginLeft: '-4px'}}>Wating for players</label>
+					</div>
 					<div className="labelItemGroup">
 						<label>Players</label>
 						<PlayerCards players={players} gameStatus={gameStatus} avatars={avatars}/>

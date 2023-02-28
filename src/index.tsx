@@ -33,6 +33,7 @@ import CreateGame from "./components/CreateGame"
 import Imprint from "./components/Imprint"
 import About from "./components/About"
 
+
 import reportWebVitals from './reportWebVitals';
 import { GameWrapper } from './GameWrapper';
 import { initializeApp } from 'firebase/app';

@@ -8,10 +8,12 @@ import { useLocation } from "react-router-dom";
 import { setDefaultStacks, setDefaultUsedCards } from "./helpers/mp";
 
 import CreateGame from "./components/CreateGame"
+import Loading from "./components/Loading"
 import PlayingGame from "./PlayingGame"
 
 import { miniCards } from "./helpers/Cards";
 import { Distributor } from "./helpers/distributor/distributor";
+import useAsyncReference from "./helpers/hooks/useAsyncReference";
 
 export const GameWrapper = ({app}: {app:any}) => {
 
@@ -78,14 +80,16 @@ export const GameWrapper = ({app}: {app:any}) => {
     const [hand, setHand] = useState(5)
     const [pile, setPile] = useState(true)
 	const [gameStarted, setGameStarted] = useState(false)
+	const [ loading, setLoading ] = useState(false)
 
 	// TODO: Generate Random room name
-	const [gameId] = useState("auth")
+	const [gameId, setGameId] = useState("auth")
 
 	// Getting the set User Name
 	const {state} = useLocation();
-	const {name} = state as {name: string};
-	  
+	// const [name, setName] = useState<String>()
+	const [name, setName] = useStateRef<String>("")
+
 	const gameStatusRef = useRef(null)
 	const [gameStatusState, setGameStatusState] = useState<GameStatus>()
 	const defaultGameStatus: (userId: string) => GameStatus = (userId: string) => {
@@ -108,6 +112,9 @@ export const GameWrapper = ({app}: {app:any}) => {
 	
 	const stacksRef = useRef(null);
 	const [stacksState, setStacksState] = useState<Stack[]>([]);
+
+	const [ processCreate, setProcessCreate ] = useState( true )
+	const [ processJoin, setProcessJoin ] = useState( false )
 
 	const initGame = () => {
 
@@ -250,6 +257,10 @@ export const GameWrapper = ({app}: {app:any}) => {
 
 	// Page Load
 	useEffect(() => {
+		state?.name ? setName(state.name) : (setLoading(true))
+		console.log(`state.name = ${state?.name}`)
+		console.log(loading)
+
 		// Connect to Firebase
 		signInAnonymously(getAuth(app.current)).catch((error) => {
 			// Handle Errors here.
@@ -295,7 +306,17 @@ export const GameWrapper = ({app}: {app:any}) => {
 
 	return (
 		<>
-			{!gameStarted ? <CreateGame 
+			{
+			loading ? <Loading 
+			processCreate={processCreate}
+			setProcessCreate={setProcessCreate}
+			processJoin={processJoin}
+			setProcessJoin={setProcessJoin}
+			gameId={gameId}
+			setGameId={setGameId}
+			setLoading={setLoading}
+			setName={setName}
+			/> : !gameStarted ? <CreateGame 
 				deckCards={deckCards} 
 				setDeckCards={setDeckCards} 
 				joker={joker} 
@@ -325,7 +346,8 @@ export const GameWrapper = ({app}: {app:any}) => {
 				setStack={setStack}
 				players={allPlayers} 
 				avatars={avatars}
-			/>}
+			/>
+			}
 		</>
 	)
 }
