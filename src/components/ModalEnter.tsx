@@ -96,8 +96,8 @@ function ModaleEnter( {
 		<input ref={inputElement} type="text" id="name" required minLength={3} maxLength={20} placeholder="Enter Your Name" onChange={(e) => {setItem('name', `${e.target.value}`); setLocalName(e.target.value)}} value={localName} onKeyDown={(e) => localName !== "" ? handleKey(e) : null }/>
 
 		<div className="buttonContainer">
-			<Button label={"Discard"} btn={"btn"} size={"medium"} type={"Secondary"} style={{width: "100%"}} click={discardName}/>
-			<Button label={"Next"} btn={"btn"} size={"medium"} type={"Primary"} style={{width: "100%"}} click={() => localName !== "" ? nextName() : null} />
+			<Button label={"Discard"} btn={"btn"} size={"medium"} type={"Secondary"} drop={"dropSmall"} style={{width: "100%"}} click={discardName}/>
+			<Button label={"Next"} btn={"btn"} size={"medium"} type={"Primary"} drop={"dropSmall"} style={{width: "100%"}} click={() => localName !== "" ? nextName() : null} />
 		</div>
 		</div> : null }
 
@@ -108,8 +108,8 @@ function ModaleEnter( {
 			<input type="text" id="key" required minLength={3} maxLength={20} placeholder="Enter Access Code" onChange={(e) => setGameId(e.target.value)} value={gameId}/>
 
 			<div className="buttonContainer">
-				<Button label={"Back"} btn={"btn"} size={"medium"} type={"Secondary"} style={{width: "100%"}} click={discardKey}/>
-				<Button label={"Next"} btn={"btn"} size={"medium"} type={"Primary"} style={{width: "100%"}} click={() => gameId !== "" ? nextKey() : null}/>
+				<Button label={"Back"} btn={"btn"} size={"medium"} type={"Secondary"} drop={"dropSmall"} style={{width: "100%"}} click={discardKey}/>
+				<Button label={"Next"} btn={"btn"} size={"medium"} type={"Primary"}  drop={"dropSmall"}style={{width: "100%"}} click={() => gameId !== "" ? nextKey() : null}/>
 			</div>
 		</div>  : null }
 

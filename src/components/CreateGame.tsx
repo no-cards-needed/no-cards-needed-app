@@ -137,7 +137,7 @@ function Menu(
 							
 						<div className="labelItemGroup">
 							<label>share access</label>
-							<Button btn={"quadBtnSmall"} iconLeading={share} size={"small"} type={"Primary"} click={shareId} />
+							<Button btn={"quadBtnSmall"} iconLeading={share} size={"small"} type={"Primary"} drop={"dropSmall"} click={shareId} />
 						</div>
 					</div>
 				</div>
@@ -401,7 +401,7 @@ function Menu(
 						</div>
 					</motion.div> 
 				</div> 
-				<Button label={"Start Game"} btn={"btnBig"} size={""} type={"Primary"} click={() => setStartGame()} style={{display: gameStatus && userId === gameStatus?.host ? 'flex' : 'none'}}/>
+				<Button label={"Start Game"} btn={"btnBig"} size={""} type={"Primary"} drop={"basicDrop"} click={() => setStartGame()} style={{display: gameStatus && userId === gameStatus?.host ? 'flex' : 'none'}}/>
 			</div>
 		);
 	}   
