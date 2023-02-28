@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, NavigateFunction } from 'react-router-dom';
 import { setItem, getItem } from '../helpers/localStorageHelper';
+import Button from "./Button"
+
 
 function ModaleEnter( {
 	processCreate,
@@ -94,12 +96,8 @@ function ModaleEnter( {
 		<input ref={inputElement} type="text" id="name" required minLength={3} maxLength={20} placeholder="Enter Your Name" onChange={(e) => {setItem('name', `${e.target.value}`); setLocalName(e.target.value)}} value={localName} onKeyDown={(e) => localName !== "" ? handleKey(e) : null }/>
 
 		<div className="buttonContainer">
-			<div className="btn medium Secondary noselect" id="basicDrop" style={{width: "100%"}} onClick={discardName}>
-			<p>Discard</p>
-			</div>
-			<div className="btn medium Primary noselect" id="basicDrop" style={{width: "100%"}} onClick={() => localName !== "" ? nextName() : null}>
-			<p>Next</p>
-			</div>
+			<Button label={"Discard"} btn={"btn"} size={"medium"} type={"Secondary"} style={{width: "100%"}} click={discardName}/>
+			<Button label={"Next"} btn={"btn"} size={"medium"} type={"Primary"} style={{width: "100%"}} click={() => localName !== "" ? nextName() : null} />
 		</div>
 		</div> : null }
 
@@ -110,12 +108,8 @@ function ModaleEnter( {
 			<input type="text" id="key" required minLength={3} maxLength={20} placeholder="Enter Access Code" onChange={(e) => setGameId(e.target.value)} value={gameId}/>
 
 			<div className="buttonContainer">
-				<div className="btn medium Secondary noselect" id="basicDrop" style={{width: "100%"}} onClick={discardKey}>
-					<p>Back</p>
-				</div>
-				<div className="btn medium Primary noselect" id="basicDrop" style={{width: "100%"}} onClick={() => gameId !== "" ? nextKey() : null}>
-					<p>Next</p>
-				</div>
+				<Button label={"Back"} btn={"btn"} size={"medium"} type={"Secondary"} style={{width: "100%"}} click={discardKey}/>
+				<Button label={"Next"} btn={"btn"} size={"medium"} type={"Primary"} style={{width: "100%"}} click={() => gameId !== "" ? nextKey() : null}/>
 			</div>
 		</div>  : null }
 

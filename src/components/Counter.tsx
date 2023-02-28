@@ -1,3 +1,5 @@
+import Button from "./Button"
+
 import plus from '../assets/iconsWhite/plus.svg';
 import minus from '../assets/iconsWhite/minus.svg';
 
@@ -14,13 +16,9 @@ function Counter( {value, setValue, minValue, maxValue, disabled} : {value: numb
     
     return (
         <div className="counter">
-          <div className="quadBtnSmall Primary small noselect" id="dropSmall" onClick={countDown} style={{pointerEvents: disabled ? "none" : "inherit"}}>
-            <img src={minus} className="iconContainer" alt=""></img>
-          </div>
+          <Button btn={"quadBtnSmall"} iconLeading={minus} size={"small"} type={"Primary"} style={{pointerEvents: disabled ? "none" : "inherit"}} click={countDown} />
           <p style={{width: "19px", textAlign: "center", color: "#fff"}}>{value}</p>
-          <div className="quadBtnSmall Primary small noselect" id="dropSmall" onClick={countUp} style={{pointerEvents: disabled ? "none" : "inherit"}}>
-            <img src={plus} className="iconContainer" alt=""></img>
-          </div>
+          <Button btn={"quadBtnSmall"} iconLeading={plus} size={"small"} type={"Primary"} style={{pointerEvents: disabled ? "none" : "inherit"}} click={countUp} />
         </div>
     );
   }   

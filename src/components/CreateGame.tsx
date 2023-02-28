@@ -9,6 +9,7 @@ import Counter from './Counter';
 import Dropdown from "./Dropdown";
 import Toggle from "./Toggle";
 import PlayerCards from "./PlayerCards";
+import Button from "./Button"
 
 import chevronDown from '../assets/iconsBlack/chevron/down.svg';
 import chevronUp from '../assets/iconsBlack/chevron/up.svg';
@@ -136,9 +137,7 @@ function Menu(
 							
 						<div className="labelItemGroup">
 							<label>share access</label>
-							<div className="quadBtnSmall Primary small noselect" id="basicDrop">
-								<img onClick={shareId} src={share} className="iconContainer" alt=""></img>
-							</div>
+							<Button btn={"quadBtnSmall"} iconLeading={share} size={"small"} type={"Primary"} click={shareId} />
 						</div>
 					</div>
 				</div>
@@ -402,11 +401,7 @@ function Menu(
 						</div>
 					</motion.div> 
 				</div> 
-
-				<div className="btnBig Primary" id="basicDrop" onClick={() => setStartGame()} style={{display: gameStatus && userId === gameStatus?.host ? 'flex' : 'none'}}>
-					<div className="headline">Start Game</div>
-				</div>
-
+				<Button label={"Start Game"} btn={"btnBig"} size={""} type={"Primary"} click={() => setStartGame()} style={{display: gameStatus && userId === gameStatus?.host ? 'flex' : 'none'}}/>
 			</div>
 		);
 	}   

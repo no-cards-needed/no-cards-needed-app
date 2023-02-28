@@ -84,7 +84,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 	const [ loading, setLoading ] = useState(false)
 
 	// TODO: Generate Random room name
-	const [gameId, setGameId] = useState("auth")
+	const [gameId, setGameId] = useState("123")
 
 	// Getting the set User Name
 	const {state} = useLocation();
@@ -278,8 +278,6 @@ export const GameWrapper = ({app}: {app:any}) => {
 	// Page Load
 	useEffect(() => {
 		state?.name ? setName(state.name) : (setLoading(true))
-		console.log(`state.name = ${state?.name}`)
-		console.log(loading)
 
 		// Connect to Firebase
 		signInAnonymously(getAuth(app.current)).catch((error) => {
