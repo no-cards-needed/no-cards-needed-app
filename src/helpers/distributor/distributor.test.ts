@@ -216,7 +216,7 @@ describe("Distribute to Players", () => {
 		const numberOfDecks = 1
 		const onStack = 2
 		const handCards = 2
-		const players: ListOfPlayers = {
+		const players: {[name: string]: Player} = {
 			"1": {
 				id: "1",
 				name: "Player 1",
@@ -300,7 +300,7 @@ describe("Stacks", () => {
 		const numberOfDecks = 1
 		const onStack = 2
 		const handCards = 2
-		const players: ListOfPlayers = {
+		const players: {[name: string]: Player} = {
 			"1": {
 				id: "1",
 				name: "Player 1",

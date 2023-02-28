@@ -1,6 +1,4 @@
-type ListOfPlayers = {
-	[playerId: string]: Player
-}
+type ListOfPlayers = Map<string, Player>
 
 type Player = {
 	name: string;
@@ -38,6 +36,8 @@ type NearestStack = {
 	stackIndex: number
 }
 
+type StackMap = Map<number, Stack>
+
 type Stack = {
 	id: number,
 	/**
@@ -50,8 +50,10 @@ type Stack = {
 	 * Position of stack in Stack-Grid
 	 */
 	position: {x: number, y: number},
-	cards?: number[],
+	cards?: Set<number>,
 }
+
+type UsedCardsMap = Map<number, UsedCard>
 
 interface UsedCard extends Card {
 	onStackType: Stack["stackType"]
@@ -61,8 +63,4 @@ interface UsedCard extends Card {
 	animation: string,
 	movedAside: "left" | "right" | "none",
 	hasShadow: boolean
-}
-
-type ControlledStacks = {
-	[stackId: number]: number[]
 }

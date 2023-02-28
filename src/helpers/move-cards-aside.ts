@@ -2,18 +2,18 @@ import { MutableRefObject } from "react";
 import { cardDimensions } from "./card-dimensions"
 
 export const moveCardsAside = (
-	controlledStacks: MutableRefObject<ControlledStacks>, 
+	usedStacksRef: MutableRefObject<StackMap>, 
 	nearestStack: NearestStack, 
 	currentCardRef: React.MutableRefObject<HTMLElement>, 
-	usedCards: UsedCard[],
-	setUsedCards: (usedCards: UsedCard[]) => void,
+	usedCards: UsedCardsMap,
+	setUsedCards: (usedCards: UsedCardsMap) => void,
 	cardId: number) => {
 
-	const controlledStack = controlledStacks.current[nearestStack.stackIndex]
+	const controlledStack = usedStacksRef.current.get(nearestStack.stackIndex)
 
 	// Moving the Cards in the open Stack aside
 	if(controlledStack) {
-		for (let loopedCardId = 0; loopedCardId < controlledStack.length; loopedCardId++) {
+		for (let loopedCardId = 0; loopedCardId < controlledStack.cards.size; loopedCardId++) {
 
 			if (loopedCardId !== cardId) {
 				// Get Position of currently dragged card
@@ -27,10 +27,12 @@ export const moveCardsAside = (
 				// console.log(isLeft, isRight)
 				
 				// Set Card to Moved Aside
-				const tempUsedCards = [...usedCards];
+				const tempUsedCards = usedCards;
 				const movedAside = isLeft ? "left" : isRight ? "right" : "none"
-				if(movedAside !== "none" || tempUsedCards[loopedCardId].movedAside !== movedAside) {
-					tempUsedCards[loopedCardId].movedAside = movedAside
+				if(movedAside !== "none" || tempUsedCards.get(loopedCardId).movedAside !== movedAside) {
+					const tempCard = tempUsedCards.get(loopedCardId)
+					tempCard.movedAside = movedAside
+					tempUsedCards.set(loopedCardId, tempCard)
 					setUsedCards(tempUsedCards)
 				}
 				// TODO: When in "Selection" mode, the collidion shouldnt toggle the stack width

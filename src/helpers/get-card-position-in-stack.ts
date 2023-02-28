@@ -1,14 +1,12 @@
-export const getCardPositionInStack = (
-		cardId: number, 
-		stackId: number,
-		controlledStack: React.MutableRefObject<ControlledStacks>, 
-		) => {
-	let cardPositionInStack: number = 0;
-	console.log("getCardPositionInStack", cardId, stackId, controlledStack.current[stackId]);
-	// Find out where the card is in the stack
-	return controlledStack.current[stackId] 
-			? controlledStack.current[stackId].findIndex((card) => card === cardId) < 0 
-				? 0 
-				: controlledStack.current[stackId].findIndex((card) => card === cardId) 
-			: 0;
+export const getCardPositionInStack = (cardId: number, stackId: number, stack: Stack) => {
+	const cardIndex = [...stack.cards].findIndex((card) => card === cardId)
+	return calculateCardPositionInStack(cardIndex, stack)
+}
+
+function calculateCardPositionInStack (cardIndex: number, stack: Stack) {
+	if (cardIndex < 0 || !stack.cards) {
+		return 0;
+	}
+	
+	return cardIndex;
 }

@@ -21,15 +21,7 @@ import './css/hand.css';
 import './css/modal.css';
 import './css/cards.css';
 
-// Comment out the thing you are currently not working on
-
-// Game Development
-import App from './PlayingGame';
-// Menu Development
-// import App from './App';
-
 import StartScreen from "./components/startScreen"
-import CreateGame from "./components/CreateGame"
 import Imprint from "./components/Imprint"
 import About from "./components/About"
 

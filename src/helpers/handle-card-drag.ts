@@ -1,5 +1,6 @@
 import { MutableRefObject } from "react";
 import { checkCollision } from "./check-collision";
+import { getNearestStack } from "./getNearestStack";
 import { moveCardsAside } from "./move-cards-aside";
 
 // state of the position when the drag started
@@ -8,38 +9,37 @@ export const handleCardDrag = (
 		cardRef: MutableRefObject<HTMLDivElement>,
 		cardId: number, 
 
-		usedCards: UsedCard[], 
-		setUsedCards: (usedCards: UsedCard[]) => void,
+		usedCards: UsedCardsMap, 
+		setUsedCards: (usedCards: UsedCardsMap) => void,
 		
-		getNearestStack: (cardRef: React.MutableRefObject<HTMLDivElement>) => NearestStack, 
 		nearestStack: NearestStack, 
 		setNearestStack: (nearestStack: NearestStack) => void, 
 		
-		stacks: Stack[], 
-		controlledStacks: MutableRefObject<ControlledStacks>,
+		usedStacksRef: MutableRefObject<StackMap>, 
+		stacksDomRef: React.MutableRefObject<HTMLDivElement[]>,
 		
 		setIsColliding: (isColliding: boolean) => void,
 		) => {
 
 	// Setting Z-Index of currently dragged Card to the highest
 	// Check if Card is already on top
-	if(usedCards[cardId].zIndex !== usedCards.length) {
-		console.log("🫱 updating zIndex", usedCards[cardId].zIndex, usedCards.length)
+	if(usedCards.get(cardId).zIndex !== usedCards.size) {
+		console.log("🫱 updating zIndex", usedCards.get(cardId).zIndex, usedCards.size)
 		const tempUsedCards = usedCards;
-		tempUsedCards[cardId].zIndex = usedCards.length;
+		tempUsedCards.get(cardId).zIndex = usedCards.size;
 		setUsedCards(tempUsedCards)
 	} 
 
-	setNearestStack(getNearestStack(cardRef))
+	setNearestStack(getNearestStack(cardRef, usedStacksRef, stacksDomRef))
 
 	// Collision
 	if (nearestStack && nearestStack.nearestStack && checkCollision(nearestStack.nearestStack, cardRef.current)) {
 		setIsColliding(true)
 
 		// Checking if the Stack Type is an open one, so the cards can be moved aside
-		const nearestStackType = stacks[nearestStack.stackIndex].stackType;
+		const nearestStackType = usedStacksRef.current.get(nearestStack.stackIndex).stackType;
 		if (nearestStackType === "open" || nearestStackType === "hand") {
-			moveCardsAside(controlledStacks, nearestStack, cardRef, usedCards, setUsedCards, cardId)
+			moveCardsAside(usedStacksRef, nearestStack, cardRef, usedCards, setUsedCards, cardId)
 		}
 
 	} else {

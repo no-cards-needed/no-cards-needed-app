@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useRef, useState, useEffect } from "react";
 import Draggable, { DraggableData, DraggableEvent, DraggableEventHandler } from "react-draggable";
 
@@ -15,7 +16,7 @@ type CardProps = {
 	handleCardDrop: (nodeRef: any, cardId: number) => void,
 	card: UsedCard,
 	cardId: number,
-	setRef: (cardId: number, ref: HTMLDivElement) => void,
+	setRef: (ref: HTMLDivElement) => void,
 	shuffle: () => void,
 	handleLongPress: (cardId: number) => void,
 }
@@ -122,40 +123,47 @@ function Card({
 
 	const [cardToDisplay] = useState(getCardBySymbol());
 
-	const cardStartPosition = {x: 0, y: 0}
 
-	const onLongPress: DraggableEventHandler = () => {
+				// LONG PRESS LEGACY CODE
+				
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				const cardStartPosition = {x: 0, y: 0}
 
-    };
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				const onLongPress: DraggableEventHandler = () => {
 
-	const lastTouchTimestamp = useRef(0);
-    const onClick = (e: any) => {
-		if (e.type === "touchend") {
-			lastTouchTimestamp.current = e.timeStamp;
-		}
+				};
 
-		// Open Context Menu on double press
-		if(e.detail === 2 || e.timeStamp - lastTouchTimestamp.current < 500) {
-			toggleMenu(true)
-			if(e.type === "touchend") {
-				setAnchorPoint({x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY})
-			} else {
-				setAnchorPoint({x: e.clientX, y: e.clientY})
-			}
-		}
-    }
+				const lastTouchTimestamp = useRef(0);
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				const onClick = (e: any) => {
+					if (e.type === "touchend") {
+						lastTouchTimestamp.current = e.timeStamp;
+					}
 
-	const onMouseDown = (e: Event) => {
-		// Setting cardStartPosition to current position of the card
-		// console.log("setting delta position")
-		// cardStartPosition = deltaPosition
-	}
+					// Open Context Menu on double press
+					if(e.detail === 2 || e.timeStamp - lastTouchTimestamp.current < 500) {
+						toggleMenu(true)
+						if(e.type === "touchend") {
+							setAnchorPoint({x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY})
+						} else {
+							setAnchorPoint({x: e.clientX, y: e.clientY})
+						}
+					}
+				}
 
-    const defaultOptions = {
-        shouldPreventDefault: true,
-        delay: 500,
-    };
-    // const longPressEvent = useLongPress(onLongPress, onClick, onMouseDown, defaultOptions);
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				const onMouseDown = (e: Event) => {
+					// Setting cardStartPosition to current position of the card
+					// console.log("setting delta position")
+					// cardStartPosition = deltaPosition
+				}
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				const defaultOptions = {
+					shouldPreventDefault: true,
+					delay: 500,
+				};
+				// const longPressEvent = useLongPress(onLongPress, onClick, onMouseDown, defaultOptions);
 
 	const maxRotationInDegrees = 10;
 	const [rotation, setRotation] = useState(Math.random() * maxRotationInDegrees * 2 - maxRotationInDegrees);
@@ -182,7 +190,7 @@ function Card({
 	const [defaultPosition, setDefaultPosition] = useState({x: 0, y: 0})
 
 	useEffect(() => {
-		setRef(cardId, nodeRef.current)
+		setRef(nodeRef.current)
 		
 		setDefaultPosition({
 			x: window.innerWidth / 2 - 40,

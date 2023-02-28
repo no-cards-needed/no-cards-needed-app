@@ -105,13 +105,13 @@ export const GameWrapper = ({app}: {app:any}) => {
 	const playerRef = useRef(null);
 
 	const allPlayersRef = useRef(null);
-	const [allPlayers, setAllPlayers] = useState<ListOfPlayers>({});
+	const [allPlayers, setAllPlayers] = useState<ListOfPlayers>(new Map([]));
 	
 	const cardsRef = useRef(null);
-	const [cardsState, setCardsState] = useState<Card[]>([]);
+	const [cardsState, setCardsState] = useState<Map<number, Card>>(new Map([]));
 	
 	const stacksRef = useRef(null);
-	const [stacksState, setStacksState] = useState<Stack[]>([]);
+	const [stacksState, setStacksState] = useState<Map<number, Stack>>(new Map([]));
 
 	const [ processCreate, setProcessCreate ] = useState( true )
 	const [ processJoin, setProcessJoin ] = useState( false )
@@ -151,13 +151,22 @@ export const GameWrapper = ({app}: {app:any}) => {
 			// console.log("👁️ [gamewrapper] recieved a new game status: ", snapshot.val())
 			const newGameStatus: GameStatus = snapshot.val()
 			setGameStatusState(newGameStatus)
+
+			// GameStatus Obj to Map
 			setGameStarted(newGameStatus?.currentGameState === "game")
 		})
 
 		// Card Value Change in FireBase Realtime Database
 		onValue(cardsRef.current, (snapshot) => {
 			// console.log("👁️ [gamewrapper] recieved new cards: ", snapshot.val());
-			setCardsState(snapshot.val());
+			// setCardsState(snapshot.val());
+
+			const newCards = snapshot.val()
+			if(newCards) {
+				// Convert the cards to a Map
+				const _newCards: Map<number, Card> = new Map(newCards.map((card: Card) => [card.cardId, card]));
+				setCardsState(_newCards);
+			}
 		})
 
 		// Stack Value Change in FireBase Realtime Database
@@ -168,10 +177,16 @@ export const GameWrapper = ({app}: {app:any}) => {
 			if(newStacks) {
 				for (let i = 0; i < newStacks.length; i++) {
 					if (!newStacks[i].cards) {
-						newStacks[i].cards = [];
+						newStacks[i].cards = new Set();
+					}
+					else {
+						newStacks[i].cards = new Set(newStacks[i].cards);
 					}
 				}
-				setStacksState(newStacks);
+
+				// Convert the stacks to a Map
+				const _newStacks: Map<number, Stack> = new Map(newStacks.map((stack: Stack) => [stack.id, stack]));
+				setStacksState(_newStacks);
 			}
 		})
 
@@ -179,9 +194,10 @@ export const GameWrapper = ({app}: {app:any}) => {
 		onChildAdded(allPlayersRef.current, (snapshot) => {
 			const addedPlayer = snapshot.val();
 
-			// New Player
 			setAllPlayers((prev) => {
-				return {...prev, [addedPlayer.id]: addedPlayer}
+				const _prev = new Map(prev);
+				_prev.set(addedPlayer.id, addedPlayer);
+				return _prev;
 			})
 		})
 	}
@@ -238,7 +254,10 @@ export const GameWrapper = ({app}: {app:any}) => {
 		const distributor = new Distributor(deckCards.boundries, joker, decks, 2);
 		distributor.shuffleCards();
 
-		distributor.distributeCards(hand, allPlayers)
+		// Convert player map to object
+		const _allPlayers = Object.fromEntries(allPlayers);
+
+		distributor.distributeCards(hand, _allPlayers)
 
 		set(cardsRef.current, distributor.cards)
 			.then(() => console.log("👁️ [gamewrapper] cards set"))
