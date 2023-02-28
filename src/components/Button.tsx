@@ -7,9 +7,9 @@ function Button( {
 	btn,
 	size,
 	type,
+	drop,
 	style,
-	click,
-	children
+	click
 }: {
 	label?: string, 
 	iconTailing?: string,
@@ -17,13 +17,16 @@ function Button( {
 	btn: string,
 	size: string,
 	type: string,
+	drop: string,
 	style?: {},
-	click?: () => void,
-	children?: string | JSX.Element | JSX.Element[]
-
+	click?: () => void
 } ) {
 
-	const [play] = useSound('/sounds/button-click.ogg');
+	const [play] = useSound(
+		'/sounds/button-click.mp3',
+		{
+			volume: 0.1
+		});
 
 	const handleClick = () => {
 		if(typeof(click) === "function") {
@@ -36,7 +39,7 @@ function Button( {
 	}
 
 	return (
-		<div className={`${btn} ${size} ${type} noselect`} id="basicDrop" style={style} onClick={() => {handleClick()}}>
+		<div className={`${btn} ${size} ${type} noselect`} id={drop} style={style} onClick={() => {handleClick()}}>
 			{
 			iconLeading ? <img src={iconLeading} className="iconContainer" alt=""></img> : null
 			}
@@ -49,7 +52,6 @@ function Button( {
 			{
 			iconTailing ? <img src={iconTailing} className="iconContainer" alt=""></img> : null
 			}
-			{children}
 		</div>
 	);
 	}   

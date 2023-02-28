@@ -1,14 +1,15 @@
 import close from '../assets/iconsBlack/chevron/left.svg';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import Button from './Button';
 
 
 function About() {
 
+  const navigate = useNavigate()
+
     return (
       <div className="maxWidth" style={{padding: '16px 20.5px', backgroundColor: 'var(--vg-10)', height: '100vh'}}>
-        <Link to="/" className="btn Secondary medium noselect" id="basicDrop" style={{width: "48px"}}>
-          <img className="iconContainer" src={close} alt=""></img>
-        </Link>
+        <Button iconLeading={close} btn={"btn"} size={"medium"} type={"Secondary"} drop={"dropSmall"} style={{width: "48px"}} click={() => {navigate('/')}} />
         <div className="headline" style={{paddingTop: '24px'}}>
           About
         </div>

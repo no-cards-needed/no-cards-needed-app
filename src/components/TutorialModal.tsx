@@ -3,6 +3,7 @@ import { setItem, getItem } from '../helpers/localStorageHelper';
 
 import chevronLeft from '../assets/iconsBlack/chevron/left.svg';
 import chevronRight from '../assets/iconsWhite/chevron/right.svg';
+import Button from './Button';
 
 type Props = {
 	displayTutorial: boolean;
@@ -67,7 +68,7 @@ function Tutorial( { displayTutorial, setDisplayTutorial, kind, wasSkipped, setW
 		if (page > 0) {
 			setPage(page - 1) 
 		}
-	  } 
+	} 
 	
 	function countUp() {
 		if (page < contentInUse.length - 1 ) {
@@ -85,7 +86,7 @@ function Tutorial( { displayTutorial, setDisplayTutorial, kind, wasSkipped, setW
 	// useEffect(() => {
 	//     console.log(page)
 	//   }, [page]);
-  
+
 	const skipTutorial = () => {
 		setDisplayTutorial(false);
 		setWasSkipped(true);
@@ -95,9 +96,8 @@ function Tutorial( { displayTutorial, setDisplayTutorial, kind, wasSkipped, setW
 	return (
 		<div className="modalBackground" style={{display: displayTutorial ? 'flex' : 'none'}}>
 				<div className="modal" id="basicDrop" style={{marginBottom: '64px', padding: '16px'}}>
-					<div className="btn Secondary medium noselect" id="dropSmall" style={{alignSelf: 'flex-end'}} onClick={() => {skipTutorial()}}>
-						<p>SKIP</p>
-					</div>
+					<Button label={"SKIP"} btn={"btn"} size={"medium"} type={"Secondary"} drop={"dropSmall"} style={{alignSelf: 'flex-end'}} click={() => {skipTutorial()}} />
+
 					<div className="content-text-container">
 						<div className="tutorial-content">
 
@@ -109,22 +109,25 @@ function Tutorial( { displayTutorial, setDisplayTutorial, kind, wasSkipped, setW
 						</div>
 					</div>
 					<div className="page-bar">
-						<div className="btn Secondary medium noselect" id="dropSmall" onClick={countDown} style={{opacity: page === 0 ? '0' : '1'}}>
+						{/* <div className="btn Secondary medium noselect" id="dropSmall" onClick={countDown} style={{opacity: page === 0 ? '0' : '1'}}>
 							<img src={chevronLeft} className="iconContainer" alt="" />
-						</div> 
+						</div> */}
+						<Button btn={"btn"} iconLeading={chevronLeft} size={"medium"} type={"Secondary"} drop={"dropSmall"} style={{opacity: page === 0 ? '0' : '1'}} click={countDown} />
+
 						<div className="infoTag">
 						{contentInUse.map( (content, i) => (
 									<div key={i} className="dot" style={{backgroundColor: i === page ? 'var(--vg-0)' : 'var(--vg-40)'}} onClick={() => setPage(i)}/>
 							))}
 						</div>
-						<div className="btn Primary medium noselect" id="dropSmall" onClick={countUp}>
+						<Button btn={"btn"} iconLeading={chevronRight} size={"medium"} type={"Primary"} drop={"dropSmall"} click={countUp} />
+						{/* <div className="btn Primary medium noselect" id="dropSmall" onClick={countUp}>
 							<img src={chevronRight} className="iconContainer" alt="" />
-						</div> 
+						</div>  */}
 					</div>
 				</div>
 		</div>
 	);
-  }
+}
 
 export default Tutorial
 

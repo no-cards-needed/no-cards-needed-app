@@ -16,9 +16,9 @@ function Counter( {value, setValue, minValue, maxValue, disabled} : {value: numb
     
     return (
         <div className="counter">
-          <Button btn={"quadBtnSmall"} iconLeading={minus} size={"small"} type={"Primary"} style={{pointerEvents: disabled ? "none" : "inherit"}} click={countDown} />
+          <Button btn={"quadBtnSmall"} iconLeading={minus} size={"small"} type={"Primary"} drop={"dropSmall"} style={{pointerEvents: disabled ? "none" : "inherit"}} click={countDown} />
           <p style={{width: "19px", textAlign: "center", color: "#fff"}}>{value}</p>
-          <Button btn={"quadBtnSmall"} iconLeading={plus} size={"small"} type={"Primary"} style={{pointerEvents: disabled ? "none" : "inherit"}} click={countUp} />
+          <Button btn={"quadBtnSmall"} iconLeading={plus} size={"small"} type={"Primary"} drop={"dropSmall"} style={{pointerEvents: disabled ? "none" : "inherit"}} click={countUp} />
         </div>
     );
   }   
