@@ -1,20 +1,20 @@
 import { cards as cardsHelper } from "../Cards"
 
 export class Distributor {
-	public stacks: any = [
-		{
+	public stacks: Map<number, any> = new Map([
+		[2, {
 			id: 2,
 			stackType: "back",
 			cards: [],
 			position: { x: 0, y: 0 }
-		},
-		{
+		}],
+		[3, {
 			id: 3,
 			stackType: "front",
 			cards: [],
 			position: { x: 0, y: 0 }
-		},
-	];
+		}]
+	]);
 	public cards: Card[] = [];
 
 	// default stack to place the cards
@@ -99,14 +99,15 @@ export class Distributor {
 			// Filter out the current card from the stacks
 
 			// find stack by id
-			const stack = this.stacks.find((stack: any) => stack.id === this.defaultStack)
+			const _stack = this.stacks.get(this.defaultStack)
+			_stack.cards = _stack?.cards.filter((cardId: any) => cardId !== card.cardId)
 
-			stack.cards = stack?.cards.filter((cardId: any) => cardId !== card.cardId)
+			_stack.cards = _stack?.cards.filter((cardId: any) => cardId !== card.cardId)
 		}
 	}
 
 	private addCardToStack: (cardId: number, stackId: number) => void = (cardId, stackId) => {
-		const stack = this.stacks.find((stack: any) => stack.id === stackId)
+		const stack = this.stacks.get(stackId)
 		stack.cards.push(cardId)
 	}
 }

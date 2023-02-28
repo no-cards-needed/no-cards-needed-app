@@ -172,21 +172,18 @@ export const GameWrapper = ({app}: {app:any}) => {
 
 		// Stack Value Change in FireBase Realtime Database
 		onValue(stacksRef.current, (snapshot) => {
-			console.log("👁️ [gamewrapper] recieved new stacks: ", snapshot.val());
+			console.log("👁️ [gamewrapper] recieved new stacks: ", snapshot.val(), snapshot);
 			const newStacks = snapshot.val()
-			
 			if(newStacks) {
-				for (let i = 0; i < newStacks.length; i++) {
-					if (!newStacks[i].cards) {
-						newStacks[i].cards = new Set();
-					}
-					else {
-						newStacks[i].cards = new Set(newStacks[i].cards);
-					}
-				}
+				const _newStacks: Map<number, Stack> = new Map();
+
+				newStacks.forEach((stack: Stack) => {
+					const _stack = stack
+					_stack.cards = new Set(stack.cards)
+					_newStacks.set(stack.id, _stack)	
+				})
 
 				// Convert the stacks to a Map
-				const _newStacks: Map<number, Stack> = new Map(newStacks.map((stack: Stack) => [stack.id, stack]));
 				setStacksState(_newStacks);
 			}
 		})
@@ -235,10 +232,12 @@ export const GameWrapper = ({app}: {app:any}) => {
 		const stackRef = ref(getDatabase(app.current), `game/${gameId}/stacks/${stackId}`)
 		console.log("👁️ [gamewrapper] setting user requested stacks with stackpath: ", stackRef, " and stack: ", stack);
 
+		const _stack = {...stack, cards: Array.from(stack.cards)}
+
 		// Check if timestamp is newer than the latest server timestamp
 		if (gameStatusState.timestamp && timestamp > gameStatusState.timestamp) {
 			updateGameStatusTimestamp()
-			set(stackRef, stack)
+			set(stackRef, _stack)
 				.then(() => console.log("👁️ [gamewrapper] stack set", stack, stackId))
 				.catch((e) => console.log("👁️ [gamewrapper] Encountered error setting the stack", e))
 		} else {
@@ -263,7 +262,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 		set(cardsRef.current, distributor.cards)
 			.then(() => console.log("👁️ [gamewrapper] cards set"))
 			.catch((error) => console.log("👁️ [gamewrapper] Encountered error setting cards", error));
-		set(stacksRef.current, distributor.stacks)
+		set(stacksRef.current, Object.fromEntries(distributor.stacks))
 			.then(() => console.log("👁️ [gamewrapper] stacks set"))
 			.catch((error) => console.log("👁️ [gamewrapper] Encountered error setting stacks", error));
 
