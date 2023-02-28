@@ -14,6 +14,7 @@ import PlayingGame from "./PlayingGame"
 import { miniCards } from "./helpers/Cards";
 import { Distributor } from "./helpers/distributor/distributor";
 import useAsyncReference from "./helpers/hooks/useAsyncReference";
+import useStateRef from "./helpers/hooks/useStateRef";
 
 export const GameWrapper = ({app}: {app:any}) => {
 
@@ -88,7 +89,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 	// Getting the set User Name
 	const {state} = useLocation();
 	// const [name, setName] = useState<String>()
-	const [name, setName] = useStateRef<String>("")
+	const [name, setName, nameRef] = useStateRef<String>("")
 
 	const gameStatusRef = useRef(null)
 	const [gameStatusState, setGameStatusState] = useState<GameStatus>()
@@ -295,7 +296,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 				playerRef.current = ref(getDatabase(app.current), `game/${gameId}/players/${user.uid}`)
 				set(playerRef.current, {
 					id: user.uid,
-					name: name || "Player",
+					name: nameRef.current || "Player",
 					cards: [],
 					// Random int from 1 to 5 as avatar id
 					avatar: Math.ceil(Math.random() * 5)
