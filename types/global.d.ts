@@ -16,7 +16,7 @@ type GameStatus = {
 type Card = {
 	cardId: number,
 	symbol: string,
-	onStack: number,
+	onStack: number | string,
 	hasPlayer: string | "none",
 }
 
@@ -48,10 +48,10 @@ type NearestStack = {
 	stackIndex: number
 }
 
-type StackMap = Map<number, Stack>
+type StackMap = Map<number | string, Stack>
 
 type Stack = {
-	id: number,
+	id: number | string,
 	/**
 	 * Type of stack
 	 * 

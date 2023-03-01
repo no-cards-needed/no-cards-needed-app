@@ -2,23 +2,24 @@ import { cards as cardsHelper } from "../Cards"
 
 export class Distributor {
 	public stacks: Map<number, any> = new Map([
-		[2, {
-			id: 2,
+		[0, {
+			id: 0,
 			stackType: "back",
 			cards: [],
 			position: { x: 0, y: 0 }
 		}],
-		[3, {
-			id: 3,
+		[1, {
+			id: 1,
 			stackType: "front",
 			cards: [],
 			position: { x: 0, y: 0 }
 		}]
 	]);
 	public cards: Card[] = [];
+	public handStacks: Map<string, Stack> = new Map()
 
 	// default stack to place the cards
-	private defaultStack = 2
+	private defaultStack = 0
 
 	constructor(
 		cardsPerDeck: { from: number, to: number },
@@ -93,16 +94,28 @@ export class Distributor {
 				playerIndex++
 			}
 			card.hasPlayer = player.id
-			card.onStack = 1
+			card.onStack = player.id
 			cardIndex++
 
 			// Filter out the current card from the stacks
-
-			// find stack by id
 			const _stack = this.stacks.get(this.defaultStack)
 			_stack.cards = _stack?.cards.filter((cardId: any) => cardId !== card.cardId)
 
-			_stack.cards = _stack?.cards.filter((cardId: any) => cardId !== card.cardId)
+			// Add card to the players hand stack
+			if (!this.handStacks.has(player.id)) {
+				this.handStacks.set(player.id, {
+					id: player.id,
+					stackType: "hand",
+					position: {
+						x: 0,
+						y: 0
+					},
+					cards: new Set([card.cardId])
+				})
+			} else {
+				const _handStack = this.handStacks.get(player.id)
+				_handStack.cards.add(card.cardId)
+			}
 		}
 	}
 

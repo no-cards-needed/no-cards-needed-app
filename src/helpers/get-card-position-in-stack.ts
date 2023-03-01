@@ -1,4 +1,4 @@
-export const getCardPositionInStack = (cardId: number, stackId: number, stack: Stack) => {
+export const getCardPositionInStack = (cardId: number, stack: Stack) => {
 	const cardIndex = [...stack.cards].findIndex((card) => card === cardId)
 	return calculateCardPositionInStack(cardIndex, stack)
 }

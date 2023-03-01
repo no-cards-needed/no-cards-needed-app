@@ -3,18 +3,20 @@ import { getCardPositionInStack } from "./get-card-position-in-stack";
 import { getPositionAtCenter } from "./get-position-at-center";
 
 export const calculateCardPosition = (
-	card: MutableRefObject<HTMLDivElement[]>, 
-	stackRef: MutableRefObject<HTMLDivElement[]>, 
-	stackId: number,
+	card: MutableRefObject<Map<number, HTMLDivElement>>, 
+	stackRef: MutableRefObject<Map<number | string, HTMLDivElement>>, 
+	stackId: number | string,
 	stack: Stack, 
 	cardId: number) => {
 
 	// Get Card Position in stack from id
-	const cardPositionInStack = getCardPositionInStack(cardId, stackId, stack)
+	const cardPositionInStack = getCardPositionInStack(cardId, stack)
 
+	// Get count of Cards in the stack where the hasPlayer property is equal to the user ID
+	
 	const cardCount = stack.cards ? stack.cards?.size : 0;
 
-	const stackCenter = getPositionAtCenter(stackRef.current[stackId], "stackCenter - calculate-card-position.ts 14");
+	const stackCenter = getPositionAtCenter(stackRef.current.get(stackId), "stackCenter - calculate-card-position.ts 14");
 	// const { width: cardWidth } = card.current[cardId].getBoundingClientRect();
 	const cardWidth = 80
 	const overlap = cardWidth / 2
@@ -33,7 +35,7 @@ export const calculateCardPosition = (
 	return firstCardX + cardPositionInStack * overlap + stackCenter.x
 }
 
-export const calculateZIndex = (stackId: number, stack: Stack, cardId: number) => {
+export const calculateZIndex = (stackId: number | string, stack: Stack, cardId: number) => {
     const indexOfCard = stack.cards ? [...stack.cards].indexOf(cardId) : 0
     const cardIndex = indexOfCard === -1
                             ? cardId

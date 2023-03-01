@@ -1,6 +1,6 @@
-import { useState, useRef } from "react";
+import { useState, useRef, MutableRefObject } from "react";
 
-function useStateRef<t>(initialValue: t) : [t, (updatedValue: t) => void, React.MutableRefObject<t>] {
+function useStateRef<t>(initialValue: t) : [t, (updatedValue: t) => void, MutableRefObject<t>] {
 	const [state, setState] = useState(initialValue);
 	const stateRef = useRef(state);
 

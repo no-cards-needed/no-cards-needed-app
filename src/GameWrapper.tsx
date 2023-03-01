@@ -1,7 +1,7 @@
 // Firebase Stuff
 // Import the functions you need from the SDKs you need
 import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
-import { ref, getDatabase, set, onValue, onDisconnect, onChildAdded, serverTimestamp } from "firebase/database";
+import { ref, getDatabase, set, onValue, onDisconnect, onChildAdded, serverTimestamp, DataSnapshot } from "firebase/database";
 
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -15,6 +15,18 @@ import { miniCards } from "./helpers/Cards";
 import { Distributor } from "./helpers/distributor/distributor";
 import useAsyncReference from "./helpers/hooks/useAsyncReference";
 import useStateRef from "./helpers/hooks/useStateRef";
+
+const convertStacksMapToObject = (stacks: Map<number | string, Stack>) => {
+	const _stacks: Map<number | string, any> = stacks
+	_stacks.forEach((stack, stackId) => {
+		_stacks.set(stackId, {
+			...stack,
+			cards: Array.from(stack.cards)
+		})
+	})
+
+	return Object.fromEntries(_stacks)
+}
 
 export const GameWrapper = ({app}: {app:any}) => {
 
@@ -111,8 +123,11 @@ export const GameWrapper = ({app}: {app:any}) => {
 	const cardsRef = useRef(null);
 	const [cardsState, setCardsState] = useState<Map<number, Card>>(new Map([]));
 	
-	const stacksRef = useRef(null);
-	const [stacksState, setStacksState] = useState<Map<number, Stack>>(new Map([]));
+	const handStacksRef = useRef(null);
+	const [handStacksState, setHandStacksState] = useState<Map<number | string, Stack>>(new Map([]));
+
+	const tableStacksRef = useRef(null);
+	const [tableStacksState, setTableStacksState] = useState<Map<number | string, Stack>>(new Map([]));
 
 	const [ processCreate, setProcessCreate ] = useState( true )
 	const [ processJoin, setProcessJoin ] = useState( false )
@@ -122,7 +137,8 @@ export const GameWrapper = ({app}: {app:any}) => {
 		gameStatusRef.current = ref(getDatabase(app.current), `game/${gameId}/gameStatus/`)
 		allPlayersRef.current = ref(getDatabase(app.current), `game/${gameId}/players/`)
 		cardsRef.current = ref(getDatabase(app.current), `game/${gameId}/cards/`)
-		stacksRef.current = ref(getDatabase(app.current), `game/${gameId}/stacks/`)
+		handStacksRef.current = ref(getDatabase(app.current), `game/${gameId}/handStacks/`)
+		tableStacksRef.current = ref(getDatabase(app.current), `game/${gameId}/tableStacks/`)
 
 		// A new player connected to the game
 		onValue(allPlayersRef.current, (snapshot) => {
@@ -170,22 +186,29 @@ export const GameWrapper = ({app}: {app:any}) => {
 			}
 		})
 
-		// Stack Value Change in FireBase Realtime Database
-		onValue(stacksRef.current, (snapshot) => {
+		const handleStackChange = (snapshot: DataSnapshot, stackType: "hand" | "table") => {
 			console.log("👁️ [gamewrapper] recieved new stacks: ", snapshot.val(), snapshot);
 			const newStacks = snapshot.val()
 			if(newStacks) {
-				const _newStacks: Map<number, Stack> = new Map();
-
+				const _newStacks: Map<number | string, Stack> = new Map();
+	
 				newStacks.forEach((stack: Stack) => {
 					const _stack = stack
 					_stack.cards = new Set(stack.cards)
 					_newStacks.set(stack.id, _stack)	
 				})
-
+	
 				// Convert the stacks to a Map
-				setStacksState(_newStacks);
+				if (stackType === "hand") setHandStacksState(_newStacks);
+				else if (stackType === "table") setTableStacksState(_newStacks);
 			}
+		}
+		// Stack Value Change in FireBase Realtime Database
+		onValue(tableStacksRef.current, (snapshot) => {
+			handleStackChange(snapshot, "table")
+		})
+		onValue(handStacksRef.current, (snapshot) => {
+			handleStackChange(snapshot, "hand")
 		})
 
 		// Add the new player to the "allPlayers" state
@@ -236,7 +259,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 
 	// Updater Function for the Cards
 	// recieves a *SINGLE* Stack object and sets it in the Firebase Database
-	const setStack = (stack: Stack, stackId: number, timestamp: number) => {
+	const setTableStack = (stack: Stack, stackId: number, timestamp: number) => {
 		const stackRef = ref(getDatabase(app.current), `game/${gameId}/stacks/${stackId}`)
 		console.log("👁️ [gamewrapper] setting user requested stacks with stackpath: ", stackRef, " and stack: ", stack);
 
@@ -251,6 +274,10 @@ export const GameWrapper = ({app}: {app:any}) => {
 		} else {
 			updateGameStatusTimestamp()
 		}
+	}
+
+	const setHandStack = (stack: Stack, stackId: number, timestamp: number) => {
+		const _userId = userId
 	}
 
 	const updateGameStatusTimestamp = () => {
@@ -270,8 +297,11 @@ export const GameWrapper = ({app}: {app:any}) => {
 		set(cardsRef.current, distributor.cards)
 			.then(() => console.log("👁️ [gamewrapper] cards set"))
 			.catch((error) => console.log("👁️ [gamewrapper] Encountered error setting cards", error));
-		set(stacksRef.current, Object.fromEntries(distributor.stacks))
+		set(tableStacksRef.current, convertStacksMapToObject(distributor.stacks))
 			.then(() => console.log("👁️ [gamewrapper] stacks set"))
+			.catch((error) => console.log("👁️ [gamewrapper] Encountered error setting stacks", error));
+		set(handStacksRef.current, convertStacksMapToObject(distributor.handStacks))
+			.then(() => console.log("👁️ [gamewrapper] hand stacks set"))
 			.catch((error) => console.log("👁️ [gamewrapper] Encountered error setting stacks", error));
 
 		setGameStatus({
@@ -367,8 +397,12 @@ export const GameWrapper = ({app}: {app:any}) => {
 				syncedCards={cardsState}
 				setCard={setCard}
 				
-				syncedStacks={stacksState}
-				setStack={setStack}
+				syncedTableStacks={tableStacksState}
+				setTableStack={setTableStack}
+
+				syncedHandStacks={handStacksState}
+				setHandStack={setHandStack}
+
 				players={allPlayers} 
 				avatars={avatars}
 			/>
