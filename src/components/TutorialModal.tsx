@@ -109,20 +109,14 @@ function Tutorial( { displayTutorial, setDisplayTutorial, kind, wasSkipped, setW
 						</div>
 					</div>
 					<div className="page-bar">
-						{/* <div className="btn Secondary medium noselect" id="dropSmall" onClick={countDown} style={{opacity: page === 0 ? '0' : '1'}}>
-							<img src={chevronLeft} className="iconContainer" alt="" />
-						</div> */}
 						<Button btn={"btn"} iconLeading={chevronLeft} size={"medium"} type={"Secondary"} drop={"dropSmall"} style={{opacity: page === 0 ? '0' : '1'}} click={countDown} />
 
 						<div className="infoTag">
 						{contentInUse.map( (content, i) => (
-									<div key={i} className="dot" style={{backgroundColor: i === page ? 'var(--vg-0)' : 'var(--vg-40)'}} onClick={() => setPage(i)}/>
-							))}
+							<div key={i} className="dot" style={{backgroundColor: i === page ? 'var(--vg-0)' : 'var(--vg-40)'}} onClick={() => setPage(i)}/>
+						))}
 						</div>
 						<Button btn={"btn"} iconLeading={chevronRight} size={"medium"} type={"Primary"} drop={"dropSmall"} click={countUp} />
-						{/* <div className="btn Primary medium noselect" id="dropSmall" onClick={countUp}>
-							<img src={chevronRight} className="iconContainer" alt="" />
-						</div>  */}
 					</div>
 				</div>
 		</div>
