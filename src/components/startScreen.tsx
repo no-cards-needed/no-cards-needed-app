@@ -26,9 +26,11 @@ const navigate = useNavigate()
 			<Button label={"Create Game"} btn={"btnBig"} size={""} type={"Primary"} drop={"basicDrop"} click={() => setProcessCreate(true)} />
 			<Button label={"Join Game"} btn={"btnBig"} size={""} type={"Secondary"} drop={"basicDrop"} click={() => setProcessJoin(true)} />
 			
-			<div style={{padding: '0 16px', display: 'flex', flexDirection: 'row', gap: '16px'}}>
-				<Button label={"About"} btn={"btn"} size={"small"} type={"Secondary"} drop={"dropSmall"} style={{width: "100%"}} click={() => {navigate('/about')}} />
-				<Button label={"Imprint"} btn={"btn"} size={"small"} type={"Secondary"} drop={"dropSmall"} style={{width: "100%"}} click={() => {navigate('/imprint')}} />
+			<div style={{padding: '0 16px', display: 'flex', flexDirection: 'row', gap: '16px', justifyContent: 'center'}}>
+				{/* <Button label={"About"} btn={"btn"} size={"small"} type={"Secondary"} drop={"dropSmall"} style={{width: "100%"}} click={() => {navigate('/about')}} /> */}
+				<p style={{margin: '16px', fontWeight: '400', cursor: 'pointer'}} onClick={() => {navigate('/about')}}>About</p>
+				<p style={{margin: '16px', fontWeight: '400', cursor: 'pointer'}} onClick={() => {navigate('/imprint')}}>Imprint</p>
+				{/* <Button label={"Imprint"} btn={"btn"} size={"small"} type={"Secondary"} drop={"dropSmall"} style={{width: "100%"}} click={() => {navigate('/imprint')}} /> */}
 			</div>
 		</div>
 
