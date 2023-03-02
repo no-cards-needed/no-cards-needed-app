@@ -63,24 +63,27 @@ function PlayingGame({
 		const placeCard = (cardId: number, stackId: number | string, userInitiated: boolean = false) => {
 			const _usedCards = usedCardsRef.current
 			// If card is "owned" by user, place it in the hand stack, otherwise place it in the hidden stack
-			const userSpecificStackId = stackId < 2 ? ( _usedCards.get(cardId).hasPlayer === userId || userInitiated ) ? 0 : 1 : stackId
-			const _stack = tableStacksRef.current.get(userSpecificStackId)
 
-			// Add card to stack
-			if(_stack.cards) {
-				_stack.cards.add(cardId)
-			} else {
-				_stack.cards = new Set([cardId])
+			let _stack: Stack;
+			if (tableStacksRef.current.has(stackId)) {
+				_stack = tableStacksRef.current.get(stackId)
 			}
-			setTableStacks(tableStacksRef.current)
+			else if (stackId === "hidden") {
+				_stack = hiddenStackRef.current
+			} else {
+				_stack = handStackRef.current
+			}
+			
 
 			// Calculate Card position based on stack
 			const cardPosition = {
 				x: _stack.stackType === "hand" || _stack.stackType === "open"
-					? calculateCardPosition(cardsDomRef, stacksDomRef, userSpecificStackId, _stack, cardId)
-					: stacksDomRef.current.get(userSpecificStackId).getBoundingClientRect().x, 
-				y: stacksDomRef.current.get(userSpecificStackId).getBoundingClientRect().y
+					? calculateCardPosition(cardsDomRef, stacksDomRef, stackId, _stack, cardId)
+					: stacksDomRef.current.get(stackId).getBoundingClientRect().x, 
+				y: stacksDomRef.current.get(stackId).getBoundingClientRect().y
 			}
+			if(_stack.stackType === "hand") console.log("cardPosition", _stack.cards)
+			if(_stack.stackType === "hand") console.log("cardPosition", Array.from(_stack.cards))
 
 			// Calculate shadow of the card
 			const hasShadow: boolean = _stack.cards && _stack.cards.size > 0 
@@ -89,9 +92,9 @@ function PlayingGame({
 
 			_usedCards.set(cardId, {
 				..._usedCards.get(cardId),
-				onStack: userSpecificStackId,
+				onStack: stackId,
 				onStackType: _stack.stackType,
-				zIndex: calculateZIndex(userSpecificStackId, _stack, cardId),
+				zIndex: calculateZIndex(_stack, cardId),
 				controlledPosition: cardPosition,
 				hasShadow
 			})
@@ -99,16 +102,26 @@ function PlayingGame({
 			
 			if (userInitiated) {
 				sendCard(usedCardsRef.current.get(cardId), cardId)
-				sendTableStack(_stack, userSpecificStackId)
-
-				// Remove card from previous stack
-				const _stacks = tableStacksRef.current
-				_stacks.forEach(stack => {
-					if(stack.cards && stack.cards.has(cardId) && stack.id !== userSpecificStackId) {
-						stack.cards.delete(cardId)
-						sendTableStack(stack, stack.id)
-					}	
+				tableStacksRef.current.forEach((stack, stackId) => {
+					if (stack.cards.has(cardId)) {
+						const _stack = stack
+						_stack.cards.delete(cardId)
+						sendTableStack(_stack, stackId)
+					}
 				})
+				if (stackId !== userId) {
+					// Delete card from all other stacks
+					if (handStackRef.current.cards.has(cardId)) {
+						const _handStack = handStackRef.current
+						_handStack.cards.delete(cardId)
+						setHandStackState(_handStack)
+					}
+					_stack.cards.add(cardId)
+					sendTableStack(_stack, stackId)
+				} else {
+					_stack.cards.add(cardId)
+					sendHandStack(_stack)
+				}
 			}
 		}
 
@@ -123,6 +136,7 @@ function PlayingGame({
 						...card
 					})
 				} else {
+					console.log(`Card ${card.cardId} not found in usedCards`)
 					_usedCards.set(card.cardId, {
 						...card,
 						onStack: 0,
@@ -138,6 +152,7 @@ function PlayingGame({
 			setUsedCards(_usedCards)
 
 			// Place cards in stacks
+			console.log(`Placing ${syncedCards.size} cards`, syncedCards)
 			syncedCards.forEach(card => {
 				placeCard(card.cardId, card.onStack)
 			})
@@ -194,8 +209,8 @@ function PlayingGame({
 			recieveStacks(syncedHandStacks, "hand")
 		}, [syncedHandStacks, syncedTableStacks])
 
-		const sendHandStack = () => {
-			setHandStack(handStackRef.current, userId, Date.now())
+		const sendHandStack = (handStack: Stack) => {
+			setHandStack(handStack, userId, Date.now())
 		}
 		const sendTableStack = (stack: Stack, stackId: number | string) => {
 			setTableStack(stack, stackId, Date.now())
@@ -210,7 +225,7 @@ function PlayingGame({
 					Array.from(tableStacks).map(([stackId, stack]) => {
 						if(stack.stackType !== "hand" && stack.stackType !== "hidden") {
 							return (
-								<Stack key={stack.id} stackType={stack.stackType} stackRef={(el: HTMLDivElement) => stacksDomRef.current.set(stackId, el)}/>
+								<Stack key={stackId} stackType={stack.stackType} stackRef={(el: HTMLDivElement) => stacksDomRef.current.set(stackId, el)}/>
 							)
 						} else return null
 					})

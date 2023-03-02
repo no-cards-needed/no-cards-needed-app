@@ -5,7 +5,6 @@ import { ref, getDatabase, set, onValue, onDisconnect, onChildAdded, serverTimes
 
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { setDefaultStacks, setDefaultUsedCards } from "./helpers/mp";
 
 import CreateGame from "./components/CreateGame"
 import Loading from "./components/Loading"
@@ -13,10 +12,10 @@ import PlayingGame from "./PlayingGame"
 
 import { miniCards } from "./helpers/Cards";
 import { Distributor } from "./helpers/distributor/distributor";
-import useAsyncReference from "./helpers/hooks/useAsyncReference";
 import useStateRef from "./helpers/hooks/useStateRef";
 
 const convertStacksMapToObject = (stacks: Map<number | string, Stack>) => {
+	console.log("👁️ Convert Stacks Map to Object", stacks)
 	const _stacks: Map<number | string, any> = stacks
 	_stacks.forEach((stack, stackId) => {
 		_stacks.set(stackId, {
@@ -100,7 +99,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 
 	// Getting the set User Name
 	const {state} = useLocation();
-	// const [name, setName] = useState<String>()
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [name, setName, nameRef] = useStateRef<String>("")
 
 	const gameStatusRef = useRef(null)
@@ -187,11 +186,12 @@ export const GameWrapper = ({app}: {app:any}) => {
 		})
 
 		const handleStackChange = (snapshot: DataSnapshot, stackType: "hand" | "table") => {
-			console.log("👁️ [gamewrapper] recieved new stacks: ", snapshot.val(), snapshot);
-			const newStacks = snapshot.val()
-			if(newStacks) {
+			console.log(`👁️ [gamewrapper] recieved new stacks of type ${stackType}: `, snapshot.val());
+			if(snapshot.val()) {
 				const _newStacks: Map<number | string, Stack> = new Map();
-	
+				
+				let newStacks = snapshot.val()
+				if (typeof(newStacks) === "object") newStacks = Object.values(newStacks)
 				newStacks.forEach((stack: Stack) => {
 					const _stack = stack
 					_stack.cards = new Set(stack.cards)
@@ -243,14 +243,13 @@ export const GameWrapper = ({app}: {app:any}) => {
 			cardId: card.cardId,
 			symbol: card.symbol,
 			onStack: card.onStack,
-			hasPlayer: userId
 		}
 
 		// Check if timestamp is newer than the latest server timestamp
 		if (gameStatusState.timestamp && timestamp > gameStatusState.timestamp) {
 			updateGameStatusTimestamp()
 			set(cardRef, _card)
-				// .then(() => console.log("👁️ [gamewrapper] card set", card, cardId))
+				.then(() => console.log("👁️ [gamewrapper] card set", card, cardId))
 				.catch((e) => console.log("👁️ [gamewrapper] Encountered error setting the card", e))
 		} else {
 			updateGameStatusTimestamp()
@@ -260,15 +259,15 @@ export const GameWrapper = ({app}: {app:any}) => {
 	// Updater Function for the Cards
 	// recieves a *SINGLE* Stack object and sets it in the Firebase Database
 	const setTableStack = (stack: Stack, stackId: number, timestamp: number) => {
-		const stackRef = ref(getDatabase(app.current), `game/${gameId}/stacks/${stackId}`)
-		console.log("👁️ [gamewrapper] setting user requested stacks with stackpath: ", stackRef, " and stack: ", stack);
+		const currentTableStackRef = ref(getDatabase(app.current), `game/${gameId}/tableStacks/${stackId}`)
+		console.log("👁️ [gamewrapper] setting user requested stacks with stackpath: ", currentTableStackRef, " and stack: ", stack);
 
 		const _stack = {...stack, cards: Array.from(stack.cards)}
 
 		// Check if timestamp is newer than the latest server timestamp
 		if (gameStatusState.timestamp && timestamp > gameStatusState.timestamp) {
 			updateGameStatusTimestamp()
-			set(stackRef, _stack)
+			set(currentTableStackRef, _stack)
 				.then(() => console.log("👁️ [gamewrapper] stack set", stack, stackId))
 				.catch((e) => console.log("👁️ [gamewrapper] Encountered error setting the stack", e))
 		} else {
@@ -277,7 +276,20 @@ export const GameWrapper = ({app}: {app:any}) => {
 	}
 
 	const setHandStack = (stack: Stack, stackId: number, timestamp: number) => {
-		const _userId = userId
+		const currentTableStackRef = ref(getDatabase(app.current), `game/${gameId}/handStacks/${userId}`)
+		console.log("👁️ [gamewrapper] setting user requested stacks with stackpath: ", currentTableStackRef, " and stack: ", stack);
+
+		const _stack = {...stack, cards: Array.from(stack.cards)}
+
+		// Check if timestamp is newer than the latest server timestamp
+		if (gameStatusState.timestamp && timestamp > gameStatusState.timestamp) {
+			updateGameStatusTimestamp()
+			set(currentTableStackRef, _stack)
+				.then(() => console.log("👁️ [gamewrapper] stack set", stack, stackId))
+				.catch((e) => console.log("👁️ [gamewrapper] Encountered error setting the stack", e))
+		} else {
+			updateGameStatusTimestamp()
+		}
 	}
 
 	const updateGameStatusTimestamp = () => {
@@ -286,7 +298,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 	}
 
 	const startGame = () => {
-		const distributor = new Distributor(deckCards.boundries, joker, decks, 2);
+		const distributor = new Distributor(deckCards.boundries, joker, decks, 0);
 		distributor.shuffleCards();
 
 		// Convert player map to object

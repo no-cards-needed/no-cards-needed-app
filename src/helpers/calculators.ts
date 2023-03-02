@@ -11,6 +11,7 @@ export const calculateCardPosition = (
 
 	// Get Card Position in stack from id
 	const cardPositionInStack = getCardPositionInStack(cardId, stack)
+	console.log("cardPositionInStack", cardPositionInStack)
 
 	// Get count of Cards in the stack where the hasPlayer property is equal to the user ID
 	
@@ -35,7 +36,7 @@ export const calculateCardPosition = (
 	return firstCardX + cardPositionInStack * overlap + stackCenter.x
 }
 
-export const calculateZIndex = (stackId: number | string, stack: Stack, cardId: number) => {
+export const calculateZIndex = (stack: Stack, cardId: number) => {
     const indexOfCard = stack.cards ? [...stack.cards].indexOf(cardId) : 0
     const cardIndex = indexOfCard === -1
                             ? cardId

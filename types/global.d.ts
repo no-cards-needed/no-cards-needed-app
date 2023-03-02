@@ -17,7 +17,6 @@ type Card = {
 	cardId: number,
 	symbol: string,
 	onStack: number | string,
-	hasPlayer: string | "none",
 }
 
 type UsedCardsMap = Map<number, UsedCard>
