@@ -17,8 +17,12 @@ type PlayingGameProps = {
 	syncedCards: Map<number, Card>,
 	setCard: (card: Card, cardId: number, timestamp: number) => void,
 	
-	syncedStacks: Map<number, Stack>,
-	setStack: (stack: Stack, stackId: number, timestamp: number) => void
+	syncedTableStacks: Map<number | string, Stack>,
+	setTableStack: (stack: Stack, stackId: number | string, timestamp: number) => void
+
+	syncedHandStacks: Map<number | string, Stack>,
+	setHandStack: (stack: Stack, stackId: number | string, timestamp: number) => void
+
 	players: ListOfPlayers,
 	avatars: {
 		src: string
@@ -33,8 +37,11 @@ function PlayingGame({
 		syncedCards, 
 		setCard,
 
-		syncedStacks, 
-		setStack,
+		syncedTableStacks, 
+		setTableStack,
+
+		syncedHandStacks,
+		setHandStack,
 
 		players,
 		avatars,
@@ -43,39 +50,40 @@ function PlayingGame({
 		const firstCardSynced = useRef<boolean>(false)
 
 		const [usedCards, setUsedCards, usedCardsRef] = useStateRef<Map<number, UsedCard>>(new Map([]))
-		const cardsDomRef = useRef<HTMLDivElement[]>([])
-		const [usedStacks, setUsedStacks, usedStacksRef] = useStateRef<Map<number, Stack>>(new Map([
-			[0, {id: 0, stackType: "hand", cards: new Set(), position: {x: 0, y: 0}}],
-			[1, {id: 1, stackType: "hidden", cards: new Set(), position: {x: 0, y: 0}}],
-		]))
-		const stacksDomRef = useRef<HTMLDivElement[]>([])
+		const cardsDomRef = useRef<Map<number, HTMLDivElement>>(new Map([]))
+		const [handStackState, setHandStackState, handStackRef] = useStateRef<Stack>({id: userId, stackType: "hand", cards: new Set(), position: {x: 0, y: 0}})
+		const [hiddenStackState, setHiddenStackState, hiddenStackRef] = useStateRef<Stack>({id: "hidden", stackType: "hidden", cards: new Set(), position: {x: 0, y: 0}})
+		const [tableStacks, setTableStacks, tableStacksRef] = useStateRef<Map<number | string, Stack>>(new Map())
+		const stacksDomRef = useRef<Map<number | string, HTMLDivElement>>(new Map([]))
 
 		const [nearestStack, setNearestStack] = useState<NearestStack>(null);
 		const [isColliding, setIsColliding] = useState<boolean>(false);
 
 		// Function to handle card placement
-		const placeCard = (cardId: number, stackId: number, userInitiated: boolean = false) => {
-			
+		const placeCard = (cardId: number, stackId: number | string, userInitiated: boolean = false) => {
 			const _usedCards = usedCardsRef.current
 			// If card is "owned" by user, place it in the hand stack, otherwise place it in the hidden stack
-			const userSpecificStackId = stackId < 2 ? ( _usedCards.get(cardId).hasPlayer === userId || userInitiated ) ? 0 : 1 : stackId
-			const _stack = usedStacksRef.current.get(userSpecificStackId)
 
-			// Add card to stack
-			if(_stack.cards) {
-				_stack.cards.add(cardId)
-			} else {
-				_stack.cards = new Set([cardId])
+			let _stack: Stack;
+			if (tableStacksRef.current.has(stackId)) {
+				_stack = tableStacksRef.current.get(stackId)
 			}
-			setUsedStacks(usedStacksRef.current)
+			else if (stackId === "hidden") {
+				_stack = hiddenStackRef.current
+			} else {
+				_stack = handStackRef.current
+			}
+			
 
 			// Calculate Card position based on stack
 			const cardPosition = {
 				x: _stack.stackType === "hand" || _stack.stackType === "open"
-					? calculateCardPosition(cardsDomRef, stacksDomRef, userSpecificStackId, _stack, cardId)
-					: stacksDomRef.current[userSpecificStackId].getBoundingClientRect().x, 
-				y: stacksDomRef.current[userSpecificStackId].getBoundingClientRect().y
+					? calculateCardPosition(cardsDomRef, stacksDomRef, stackId, _stack, cardId)
+					: stacksDomRef.current.get(stackId).getBoundingClientRect().x, 
+				y: stacksDomRef.current.get(stackId).getBoundingClientRect().y
 			}
+			if(_stack.stackType === "hand") console.log("cardPosition", _stack.cards)
+			if(_stack.stackType === "hand") console.log("cardPosition", Array.from(_stack.cards))
 
 			// Calculate shadow of the card
 			const hasShadow: boolean = _stack.cards && _stack.cards.size > 0 
@@ -84,9 +92,9 @@ function PlayingGame({
 
 			_usedCards.set(cardId, {
 				..._usedCards.get(cardId),
-				onStack: userSpecificStackId,
+				onStack: stackId,
 				onStackType: _stack.stackType,
-				zIndex: calculateZIndex(userSpecificStackId, _stack, cardId),
+				zIndex: calculateZIndex(_stack, cardId),
 				controlledPosition: cardPosition,
 				hasShadow
 			})
@@ -94,16 +102,26 @@ function PlayingGame({
 			
 			if (userInitiated) {
 				sendCard(usedCardsRef.current.get(cardId), cardId)
-				sendStack(_stack, userSpecificStackId)
-
-				// Remove card from previous stack
-				const _stacks = usedStacksRef.current
-				_stacks.forEach(stack => {
-					if(stack.cards && stack.cards.has(cardId) && stack.id !== userSpecificStackId) {
-						stack.cards.delete(cardId)
-						sendStack(stack, stack.id)
-					}	
+				tableStacksRef.current.forEach((stack, stackId) => {
+					if (stack.cards.has(cardId)) {
+						const _stack = stack
+						_stack.cards.delete(cardId)
+						sendTableStack(_stack, stackId)
+					}
 				})
+				if (stackId !== userId) {
+					// Delete card from all other stacks
+					if (handStackRef.current.cards.has(cardId)) {
+						const _handStack = handStackRef.current
+						_handStack.cards.delete(cardId)
+						setHandStackState(_handStack)
+					}
+					_stack.cards.add(cardId)
+					sendTableStack(_stack, stackId)
+				} else {
+					_stack.cards.add(cardId)
+					sendHandStack(_stack)
+				}
 			}
 		}
 
@@ -118,6 +136,7 @@ function PlayingGame({
 						...card
 					})
 				} else {
+					console.log(`Card ${card.cardId} not found in usedCards`)
 					_usedCards.set(card.cardId, {
 						...card,
 						onStack: 0,
@@ -133,6 +152,7 @@ function PlayingGame({
 			setUsedCards(_usedCards)
 
 			// Place cards in stacks
+			console.log(`Placing ${syncedCards.size} cards`, syncedCards)
 			syncedCards.forEach(card => {
 				placeCard(card.cardId, card.onStack)
 			})
@@ -153,32 +173,47 @@ function PlayingGame({
 			setCard(card, cardId, Date.now())
 		}
 
-		const recieveStacks = (syncedStacks: Map<number, Stack>) => {
-
-			// set _usedStacks as a new Map to trigger useEffect
-			const _usedStacks = new Map(usedStacksRef.current)
-			syncedStacks.forEach(stack => {
-				if(_usedStacks.has(stack.id)) {
-					_usedStacks.set(stack.id, {
-						..._usedStacks.get(stack.id),
-						...stack
-					})
-				} else {
-					_usedStacks.set(stack.id, {
-						...stack,
-						cards: new Set()
-					})
-				}
-			})
-			setUsedStacks(_usedStacks)
-			console.log("recieveStacks", _usedStacks)
+		const recieveStacks = (syncedStacks: Map<number | string, Stack>, stackType: "table" | "hand") => {
+			if (stackType === "hand") {
+				syncedStacks.forEach(stack => {
+					if(stack.id === userId) {
+						setHandStackState(stack)
+					} else {
+						const _hiddenStack = hiddenStackRef.current
+						_hiddenStack.cards = new Set([..._hiddenStack.cards, ...stack.cards])
+						setHiddenStackState(_hiddenStack)
+					}
+				})
+			} else {
+				// set _tableStacks as a new Map to trigger useEffect
+				const _tableStacks = new Map(tableStacksRef.current)
+				syncedStacks.forEach(stack => {
+					if(_tableStacks.has(stack.id)) {
+						_tableStacks.set(stack.id, {
+							..._tableStacks.get(stack.id),
+							...stack
+						})
+					} else {
+						_tableStacks.set(stack.id, {
+							...stack,
+							cards: new Set()
+						})
+					}
+				})
+				setTableStacks(_tableStacks)
+				console.log("recieveStacks", _tableStacks)
+			}
 		}
 		useEffect(() => {
-			recieveStacks(syncedStacks)
-		}, [syncedStacks])
+			recieveStacks(syncedTableStacks, "table")
+			recieveStacks(syncedHandStacks, "hand")
+		}, [syncedHandStacks, syncedTableStacks])
 
-		const sendStack = (stack: Stack, stackId: number) => {
-			setStack(stack, stackId, Date.now())
+		const sendHandStack = (handStack: Stack) => {
+			setHandStack(handStack, userId, Date.now())
+		}
+		const sendTableStack = (stack: Stack, stackId: number | string) => {
+			setTableStack(stack, stackId, Date.now())
 		}
 
 	return (
@@ -187,10 +222,10 @@ function PlayingGame({
 				<div className='backgroundElement'></div>
 				<div className="playingArea criticalMaxWidth">
 				{
-					Array.from(usedStacks).map(([stackId, stack]) => {
+					Array.from(tableStacks).map(([stackId, stack]) => {
 						if(stack.stackType !== "hand" && stack.stackType !== "hidden") {
 							return (
-								<Stack key={stack.id} stackType={stack.stackType} stackRef={(el: HTMLDivElement) => stacksDomRef.current[stackId] = el}/>
+								<Stack key={stackId} stackType={stack.stackType} stackRef={(el: HTMLDivElement) => stacksDomRef.current.set(stackId, el)}/>
 							)
 						} else return null
 					})
@@ -201,13 +236,13 @@ function PlayingGame({
 					{
 						typeof usedCards[Symbol.iterator] === 'function' ? Array.from(usedCards).map(([cardId, card]) => {
 							return <Card 
-									setRef={(cardRef: HTMLDivElement) => cardsDomRef.current[cardId] = cardRef} 
+									setRef={(cardRef: HTMLDivElement) => cardsDomRef.current.set(cardId, cardRef)} 
 									card={card} 
 									cardId={cardId}
 									key={cardId}
 									shuffle={() => {}}
 									handleLongPress={() => {}}
-									handleCardDrag={(cardRef, cardId) => handleCardDrag(cardRef, cardId, usedCardsRef.current, setUsedCards, nearestStack, setNearestStack, usedStacksRef, stacksDomRef, setIsColliding)} 
+									handleCardDrag={(cardRef, cardId) => handleCardDrag(cardRef, cardId, usedCardsRef.current, setUsedCards, nearestStack, setNearestStack, tableStacksRef, handStackRef, stacksDomRef, setIsColliding)} 
 									handleCardDrop={(data, id) => handleCardDrop(id, usedCards, setUsedCards, isColliding, nearestStack, placeCard)} />
 						}) : <DebugComponent error={usedCards} />
 					}
@@ -216,10 +251,10 @@ function PlayingGame({
 				<GameHeader players={players} gameStatus={gameStatus} avatars={avatars} />
 
 				<div className="hand criticalMaxWidth" id="basicDrop">
-					<Stack key={"handStack"} stackType={usedStacks.get(0).stackType} stackRef={(el: HTMLDivElement) => stacksDomRef.current[0] = el}/>
+					<Stack key={"handStack"} stackType={handStackState.stackType} stackRef={(el: HTMLDivElement) => stacksDomRef.current.set(userId, el)}/>
 				</div>
 
-				<Stack key={"hiddenStack"} stackType={usedStacks.get(1).stackType} stackRef={(el: HTMLDivElement) => stacksDomRef.current[1] = el}/>
+				<Stack key={"hiddenStack"} stackType={hiddenStackState.stackType} stackRef={(el: HTMLDivElement) => stacksDomRef.current.set("hidden", el)}/>
 			</div>
 		</div>
 	);

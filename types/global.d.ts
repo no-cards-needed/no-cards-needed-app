@@ -16,8 +16,19 @@ type GameStatus = {
 type Card = {
 	cardId: number,
 	symbol: string,
-	onStack: number,
-	hasPlayer: string | "none",
+	onStack: number | string,
+}
+
+type UsedCardsMap = Map<number, UsedCard>
+
+interface UsedCard extends Card {
+	onStackType: Stack["stackType"]
+
+	controlledPosition: {x: number, y: number},
+	zIndex: number,
+	animation: string,
+	movedAside: "left" | "right" | "none",
+	hasShadow: boolean
 }
 
 type DropdownContent = {
@@ -36,10 +47,10 @@ type NearestStack = {
 	stackIndex: number
 }
 
-type StackMap = Map<number, Stack>
+type StackMap = Map<number | string, Stack>
 
 type Stack = {
-	id: number,
+	id: number | string,
 	/**
 	 * Type of stack
 	 * 
@@ -51,16 +62,4 @@ type Stack = {
 	 */
 	position: {x: number, y: number},
 	cards?: Set<number>,
-}
-
-type UsedCardsMap = Map<number, UsedCard>
-
-interface UsedCard extends Card {
-	onStackType: Stack["stackType"]
-
-	controlledPosition: {x: number, y: number},
-	zIndex: number,
-	animation: string,
-	movedAside: "left" | "right" | "none",
-	hasShadow: boolean
 }
