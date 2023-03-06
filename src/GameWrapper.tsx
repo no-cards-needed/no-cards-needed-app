@@ -174,7 +174,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 
 		// Card Value Change in FireBase Realtime Database
 		onValue(cardsRef.current, (snapshot) => {
-			// console.log("👁️ [gamewrapper] recieved new cards: ", snapshot.val());
+			console.log("👁️ [gamewrapper] recieved new cards: ", snapshot.val());
 			// setCardsState(snapshot.val());
 
 			const newCards = snapshot.val()
@@ -299,7 +299,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 
 	const startGame = () => {
 		const distributor = new Distributor(deckCards.boundries, joker, decks, 0);
-		distributor.shuffleCards();
+		// distributor.shuffleCards();
 
 		// Convert player map to object
 		const _allPlayers = Object.fromEntries(allPlayers);
