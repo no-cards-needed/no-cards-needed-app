@@ -52,7 +52,6 @@ function ModaleEnter( {
 				} else {
 					navigate('/auth', {state: {name: localName}})
 				}
-				console.log('start game')
 		} else if (processJoin) {
 			setDisplayKey( true )
 			setDisplayName( false )

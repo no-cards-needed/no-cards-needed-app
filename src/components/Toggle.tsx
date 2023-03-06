@@ -3,7 +3,7 @@ import useSound from 'use-sound';
 function Toggle( {toggleOn, setToggleOn}: {toggleOn: boolean, setToggleOn: (newToggleState: boolean) => void} ) {
 		function activate() {
 			if (toggleOn) { 
-					setToggleOn(false) 
+				setToggleOn(false) 
 			} else { 
 				setToggleOn(true)
 			}

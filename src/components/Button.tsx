@@ -1,3 +1,4 @@
+import { getItem } from '../helpers/localStorageHelper';
 import useSound from 'use-sound';
 
 function Button( {
@@ -25,7 +26,7 @@ function Button( {
 	const [play] = useSound(
 		'/sounds/button-click.mp3',
 		{
-			volume: 0.1
+			volume: localStorage.getItem("stateSoundOn") === "false" ? 0.1 : 0
 		});
 
 	const handleClick = () => {
