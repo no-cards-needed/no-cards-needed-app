@@ -185,9 +185,13 @@ function PlayingGame({
 			}
 		}
 		useEffect(() => {
-			setTimeout(() => {
+			if(firstCardSynced.current) {
 				recieveCards(syncedCards)
-			}, 100)
+			} else {
+				setTimeout(() => {
+					recieveCards(syncedCards)
+				}, 100)
+			}
 		}, [syncedCards])
 		const sendCard = (card: Card, cardId: number) => {
 			console.log("sendCard", card, cardId, Date.now())
@@ -222,9 +226,9 @@ function PlayingGame({
 					}
 				})
 				setTableStacks(_tableStacks)
-				stackSyncDone.current = true
 				console.log("recieveStacks", _tableStacks)
 			}
+			stackSyncDone.current = true
 		}
 		useEffect(() => {
 			recieveStacks(syncedTableStacks, "table")
