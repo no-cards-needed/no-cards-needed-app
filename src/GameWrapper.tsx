@@ -116,21 +116,17 @@ export const GameWrapper = ({app}: {app:any}) => {
 	const [userId, setUserId] = useState<string>(null);
 	const playerRef = useRef(null);
 
-	const allPlayersPath = useRef(null);
-	// const [allPlayers, setAllPlayers] = useState<ListOfPlayers>(new Map([]));
-	const allPlayers = useRef<ListOfPlayers>(new Map([]))
+	const allPlayersRef = useRef(null);
+	const [allPlayers, setAllPlayers] = useState<ListOfPlayers>(new Map([]));
 	
-	const cardsPath = useRef(null);
-	// const [cardsState, setCardsState] = useState<Map<number, Card>>(new Map([]));
-	const cards = useRef<Map<number, Card>>(new Map([]))
+	const cardsRef = useRef(null);
+	const [cardsState, setCardsState] = useState<Map<number, Card>>(new Map([]));
 	
-	const handStacksPath = useRef(null);
-	// const [handStacksState, setHandStacksState] = useState<Map<number | string, Stack>>(new Map([]));
-	const handStacks = useRef<StackMap>(new Map([]))
+	const handStacksRef = useRef(null);
+	const [handStacksState, setHandStacksState] = useState<Map<number | string, Stack>>(new Map([]));
 
-	const tableStacksPath = useRef(null);
-	// const [tableStacksState, setTableStacksState] = useState<Map<number | string, Stack>>(new Map([]));
-	const tableStacks = useRef<StackMap>(new Map([]))
+	const tableStacksRef = useRef(null);
+	const [tableStacksState, setTableStacksState] = useState<Map<number | string, Stack>>(new Map([]));
 
 	const [ processCreate, setProcessCreate ] = useState( true )
 	const [ processJoin, setProcessJoin ] = useState( false )
@@ -138,13 +134,13 @@ export const GameWrapper = ({app}: {app:any}) => {
 	const initGame = () => {
 
 		gameStatusRef.current = ref(getDatabase(app.current), `game/${gameId}/gameStatus/`)
-		allPlayersPath.current = ref(getDatabase(app.current), `game/${gameId}/players/`)
-		cardsPath.current = ref(getDatabase(app.current), `game/${gameId}/cards/`)
-		handStacksPath.current = ref(getDatabase(app.current), `game/${gameId}/handStacks/`)
-		tableStacksPath.current = ref(getDatabase(app.current), `game/${gameId}/tableStacks/`)
+		allPlayersRef.current = ref(getDatabase(app.current), `game/${gameId}/players/`)
+		cardsRef.current = ref(getDatabase(app.current), `game/${gameId}/cards/`)
+		handStacksRef.current = ref(getDatabase(app.current), `game/${gameId}/handStacks/`)
+		tableStacksRef.current = ref(getDatabase(app.current), `game/${gameId}/tableStacks/`)
 
 		// A new player connected to the game
-		onValue(allPlayersPath.current, (snapshot) => {
+		onValue(allPlayersRef.current, (snapshot) => {
 			// If this is the only player, this player is starting the game instance
 
 			// TODO: When only two players are playing and one refreshes the page, this is re-triggered
@@ -177,7 +173,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 		})
 
 		// Card Value Change in FireBase Realtime Database
-		onValue(cardsPath.current, (snapshot) => {
+		onValue(cardsRef.current, (snapshot) => {
 			console.log("👁️ [gamewrapper] recieved new cards: ", snapshot.val());
 			// setCardsState(snapshot.val());
 
@@ -185,8 +181,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 			if(newCards) {
 				// Convert the cards to a Map
 				const _newCards: Map<number, Card> = new Map(newCards.map((card: Card) => [card.cardId, card]));
-				// setCardsState(_newCards);
-				cards.current = _newCards
+				setCardsState(_newCards);
 			}
 		})
 
@@ -204,31 +199,27 @@ export const GameWrapper = ({app}: {app:any}) => {
 				})
 	
 				// Convert the stacks to a Map
-				// if (stackType === "hand") setHandStacksState(_newStacks);
-				if (stackType === "hand") handStacks.current = _newStacks;
-				// else if (stackType === "table") setTableStacksState(_newStacks);
-				else if (stackType === "table") tableStacks.current = _newStacks;
+				if (stackType === "hand") setHandStacksState(_newStacks);
+				else if (stackType === "table") setTableStacksState(_newStacks);
 			}
 		}
 		// Stack Value Change in FireBase Realtime Database
-		onValue(tableStacksPath.current, (snapshot) => {
+		onValue(tableStacksRef.current, (snapshot) => {
 			handleStackChange(snapshot, "table")
 		})
-		onValue(handStacksPath.current, (snapshot) => {
+		onValue(handStacksRef.current, (snapshot) => {
 			handleStackChange(snapshot, "hand")
 		})
 
 		// Add the new player to the "allPlayers" state
-		onChildAdded(allPlayersPath.current, (snapshot) => {
+		onChildAdded(allPlayersRef.current, (snapshot) => {
 			const addedPlayer = snapshot.val();
 
-			// setAllPlayers((prev) => {
-			// 	const _prev = new Map(prev);
-			// 	_prev.set(addedPlayer.id, addedPlayer);
-			// 	return _prev;
-			// })
-			allPlayers.current.set(addedPlayer.id, addedPlayer)
-
+			setAllPlayers((prev) => {
+				const _prev = new Map(prev);
+				_prev.set(addedPlayer.id, addedPlayer);
+				return _prev;
+			})
 		})
 	}
 
@@ -311,17 +302,17 @@ export const GameWrapper = ({app}: {app:any}) => {
 		// distributor.shuffleCards();
 
 		// Convert player map to object
-		const _allPlayers = Object.fromEntries(allPlayers.current);
+		const _allPlayers = Object.fromEntries(allPlayers);
 
 		distributor.distributeCards(hand, _allPlayers)
 
-		set(cardsPath.current, distributor.cards)
+		set(cardsRef.current, distributor.cards)
 			.then(() => console.log("👁️ [gamewrapper] cards set"))
 			.catch((error) => console.log("👁️ [gamewrapper] Encountered error setting cards", error));
-		set(tableStacksPath.current, convertStacksMapToObject(distributor.stacks))
+		set(tableStacksRef.current, convertStacksMapToObject(distributor.stacks))
 			.then(() => console.log("👁️ [gamewrapper] stacks set"))
 			.catch((error) => console.log("👁️ [gamewrapper] Encountered error setting stacks", error));
-		set(handStacksPath.current, convertStacksMapToObject(distributor.handStacks))
+		set(handStacksRef.current, convertStacksMapToObject(distributor.handStacks))
 			.then(() => console.log("👁️ [gamewrapper] hand stacks set"))
 			.catch((error) => console.log("👁️ [gamewrapper] Encountered error setting stacks", error));
 
@@ -404,7 +395,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 				pile={pile} 
 				setPile={setPile} 
 				dropdownContent={dropdownContent} 
-				players={allPlayers.current} 
+				players={allPlayers} 
 				startGame={gameStarted}
 				setStartGame={startGame}
 				gameId={gameId}
@@ -415,16 +406,16 @@ export const GameWrapper = ({app}: {app:any}) => {
 				gameStatus={gameStatusState}
 				setGameStatus={setGameStatus}
 				userId={userId}
-				syncedCards={cards.current}
+				syncedCards={cardsState}
 				setCard={setCard}
 				
-				syncedTableStacks={tableStacks.current}
+				syncedTableStacks={tableStacksState}
 				setTableStack={setTableStack}
 
-				syncedHandStacks={handStacks.current}
+				syncedHandStacks={handStacksState}
 				setHandStack={setHandStack}
 
-				players={allPlayers.current} 
+				players={allPlayers} 
 				avatars={avatars}
 			/>
 			}
