@@ -8,6 +8,7 @@ import { calculateZIndex, calculateCardPosition } from "./helpers/calculators"
 import { handleCardDrag } from "./helpers/handle-card-drag"
 import { handleCardDrop } from "./helpers/handle-card-drop"
 import useStateRef from "./helpers/hooks/useStateRef"
+import { useWindowDimension } from "./helpers/hooks/useWindowDimensions"
 
 type PlayingGameProps = {
 	gameStatus: GameStatus,
@@ -48,6 +49,7 @@ function PlayingGame({
 	}: PlayingGameProps) {
 
 		const firstCardSynced = useRef<boolean>(false)
+		const stackSyncDone = useRef<boolean>(false)
 
 		const [usedCards, setUsedCards, usedCardsRef] = useStateRef<Map<number, UsedCard>>(new Map([]))
 		const cardsDomRef = useRef<Map<number, HTMLDivElement>>(new Map([]))
@@ -61,6 +63,7 @@ function PlayingGame({
 
 		// Function to handle card placement
 		const placeCard = (cardId: number, stackId: number | string, userInitiated: boolean = false) => {
+			console.log("Placing card", usedCardsRef.current.get(cardId).symbol, " with id " ,cardId, "on stack", stackId)
 			const _usedCards = usedCardsRef.current
 			// If card is "owned" by user, place it in the hand stack, otherwise place it in the hidden stack
 
@@ -88,8 +91,6 @@ function PlayingGame({
 				console.log("Error calculating card position for stack", stackId, "and card", cardId)
 				// console.error(error)
 			}
-			if(_stack.stackType === "hand") console.log("cardPosition", _stack.cards)
-			if(_stack.stackType === "hand") console.log("cardPosition", Array.from(_stack.cards))
 
 			// Calculate shadow of the card
 			const hasShadow: boolean = _stack.cards && _stack.cards.size > 0 
@@ -120,7 +121,7 @@ function PlayingGame({
 					if (handStackRef.current.cards.has(cardId)) {
 						const _handStack = handStackRef.current
 						_handStack.cards.delete(cardId)
-						setHandStackState(_handStack)
+						sendHandStack(_handStack)
 					}
 					_stack.cards.add(cardId)
 					sendTableStack(_stack, stackId)
@@ -131,59 +132,65 @@ function PlayingGame({
 			}
 		}
 
-		const recieveCards = (syncedCards: Map<number, Card>) => {
-			firstCardSynced.current = true
+		const recieveCards = (recievedCards: Map<number, Card>) => {
+			if(stackSyncDone.current) {
+				const _usedCards = new Map(usedCardsRef.current)
+				recievedCards.forEach(card => {
+					// Check if card is on hand or on table
+					let onStack;
+					console.log("ONSTACK: ", card.onStack, typeof(card.onStack), "CardId", card.cardId)
+					if (typeof(card.onStack) === "string") {
+						onStack = card.onStack === userId ? userId : "hidden"
+						recievedCards.set(card.cardId, {
+							...card,
+							onStack
+						})
+					} else {
+						onStack = card.onStack
+					}
 
-			const _usedCards = new Map(usedCardsRef.current)
-			syncedCards.forEach(card => {
-				// Check if card is on hand or on table
-				let onStack;
-				if (typeof(card.onStack) === "string") {
-					onStack = card.onStack === userId ? userId : "hidden"
-					syncedCards.set(card.cardId, {
-						...card,
-						onStack
-					})
-				} else {
-					onStack = card.onStack
-				}
+					if(_usedCards.has(card.cardId)) {
+						_usedCards.set(card.cardId, {
+							..._usedCards.get(card.cardId),
+							onStack,
+							...card
+						})
+					} else {
+						console.log(`Card ${card.cardId} not found in usedCards`)
+						_usedCards.set(card.cardId, {
+							...card,
+							onStackType: "back",
+							zIndex: 0,
+							animation: "none",
+							movedAside: "none",
+							controlledPosition: {x: 0, y: 0},
+							hasShadow: false
+						})
+					}
+				})
+				setUsedCards(_usedCards)
 
-				if(_usedCards.has(card.cardId)) {
-					_usedCards.set(card.cardId, {
-						..._usedCards.get(card.cardId),
-						onStack,
-						...card
-					})
-				} else {
-					console.log(`Card ${card.cardId} not found in usedCards`)
-					_usedCards.set(card.cardId, {
-						...card,
-						onStackType: "back",
-						zIndex: 0,
-						animation: "none",
-						movedAside: "none",
-						controlledPosition: {x: 0, y: 0},
-						hasShadow: false
-					})
-				}
-			})
-			setUsedCards(_usedCards)
+				// Place cards in stacks
+				recievedCards.forEach(card => {
+					placeCard(card.cardId, card.onStack, false)
+				})
 
-			// Place cards in stacks
-			console.log(`Placing ${syncedCards.size} cards`, syncedCards)
-			syncedCards.forEach(card => {
-				placeCard(card.cardId, card.onStack)
-			})
+				stackSyncDone.current = false
+			} else {
+				// Setting a 10ms timeout to make sure all stacks are synced before placing cards
+				setTimeout(() => {
+					console.log("Timeout triggered, waiting for stacks to sync")
+					recieveCards(syncedCards)
+				}, 10)
+			}
 		}
 		useEffect(() => {
-			if (firstCardSynced.current) {
+			if(firstCardSynced.current) {
 				recieveCards(syncedCards)
 			} else {
-				// call recieveCards after 1 second to make sure all cards are rendered
 				setTimeout(() => {
-					console.log("Timeout triggered")
 					recieveCards(syncedCards)
-				}, 1000)
+				}, 100)
 			}
 		}, [syncedCards])
 		const sendCard = (card: Card, cardId: number) => {
@@ -221,6 +228,7 @@ function PlayingGame({
 				setTableStacks(_tableStacks)
 				console.log("recieveStacks", _tableStacks)
 			}
+			stackSyncDone.current = true
 		}
 		useEffect(() => {
 			recieveStacks(syncedTableStacks, "table")
@@ -233,6 +241,13 @@ function PlayingGame({
 		const sendTableStack = (stack: Stack, stackId: number | string) => {
 			setTableStack(stack, stackId, Date.now())
 		}
+
+	const [windowHeight, windowWidth] = useWindowDimension()
+	useEffect(() => {
+		usedCardsRef.current.forEach((card, cardId) => {
+			placeCard(cardId, card.onStack, false)
+		})
+	}, [windowHeight, windowWidth])
 
 	return (
 		<div>

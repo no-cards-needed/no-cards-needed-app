@@ -11,7 +11,6 @@ export const calculateCardPosition = (
 
 	// Get Card Position in stack from id
 	const cardPositionInStack = getCardPositionInStack(cardId, stack)
-	console.log("cardPositionInStack", cardPositionInStack)
 
 	// Get count of Cards in the stack where the hasPlayer property is equal to the user ID
 	

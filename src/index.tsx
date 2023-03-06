@@ -29,6 +29,8 @@ import About from "./components/About"
 import reportWebVitals from './reportWebVitals';
 import { GameWrapper } from './GameWrapper';
 import { initializeApp } from 'firebase/app';
+import "@total-typescript/ts-reset";
+
 
 // TODO: Add SDKs for Firebase products that you want to usea
 // https://firebase.google.com/docs/web/setup#available-libraries
