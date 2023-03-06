@@ -76,11 +76,17 @@ function PlayingGame({
 			
 
 			// Calculate Card position based on stack
-			const cardPosition = {
-				x: _stack.stackType === "hand" || _stack.stackType === "open"
-					? calculateCardPosition(cardsDomRef, stacksDomRef, stackId, _stack, cardId)
-					: stacksDomRef.current.get(stackId).getBoundingClientRect().x, 
-				y: stacksDomRef.current.get(stackId).getBoundingClientRect().y
+			let cardPosition: {x: number, y: number} = {x: 0, y: 0};
+			try {
+				cardPosition = {
+					x: _stack.stackType === "hand" || _stack.stackType === "open"
+						? calculateCardPosition(cardsDomRef, stacksDomRef, stackId, _stack, cardId)
+						: stacksDomRef.current.get(stackId).getBoundingClientRect().x, 
+					y: stacksDomRef.current.get(stackId).getBoundingClientRect().y
+				}
+			} catch (error) {
+				console.log("Error calculating card position for stack", stackId, "and card", cardId)
+				// console.error(error)
 			}
 			if(_stack.stackType === "hand") console.log("cardPosition", _stack.cards)
 			if(_stack.stackType === "hand") console.log("cardPosition", Array.from(_stack.cards))
@@ -130,16 +136,28 @@ function PlayingGame({
 
 			const _usedCards = new Map(usedCardsRef.current)
 			syncedCards.forEach(card => {
+				// Check if card is on hand or on table
+				let onStack;
+				if (typeof(card.onStack) === "string") {
+					onStack = card.onStack === userId ? userId : "hidden"
+					syncedCards.set(card.cardId, {
+						...card,
+						onStack
+					})
+				} else {
+					onStack = card.onStack
+				}
+
 				if(_usedCards.has(card.cardId)) {
 					_usedCards.set(card.cardId, {
 						..._usedCards.get(card.cardId),
+						onStack,
 						...card
 					})
 				} else {
 					console.log(`Card ${card.cardId} not found in usedCards`)
 					_usedCards.set(card.cardId, {
 						...card,
-						onStack: 0,
 						onStackType: "back",
 						zIndex: 0,
 						animation: "none",
