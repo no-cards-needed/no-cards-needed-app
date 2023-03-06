@@ -61,9 +61,9 @@
 
   .gameHeaderContent {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-start;
-    gap: 6px;
+    gap: 4px;
     color: var(--violet-prime-50);
     }
 

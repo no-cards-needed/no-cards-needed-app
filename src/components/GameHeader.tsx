@@ -76,8 +76,8 @@ const navigate = useNavigate()
 	return (
 	<div className="gameHeader criticalMaxWidth" id="basicDrop">
 			<div className="gameHeaderContent">
-				<div className="avatarContainer">
-				{Array.from(players).map(([playerId, player]) => (
+				<div className="avatarContainer" style={{width: "48px"}}>
+				{/* {Array.from(players).map(([playerId, player]) => (
 					<div key={playerId} className={`avatar ${gameStatus && player.id === gameStatus?.host ? 'avatarHost' : null} `}>
 					{
 					player.avatar === 1 ? <AVATAR_1 />
@@ -87,14 +87,15 @@ const navigate = useNavigate()
 					: <AVATAR_5 />
 					}
 					</div>
+				)) */}
 
-				))}
+					<div className={"avatar"} style={{height: "32px", width: "32px", borderRadius: "9px"}}>
+						<AVATAR_1 style={{scale: "112.5%"}}/>
+					</div>
+					<label className="cardCount">5</label>
 				</div>
-				<label>{lastAction}</label>
+					<label>{lastAction}</label>
 			</div>
-			{/* <div className="btn Primary medium noselect" id="basicDrop" style={{width: "48px"}} onClick={toggleDisplay}>
-			<img src={hamburger} alt=""></img>
-			</div> */}
 			<Button iconLeading={hamburger} btn={"btn"} size={"medium"} type={"Primary"} drop={"dropSmall"} style={{width: "48px"}} click={toggleDisplay} />
 
 			<motion.div animate={{ opacity: 1 }}

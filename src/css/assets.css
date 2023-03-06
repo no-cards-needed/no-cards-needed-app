@@ -96,12 +96,11 @@
     display: flex;
     flex-direction: row;
     align-items: flex-start;
-    gap: 8px;
   }
 
   .avatar {
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
     border-radius: 6px;
     background: var(--vg-0);
     overflow: hidden;
@@ -112,6 +111,19 @@
 
   .avatarHost {
     border: 2px solid #7741EA;
+  }
+
+  .cardCount {
+    background-color: var(--vg-100); 
+    color: var(--vg-0);
+    width: 16px;
+    height: 20px;
+    border-radius: 3px;
+    rotate: 8deg; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: translateX(-4px) translateY(14px);
   }
 
   .iconContainer {
