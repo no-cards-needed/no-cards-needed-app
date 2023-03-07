@@ -89,6 +89,9 @@ export class Distributor {
 			// Getting a random index of a card that no player has on the hand yet
 			const randomIndex = this.getRandomCard()
 
+			if (randomIndex === undefined) throw new Error(`Could not find a random card index`)
+			console.log(randomIndex, this.cards)
+
 			const card = this.cards[randomIndex]
 			const player = players[playerIds[playerIndex]]
 			
@@ -130,14 +133,29 @@ export class Distributor {
 	private getRandomCard: () => number = () => {
 		const cardAmount = this.cards.length
 
-		let randomIndex: number;
-		this.handStacks.forEach(handStack => {
-			if (handStack.cards.has(randomIndex) || randomIndex === undefined) randomIndex = this.calculateRandomCardIndex(cardAmount)
-		})
+		// Generate randomCardIndecies until a card is found that is not on the hand yet
+		let randomCardIndex = this.calculateRandomCardIndex(cardAmount)
+		let card = this.cards[randomCardIndex]
 
-		return randomIndex
+		while (this.checkIfCardIsOnHand(card.cardId)) {
+			randomCardIndex = this.calculateRandomCardIndex(cardAmount)
+			card = this.cards[randomCardIndex]
+		}
+
+		return randomCardIndex
 	}
+	
 	private calculateRandomCardIndex: (cardAmount: number) => number = (cardAmount: number) => {
 		return Math.floor(Math.random() * cardAmount)
+	}
+
+	private checkIfCardIsOnHand: (cardId: number) => boolean = (cardId) => {
+		let cardOnHandStacks = false
+
+		this.handStacks.forEach((stack) => {
+			if (stack.cards.has(cardId)) cardOnHandStacks = true
+		})
+
+		return cardOnHandStacks
 	}
 }
