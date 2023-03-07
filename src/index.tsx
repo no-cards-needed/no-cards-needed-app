@@ -30,6 +30,7 @@ import reportWebVitals from './reportWebVitals';
 import { GameWrapper } from './GameWrapper';
 import { initializeApp } from 'firebase/app';
 import "@total-typescript/ts-reset";
+import Game from './components/Game';
 
 
 // TODO: Add SDKs for Firebase products that you want to usea
@@ -59,6 +60,7 @@ root.render(
 		<BrowserRouter>
 			<Routes>
 				<Route path="/" element={<StartScreen />} />
+				<Route path="/preview" element={<Game />} />
 				<Route path=":gameId/" element={<GameWrapper app={app} />} />
 				<Route path="imprint" element={<Imprint />} />
 				<Route path="about" element={<About />} />
