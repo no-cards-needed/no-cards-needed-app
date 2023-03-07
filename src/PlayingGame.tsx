@@ -175,11 +175,13 @@ function PlayingGame({
 					placeCard(card.cardId, card.onStack, false)
 				})
 
+				console.log("🪢 Setting StackSyncDone to false")
 				stackSyncDone.current = false
 			} else {
 				// Setting a 10ms timeout to make sure all stacks are synced before placing cards
 				setTimeout(() => {
 					console.log("Timeout triggered, waiting for stacks to sync")
+					recieveStacks(syncedTableStacks, "table")
 					recieveCards(syncedCards)
 				}, 10)
 			}
@@ -229,9 +231,10 @@ function PlayingGame({
 					}
 				})
 				setTableStacks(_tableStacks)
-				stackSyncDone.current = true
 				console.log("recieveStacks", _tableStacks)
 			}
+			console.log("🪢 Setting StackSyncDone to true")
+			stackSyncDone.current = true
 		}
 		useEffect(() => {
 			recieveStacks(syncedTableStacks, "table")
