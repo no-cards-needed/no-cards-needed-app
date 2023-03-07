@@ -127,7 +127,12 @@ export class Distributor {
 
 	private addCardToStack: (cardId: number, stackId: number) => void = (cardId, stackId) => {
 		const stack = this.stacks.get(stackId)
-		stack.cards.add(cardId)
+		if (stack === undefined) throw new Error(`Could not find stack with id ${stackId}`)
+		if(stack.cards) {
+			stack.cards.add(cardId)
+		} else {
+			stack.cards = new Set([cardId])
+		}
 	}
 
 	private getRandomCard: () => number = () => {
@@ -144,7 +149,7 @@ export class Distributor {
 
 		return randomCardIndex
 	}
-	
+
 	private calculateRandomCardIndex: (cardAmount: number) => number = (cardAmount: number) => {
 		return Math.floor(Math.random() * cardAmount)
 	}

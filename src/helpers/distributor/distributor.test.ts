@@ -8,56 +8,56 @@ describe('distribute cards to server', () => {
 		}
 		const jokersPerDeck = 0
 		const numberOfDecks = 1
-		const onStack = 2
+		const onStack = 0
 		const distributor = new Distributor(cardsPerDeck, jokersPerDeck, numberOfDecks, onStack)
 
 		expect(distributor.cards).toEqual([
 			{
 				cardId: 0,
 				symbol: "JC",
-				onStack: 2,
+				onStack: 0,
 
 			},
 			{
 				cardId: 1,
 				symbol: "JD",
-				onStack: 2,
+				onStack: 0,
 
 			},
 			{
 				cardId: 2,
 				symbol: "JH",
-				onStack: 2,
+				onStack: 0,
 
 			},
 			{
 				cardId: 3,
 				symbol: "JS",
-				onStack: 2,
+				onStack: 0,
 
 			},
 			{
 				cardId: 4,
 				symbol: "QC",
-				onStack: 2,
+				onStack: 0,
 
 			},
 			{
 				cardId: 5,
 				symbol: "QD",
-				onStack: 2,
+				onStack: 0,
 
 			},
 			{
 				cardId: 6,
 				symbol: "QH",
-				onStack: 2,
+				onStack: 0,
 
 			},
 			{
 				cardId: 7,
 				symbol: "QS",
-				onStack: 2,
+				onStack: 0,
 
 			},
 		])
@@ -70,120 +70,82 @@ describe('distribute cards to server', () => {
 		}
 		const jokersPerDeck = 4
 		const numberOfDecks = 1
-		const onStack = 2
+		const onStack = 0
 		const distributor = new Distributor(cardsPerDeck, jokersPerDeck, numberOfDecks, onStack)
 
 		expect(distributor.cards).toEqual([
 			{
 				cardId: 0,
 				symbol: "QC",
-				onStack: 2,
+				onStack: 0,
 			},
 			{
 				cardId: 1,
 				symbol: "QD",
-				onStack: 2,
+				onStack: 0,
 			},
 			{
 				cardId: 2,
 				symbol: "QH",
-				onStack: 2,
+				onStack: 0,
 
 			},
 			{
 				cardId: 3,
 				symbol: "QS",
-				onStack: 2,
+				onStack: 0,
 			},
 			{
 				cardId: 4,
 				symbol: "Joker",
-				onStack: 2,
+				onStack: 0,
 			},
 			{
 				cardId: 5,
 				symbol: "Joker",
-				onStack: 2,
+				onStack: 0,
 			},
 			{
 				cardId: 6,
 				symbol: "Joker",
-				onStack: 2,
+				onStack: 0,
 			},
 			{
 				cardId: 7,
 				symbol: "Joker",
-				onStack: 2,
+				onStack: 0,
 			},
 		])
 	})
 })
 
 describe("Shuffle Card Array", () => {
-	const startArray: Card[] = [
-		{
-			cardId: 0,
-			symbol: "JC",
-			onStack: 2,
-		},
-		{
-			cardId: 1,
-			symbol: "JD",
-			onStack: 2,
-		},
-		{
-			cardId: 2,
-			symbol: "JH",
-			onStack: 2,
-		},
-		{
-			cardId: 3,
-			symbol: "JS",
-			onStack: 2,
-		},
-		{
-			cardId: 4,
-			symbol: "QC",
-			onStack: 2,
-		},
-		{
-			cardId: 5,
-			symbol: "QD",
-			onStack: 2,
-		},
-		{
-			cardId: 6,
-			symbol: "QH",
-			onStack: 2,
-		},
-		{
-			cardId: 7,
-			symbol: "QS",
-			onStack: 2,
-		},
-	]
-	let shuffledArray: Card[] = []
+	let tableStacks: StackMap = new Map()
+	let shuffledStacks: StackMap = new Map()
+
 	beforeAll(() => {
-		const distributor = new Distributor({from: 11, to: 12}, 0, 1, 2)
+		const distributor = new Distributor({from: 11, to: 12}, 0, 1, 0)
+		tableStacks = distributor.stacks
 		distributor.shuffleCards()
-		shuffledArray = distributor.cards
+		shuffledStacks = distributor.stacks
 	})
 	test("Array should be different than starting arary", () => {
-		expect(shuffledArray).not.toEqual(startArray)
+		console.log(shuffledStacks.get(0).cards)
+		expect(shuffledStacks.get(0).cards).not.toEqual(new Set([0, 1, 2, 3, 4, 5, 6, 7]))
 	})
 	test("Array should have the same length", () => {
-		expect(shuffledArray.length).toEqual(startArray.length)
+		expect(shuffledStacks.size).toEqual(tableStacks.size)
 	})
 	
 	test("Array should have the same content", () => {
-		expect(shuffledArray).toContainEqual(startArray[0])
-		expect(shuffledArray).toContainEqual(startArray[1])
-		expect(shuffledArray).toContainEqual(startArray[2])
-		expect(shuffledArray).toContainEqual(startArray[3])
-		expect(shuffledArray).toContainEqual(startArray[4])
-		expect(shuffledArray).toContainEqual(startArray[5])
-		expect(shuffledArray).toContainEqual(startArray[6])
-		expect(shuffledArray).toContainEqual(startArray[7])
+		expect(shuffledStacks).toContainEqual(tableStacks.get(0))
+		expect(shuffledStacks).toContainEqual(tableStacks.get(1))
+		expect(shuffledStacks).toContainEqual(tableStacks.get(2))
+		expect(shuffledStacks).toContainEqual(tableStacks.get(3))
+		expect(shuffledStacks).toContainEqual(tableStacks.get(4))
+		expect(shuffledStacks).toContainEqual(tableStacks.get(5))
+		expect(shuffledStacks).toContainEqual(tableStacks.get(6))
+		expect(shuffledStacks).toContainEqual(tableStacks.get(7))
 	})
 })
 
@@ -195,8 +157,8 @@ describe("Distribute to Players", () => {
 		}
 		const jokersPerDeck = 0
 		const numberOfDecks = 1
-		const onStack = 2
-		const handCards = 2
+		const onStack = 0
+		const handCards = 0
 		const players: {[name: string]: Player} = {
 			"1": {
 				id: "1",
@@ -252,7 +214,7 @@ describe("Stacks", () => {
 		}
 		const jokersPerDeck = 0
 		const numberOfDecks = 1
-		const onStack = 2
+		const onStack = 0
 		const distributor = new Distributor(cardsPerDeck, jokersPerDeck, numberOfDecks, onStack)
 
 		expect(distributor.stacks.size).toEqual(2)
@@ -279,8 +241,8 @@ describe("Stacks", () => {
 		}
 		const jokersPerDeck = 0
 		const numberOfDecks = 1
-		const onStack = 2
-		const handCards = 2
+		const onStack = 0
+		const handCards = 0
 		const players: {[name: string]: Player} = {
 			"1": {
 				id: "1",
