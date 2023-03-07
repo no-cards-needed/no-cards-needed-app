@@ -299,7 +299,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 
 	const startGame = () => {
 		const distributor = new Distributor(deckCards.boundries, joker, decks, 0);
-		// distributor.shuffleCards();
+		distributor.shuffleCards();
 
 		// Convert player map to object
 		const _allPlayers = Object.fromEntries(allPlayers);

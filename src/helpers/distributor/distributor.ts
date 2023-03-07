@@ -60,13 +60,15 @@ export class Distributor {
 	}
 
 	public shuffleCards: () => void = () => {
-		let temp = this.cards
-		let shuffled = temp
-			.map(value => ({ value, sort: Math.random() }))
-			.sort((a, b) => a.sort - b.sort)
-			.map(({ value }) => value)
+		this.stacks.forEach(stack => {
+			let temp = Array.from(stack.cards)
+			let shuffled = temp
+				.map(value => ({ value, sort: Math.random() }))
+				.sort((a, b) => a.sort - b.sort)
+				.map(({ value }) => value)
 
-		this.cards = shuffled
+			stack.cards = new Set(shuffled)
+		})
 	}
 
 	public distributeCards: (handCards: number, players:{[name: string]: Player}) => void = (handCards, players) => {
@@ -84,7 +86,10 @@ export class Distributor {
 		let cardIndex = 1
 
 		for (let index = 0; index < handcardsForPlayers; index++) {
-			const card = this.cards[index]
+			// Getting a random index of a card that no player has on the hand yet
+			const randomIndex = this.getRandomCard()
+
+			const card = this.cards[randomIndex]
 			const player = players[playerIds[playerIndex]]
 			
 			if(cardIndex >= handCards) {
@@ -95,8 +100,9 @@ export class Distributor {
 			cardIndex++
 
 			// Filter out the current card from the stacks
-			const _stack = this.stacks.get(this.defaultStack)
-			_stack.cards.delete(card.cardId)
+			this.stacks.forEach((stack, stackId) => {
+				if (stack.cards.has(card.cardId)) stack.cards.delete(card.cardId)
+			})
 
 			// Add card to the players hand stack
 			if (!this.handStacks.has(player.id)) {
@@ -119,5 +125,19 @@ export class Distributor {
 	private addCardToStack: (cardId: number, stackId: number) => void = (cardId, stackId) => {
 		const stack = this.stacks.get(stackId)
 		stack.cards.add(cardId)
+	}
+
+	private getRandomCard: () => number = () => {
+		const cardAmount = this.cards.length
+
+		let randomIndex: number;
+		this.handStacks.forEach(handStack => {
+			if (handStack.cards.has(randomIndex) || randomIndex === undefined) randomIndex = this.calculateRandomCardIndex(cardAmount)
+		})
+
+		return randomIndex
+	}
+	private calculateRandomCardIndex: (cardAmount: number) => number = (cardAmount: number) => {
+		return Math.floor(Math.random() * cardAmount)
 	}
 }
