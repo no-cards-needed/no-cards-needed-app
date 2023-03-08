@@ -28,7 +28,7 @@ function ModaleEnter( {
 
 	const navigate = useNavigate()
 	const [localName, setLocalName] = useState(localStorage.getItem("name"))
-	const [localGameId, setLocalGameId] = useState("")
+	const [localGameId, setLocalGameId] = useState(gameId || "")
 	useEffect(() => {
 		// Convert to lowercase and spaces to dashes
 		setLocalGameId(localGameId.toUpperCase().replace(/ /g, '-'))
@@ -57,7 +57,7 @@ function ModaleEnter( {
 					setLoading(false)
 				} else {
 					gameId = gameId || generateLobbyString()
-					navigate(`/${gameId}`, {state: {name: localName}})
+					navigate(`/${localGameId}`, {state: {name: localName}})
 				}
 		} else if (processJoin) {
 			setDisplayKey( true )
@@ -115,7 +115,7 @@ function ModaleEnter( {
 
 			<div className="buttonContainer">
 				<Button label={"Back"} btn={"btn"} size={"medium"} type={"Secondary"} drop={"dropSmall"} style={{width: "100%"}} click={discardKey}/>
-				<Button label={"Next"} btn={"btn"} size={"medium"} type={"Primary"}  drop={"dropSmall"}style={{width: "100%"}} click={() => gameId !== "" ? nextKey() : null}/>
+				<Button label={"Next"} btn={"btn"} size={"medium"} type={"Primary"}  drop={"dropSmall"}style={{width: "100%"}} click={() => localGameId !== "" ? nextKey() : null}/>
 			</div>
 		</div>  : null }
 
