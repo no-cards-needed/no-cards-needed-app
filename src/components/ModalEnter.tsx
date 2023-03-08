@@ -28,6 +28,11 @@ function ModaleEnter( {
 
 	const navigate = useNavigate()
 	const [localName, setLocalName] = useState(localStorage.getItem("name"))
+	const [localGameId, setLocalGameId] = useState("")
+	useEffect(() => {
+		// Convert to lowercase and spaces to dashes
+		setLocalGameId(localGameId.toLowerCase().replace(/ /g, '-'))
+	}, [localGameId])
 
 	const [ displayName, setDisplayName ] = useState( true )
 	const [ displayKey, setDisplayKey ] = useState( false )
@@ -106,7 +111,7 @@ function ModaleEnter( {
 		{ displayKey ? <div className="modal" id="basicDrop" style={{display: 'flex'}}>
 		<div className="headline" style={{textAlign: "center", letterSpacing: "0.01em"}}>  Which Lobby do you <br />want to Join? </div>
 
-			<input type="text" id="key" required minLength={3} maxLength={20} placeholder="Enter Access Code" onChange={(e) => setGameId(e.target.value)} value={gameId}/>
+			<input type="text" id="key" required minLength={3} maxLength={20} placeholder="Enter Access Code" onChange={(e) => setLocalGameId(e.target.value)} value={localGameId}/>
 
 			<div className="buttonContainer">
 				<Button label={"Back"} btn={"btn"} size={"medium"} type={"Secondary"} drop={"dropSmall"} style={{width: "100%"}} click={discardKey}/>

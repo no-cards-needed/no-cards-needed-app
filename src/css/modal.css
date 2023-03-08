@@ -57,6 +57,7 @@ input[type="text"] {
 
     border: none;
     color: var(--vg-100);
+    text-transform: uppercase;
   }
 
   input[type="text"]:focus {
