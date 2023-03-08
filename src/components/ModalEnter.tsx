@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, NavigateFunction } from 'react-router-dom';
 import { setItem, getItem } from '../helpers/localStorageHelper';
+import { generateLobbyString } from '../helpers/words';
 import Button from "./Button"
 
 
@@ -50,7 +51,8 @@ function ModaleEnter( {
 					setName(localName)
 					setLoading(false)
 				} else {
-					navigate('/auth', {state: {name: localName}})
+					gameId = gameId || generateLobbyString()
+					navigate(`/${gameId}`, {state: {name: localName}})
 				}
 		} else if (processJoin) {
 			setDisplayKey( true )
@@ -74,7 +76,7 @@ function ModaleEnter( {
 	function nextKey() {
 		setProcessJoin(false) 
 		setDisplayKey( false )
-		navigate('/auth', {state: {name: localName, gameId: gameId}})
+		navigate(`/${gameId.toLowerCase()}`, {state: {name: localName, gameId: gameId}})
 	}
 
 	const inputElement = useRef(null)

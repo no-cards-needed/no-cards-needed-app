@@ -4,7 +4,7 @@ import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
 import { ref, getDatabase, set, onValue, onDisconnect, onChildAdded, serverTimestamp, DataSnapshot } from "firebase/database";
 
 import { useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 
 import CreateGame from "./components/CreateGame"
 import Loading from "./components/Loading"
@@ -95,7 +95,8 @@ export const GameWrapper = ({app}: {app:any}) => {
 	const [ loading, setLoading ] = useState(false)
 
 	// TODO: Generate Random room name
-	const [gameId, setGameId] = useState("123")
+
+	const [gameId, setGameId] = useState(useParams().gameId || "DEBUG")
 
 	// Getting the set User Name
 	const {state} = useLocation();
@@ -212,14 +213,21 @@ export const GameWrapper = ({app}: {app:any}) => {
 		})
 
 		// Add the new player to the "allPlayers" state
-		onChildAdded(allPlayersRef.current, (snapshot) => {
-			const addedPlayer = snapshot.val();
+		// onChildAdded(allPlayersRef.current, (snapshot) => {
+		// 	const addedPlayer = snapshot.val();
 
-			setAllPlayers((prev) => {
-				const _prev = new Map(prev);
-				_prev.set(addedPlayer.id, addedPlayer);
-				return _prev;
-			})
+		// 	setAllPlayers((prev) => {
+		// 		const _prev = new Map(prev);
+		// 		_prev.set(addedPlayer.id, addedPlayer);
+		// 		return _prev;
+		// 	})
+		// })
+		onValue(allPlayersRef.current, (snapshot) => {
+			const players = snapshot.val();
+			if (players) {
+				const _players: ListOfPlayers = new Map(Object.entries(players));
+				setAllPlayers(_players);
+			}
 		})
 	}
 

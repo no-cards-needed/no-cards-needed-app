@@ -48,14 +48,14 @@ function toggleSound() {
 
 
 		{
-		processJoin || processCreate ? <ModalEnter 
-		processCreate={processCreate}
-		setProcessCreate={setProcessCreate}
-		processJoin={processJoin}
-		setProcessJoin={setProcessJoin}
-		gameId={gameId}
-		setGameId={setGameId}
-		/> : null
+			processJoin || processCreate ? <ModalEnter 
+				processCreate={processCreate}
+				setProcessCreate={setProcessCreate}
+				processJoin={processJoin}
+				setProcessJoin={setProcessJoin}
+				gameId={gameId}
+				setGameId={setGameId}
+				/> : null
 		}
 		
 	</div>

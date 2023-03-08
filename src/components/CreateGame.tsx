@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from "framer-motion" 
 
 import Rive from '@rive-app/react-canvas';
-import useSound from 'use-sound';
 
 import MenuHeader from "./MenuHeader"
 import Counter from './Counter';
