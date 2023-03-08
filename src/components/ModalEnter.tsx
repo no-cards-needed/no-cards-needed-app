@@ -81,7 +81,7 @@ function ModaleEnter( {
 	function nextKey() {
 		setProcessJoin(false) 
 		setDisplayKey( false )
-		navigate(`/${gameId.toLowerCase()}`, {state: {name: localName, gameId: gameId}})
+		navigate(`/${localGameId.toLowerCase()}`, {state: {name: localName, gameId: localGameId}})
 	}
 
 	const inputElement = useRef(null)
