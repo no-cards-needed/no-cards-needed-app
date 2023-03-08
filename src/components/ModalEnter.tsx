@@ -57,7 +57,7 @@ function ModaleEnter( {
 					setLoading(false)
 				} else {
 					gameId = gameId || generateLobbyString()
-					navigate(`/${localGameId}`, {state: {name: localName}})
+					navigate(`/${gameId}`, {state: {name: localName}})
 				}
 		} else if (processJoin) {
 			setDisplayKey( true )
