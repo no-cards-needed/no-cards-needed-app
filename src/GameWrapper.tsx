@@ -1,7 +1,7 @@
 // Firebase Stuff
 // Import the functions you need from the SDKs you need
 import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
-import { ref, getDatabase, set, onValue, onDisconnect, onChildAdded, serverTimestamp, DataSnapshot } from "firebase/database";
+import { ref, getDatabase, set, onValue, onDisconnect, onChildAdded, serverTimestamp, DataSnapshot, remove } from "firebase/database";
 
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
@@ -92,7 +92,7 @@ export const GameWrapper = ({app}: {app:any}) => {
     const [hand, setHand] = useState(5)
     const [pile, setPile] = useState(true)
 	const [gameStarted, setGameStarted] = useState(false)
-	const [ loading, setLoading ] = useState(false)
+	const [loading, setLoading] = useState(true)
 
 	// TODO: Generate Random room name
 
@@ -332,10 +332,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 		setGameStarted(true);
 	}
 
-	// Page Load
-	useEffect(() => {
-		state?.name ? setName(state.name) : (setLoading(true))
-
+	const signIn = () => {
 		// Connect to Firebase
 		signInAnonymously(getAuth(app.current)).catch((error) => {
 			// Handle Errors here.
@@ -357,9 +354,7 @@ export const GameWrapper = ({app}: {app:any}) => {
 					avatar: Math.ceil(Math.random() * 5)
 				})
 				setUserId(user.uid);
-
 				onDisconnect(playerRef.current).remove();
-	
 				// Connected
 				initGame()
 			} else {
@@ -368,6 +363,28 @@ export const GameWrapper = ({app}: {app:any}) => {
 				console.log("👁️ [gamewrapper] User is signed out");
 			}
 		});
+	}
+
+	useEffect(() => {
+		if(!loading) {
+			signIn()
+		}
+	}, [loading])
+
+	const signOut = () => {
+		if(playerRef.current) remove(playerRef.current)
+	}
+
+	// Page Load
+	useEffect(() => {
+		if(state?.name) {
+			setName(state.name)
+			setLoading(false)
+		} else {
+			setLoading(true)
+		}
+
+		
 
 		return () => {
 			// Cleanup, remove the player from the game
@@ -375,6 +392,8 @@ export const GameWrapper = ({app}: {app:any}) => {
 			// 	console.log("👁️ [gamewrapper] cleanup, removed player from game", userId, allPlayersRef.current);
 			// 	allPlayersRef.current.child(userId).remove();
 			// }
+			console.log("👁️ [gamewrapper] cleanup, removed player from game", userId, allPlayersRef.current);
+			signOut()
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);

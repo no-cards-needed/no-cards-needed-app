@@ -31,7 +31,7 @@ function ModaleEnter( {
 	const [localGameId, setLocalGameId] = useState("")
 	useEffect(() => {
 		// Convert to lowercase and spaces to dashes
-		setLocalGameId(localGameId.toLowerCase().replace(/ /g, '-'))
+		setLocalGameId(localGameId.toUpperCase().replace(/ /g, '-'))
 	}, [localGameId])
 
 	const [ displayName, setDisplayName ] = useState( true )
