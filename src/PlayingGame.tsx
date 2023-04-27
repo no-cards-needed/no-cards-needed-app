@@ -260,15 +260,17 @@ function PlayingGame({
 			<div style={{background: "#DEDBE5", position: "fixed"}}>
 				<div className='backgroundElement'></div>
 				<div className="playingArea criticalMaxWidth">
-				{
-					Array.from(tableStacks).map(([stackId, stack]) => {
-						if(stack.stackType !== "hand" && stack.stackType !== "hidden") {
-							return (
-								<Stack key={stackId} stackType={stack.stackType} stackRef={(el: HTMLDivElement) => stacksDomRef.current.set(stackId, el)}/>
-							)
-						} else return null
-					})
-				}
+					<div className="stackArea">
+						{
+							Array.from(tableStacks).map(([stackId, stack]) => {
+								if(stack.stackType !== "hand" && stack.stackType !== "hidden") {
+									return (
+										<Stack key={stackId} stackType={stack.stackType} stackRef={(el: HTMLDivElement) => stacksDomRef.current.set(stackId, el)}/>
+									)
+								} else return null
+							})
+						}
+					</div>
 				</div>
 
 				<div className="cards">

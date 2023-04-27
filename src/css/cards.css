@@ -18,17 +18,25 @@
   .playingArea {
     position: fixed;
     width: 100vw;
+    max-width: min(726px, 100%);
     top: 80px;
     height: calc(100vh - 224px);
 
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 16px;
+
 
     z-index: 0;
     overflow: auto;
+  }
+
+  .stackArea {
+    display: grid;
+    gap: 16px;
+
+    z-index: 1;
+    overflow: visible;
   }
 
   .playingAreaColumn {
@@ -52,6 +60,9 @@
     gap: 32px;
   }
 
+
+
+
   .cardDropZone {
     width: 80px;
     height: 112px;
@@ -73,6 +84,12 @@
     border: 3px dashed var(--violet-30);
     background: none;
   }
+
+  .hand .cardDropZone {
+    height: 129px;
+    border: none;
+  }
+
 
   .pileSize {
     position: relative;

@@ -22,45 +22,42 @@ function Game() {
             setActiveTricks(false) 
             setLashTextTricks('Show Tricks')
         } else { 
-          setActiveTricks(true) 
-          setLashTextTricks('Hide Tricks')
+            setActiveTricks(true) 
+            setLashTextTricks('Hide Tricks')
 
-          setActiveRemoved(false) 
-          setLashTextRemoved('Show Removed Cards')
+            setActiveRemoved(false) 
+            setLashTextRemoved('Show Removed Cards')
         }
-      } 
+    } 
 
-      function toggleDisplayRemoved() {
+    function toggleDisplayRemoved() {
         if (activeRemoved) {   
             setActiveRemoved(false) 
             setLashTextRemoved('Show Removed Cards')
         } else { 
-          setActiveRemoved(true) 
-          setLashTextRemoved('Hide Removed Cards')
+            setActiveRemoved(true) 
+            setLashTextRemoved('Hide Removed Cards')
 
-          setActiveTricks(false) 
-          setLashTextTricks('Show Tricks')
+            setActiveTricks(false) 
+            setLashTextTricks('Show Tricks')
         }
-      } 
+    } 
     
     return (
             <div style={{background: "#DEDBE5", position: "fixed"}}>
                 <div className='backgroundElement'></div>
                 <div className="playingArea criticalMaxWidth">
-                    <div className="playingAreaColumn">
-                        <div className="playingAreaRow">
-                            <div className="cardDropZone">
-                                <div className="pileSize">55</div>
-                            </div>
-                            <div className="cardDropZone"></div>
+                    <div className="stackArea">
+                        <div className="cardDropZone">
+                            <div className="pileSize">55</div>
                         </div>
-                        <div className="playingAreaRow">
-                            <div className="cardContainer" id="dropSmall">
-                                <div className="stackZone"></div>
-                                <div className="spreadZone"></div>                               
-                            </div>
-                            <div className="cardDropZone"></div>
+                        <div className="cardDropZone"></div>
+
+                        <div className="cardContainer" id="dropSmall">
+                            <div className="stackZone"></div>
+                            <div className="spreadZone"></div>                               
                         </div>
+                        <div className="cardDropZone"></div>
                     </div>
                 </div>
 
@@ -107,6 +104,6 @@ function Game() {
                 </div>
             </div>
     );
-  }   
+}   
 
-  export default Game
+export default Game

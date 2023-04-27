@@ -33,7 +33,7 @@ function toggleSound() {
 	return (
 	<div className="maxWidth">
 		<div className="startScreen noselect">
-			<Button iconLeading={stateSoundOn ? soundOn : soundOff} btn={"btn"} size={"medium"} type={"Primary"} drop={"dropSmall"} style={{position: "relative", top: "28.5px", left: "12.5px", width: "48px"}} click={toggleSound} />
+			<Button iconLeading={stateSoundOn ? soundOn : soundOff} btn={"btn"} size={"medium"} type={"Primary"} drop={"dropSmall"} style={{position: "relative", top: "16px", left: "12.5px", width: "48px"}} click={toggleSound} />
 			<img style={{marginBottom: "10%", height: "30vh", marginTop: "10vh"}} src={Image} alt=""/>
 			<Button label={"Create Game"} btn={"btnBig"} size={""} type={"Primary"} drop={"basicDrop"} click={() => setProcessCreate(true)} />
 			<Button label={"Join Game"} btn={"btnBig"} size={""} type={"Secondary"} drop={"basicDrop"} click={() => setProcessJoin(true)} />

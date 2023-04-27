@@ -125,7 +125,7 @@ const navigate = useNavigate()
 				</div>
 			</motion.div>
 
-		<div className="modalBackground" style={{display:displayModal}}>
+		<div className="modalBackground" style={{display:displayModal, zIndex: "9999"}}>
 		<div className="modal" id="basicDrop">
 			<p style={{textAlign: "center", letterSpacing: "0.01em"}}>  Do You Really Want to <br/> Leave This Game? </p>
 			<div className="buttonContainer">
