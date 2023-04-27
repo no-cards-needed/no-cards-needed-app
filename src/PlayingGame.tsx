@@ -266,10 +266,12 @@ function PlayingGame({
 								if(stack.stackType !== "hand" && stack.stackType !== "hidden") {
 									return (
 										<Stack key={stackId} stackType={stack.stackType} stackRef={(el: HTMLDivElement) => stacksDomRef.current.set(stackId, el)}/>
+										
 									)
 								} else return null
 							})
 						}
+						<Stack key={9} stackType={"front"} stackRef={(el: HTMLDivElement) => stacksDomRef.current.set(9, el)}/>
 					</div>
 				</div>
 
