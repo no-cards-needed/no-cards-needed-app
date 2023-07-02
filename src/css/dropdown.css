@@ -1,22 +1,22 @@
 .dropdown {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 
-    width: 140px;
-    max-height: 48px;
+  width: 140px;
+  max-height: 48px;
 
-    background: var(--vg-20);
-    border-radius: 12px;
-    z-index: 1;
+  background: var(--vg-20);
+  border-radius: 12px;
+  z-index: 1;
 }
 
 .dropdownUnfolded {
   display: flex;
   flex-direction: column;
   align-items: center;
-  
+
   border-radius: 12px;
 
   z-index: 1;
@@ -24,55 +24,54 @@
 }
 
 .dropdownHead {
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 
-    position: relative;
-    width: 140px;
+  position: relative;
+  width: 140px;
 
-    border-radius: 12px;
-    padding: 12.5px 16px 11.5px;
-    height: 48px;
+  border-radius: 12px;
+  padding: 12.5px 16px 11.5px;
+  height: 48px;
 
+  background: var(--violet-prime-50);
+  color: var(--vg-0);
+  z-index: 1;
 
-    background: var(--violet-prime-50);
-    color: var(--vg-0);
-    z-index: 1;
+  cursor: pointer;
 
-    cursor: pointer;
+  border: 0.75px solid var(--border);
+}
 
-    border: 0.75px solid var(--border);
- }
+.dropdownHead:active {
+  background: var(--violet-70);
+}
 
- .dropdownHead:active {
-    background: var(--violet-70);
- }
+.dropdownItem {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 8px 12px 7px;
+  gap: 4px;
 
-  .dropdownItem {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 8px 12px 7px;
-    gap: 4px;
-    
-    width: 140px;
-    height: 40px;
-    
-    background: var(--vg-20);
-    
-    z-index: 1;
-    
-    cursor: pointer;
-  }
+  width: 140px;
+  height: 40px;
 
-  .dropdownItem:active {
-    background: var(--vg-30);
-  }
+  background: var(--vg-20);
 
-  .dropdownItem:last-child {
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
-  }
+  z-index: 1;
+
+  cursor: pointer;
+}
+
+.dropdownItem:active {
+  background: var(--vg-30);
+}
+
+.dropdownItem:last-child {
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}

@@ -1,145 +1,201 @@
 .labelItemGroup {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
 
-    flex: none;
-    flex-grow: 1;
-  }
- 
-  .labelItemGroupContainer {
-    display: flex; 
-    flex-Direction: row; 
-    justify-content: space-between; 
-    align-items: center; 
-    padding: 8px 0px; 
-    align-self: stretch;
-  }
+  flex: none;
+  flex-grow: 1;
+}
 
-  .labelIconCombo {
-    display: flex; 
-    flex-Direction: row; 
-    justify-content: left; 
-    gap: 3px;
-  }
+.labelItemGroupContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0px;
+  align-self: stretch;
+}
 
-  .settingsContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 32px 16px;
-    gap: 16px;
+.labelIconCombo {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  gap: 3px;
+}
 
-    position: relative;
-    margin: 0px 12.5px;
-    min-height: 88px;
+.settingsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 32px 16px;
+  gap: 16px;
 
-    background: var(--vg-10);
-    border-radius: 24px;
-  } 
+  position: relative;
+  margin: 0px 12.5px;
+  min-height: 88px;
 
-  .settingsContent {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-    
-    width: 100%;
-    flex: content;
-    order: 1;
-    flex-grow: 0;
-  } 
+  background: var(--vg-10);
+  border-radius: 24px;
+}
 
-  .settingsLabel {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between; 
-    align-items: center;
-    padding: 0px 8px 0px 0px;
-    gap: 8px;
+.settingsContent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
 
-    flex: none;
-    order: 0;
-    align-self: stretch;
-    flex-grow: 0;
-    cursor: pointer;
-  }
+  width: 100%;
+  flex: content;
+  order: 1;
+  flex-grow: 0;
+}
 
-  .hairline {
-    position: relative;
-    width:  100%;
-    border: .5px solid var(--vg-20);
-    border-radius: 2px;
-    align-self: stretch;
-  }
+.settingsLabel {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 8px 0px 0px;
+  gap: 8px;
 
-  .player {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+  flex: none;
+  order: 0;
+  align-self: stretch;
+  flex-grow: 0;
+  cursor: pointer;
+}
 
-    max-width: max-content;
-    padding: 4px 12px 4px 4px;
+.hairline {
+  position: relative;
+  width: 100%;
+  border: 0.5px solid var(--vg-20);
+  border-radius: 2px;
+  align-self: stretch;
+}
 
-    align-self: stretch;
-    flex-grow: 1;
+.player {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 
-    background: var(--vg-20);
-    border-radius: 8px;
-  }
+  max-width: max-content;
+  padding: 4px 12px 4px 4px;
 
-  .player p {
-    margin-left: 8px;
-  }
+  align-self: stretch;
+  flex-grow: 1;
 
+  background: var(--vg-20);
+  border-radius: 8px;
+}
 
-  .playerContainer {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    gap: 8px;
+.player p {
+  margin-left: 8px;
+}
 
-    width: 100%;
-    flex-wrap: wrap;
-  }
+.playerContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 8px;
 
-  .countTag {
-    display: flex;
-    flex-direction: row;
-    background-color: var(--vg-20);
-    border-radius: 4px;
-    padding: 2px 8px;
-    height: fit-content;
-    margin-left: 40px;
-  }
+  width: 100%;
+  flex-wrap: wrap;
+}
 
-  .multiCardBox {
-    display: flex;
-    flex-direction: row;
-    gap: 4px;
-    align-items: center;
-  }
+.countTag {
+  display: flex;
+  flex-direction: row;
+  background-color: var(--vg-20);
+  border-radius: 4px;
+  padding: 2px 8px;
+  height: fit-content;
+  margin-left: 40px;
+}
 
-  .miniCards:last-child {
-    height: 56px;
-    width: 40px;
-    border-radius: 5px;
-    background-color: var(--vg-0);
-    margin-right: 0;
-  }
+.multiCardBox {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
+}
 
-  .miniCards {
-    height: 56px;
-    width: 40px;
-    border-radius: 5px;
-    background-color: var(--vg-0);
-    margin-right: -32px;
-  }
+.miniCards:last-child {
+  height: 56px;
+  width: 40px;
+  border-radius: 5px;
+  background-color: var(--vg-0);
+  margin-right: 0;
+}
 
-  .cardRow {
-    height: 56px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-  }
+.miniCards {
+  height: 56px;
+  width: 40px;
+  border-radius: 5px;
+  background-color: var(--vg-0);
+  margin-right: -32px;
+}
+
+.cardRow {
+  height: 56px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.help {
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  border: 0.75px solid var(--border);
+  color: var(--vg-0);
+  background: var(--vg-50);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.help:active {
+  background: var(--vg-70);
+}
+
+.help::before {
+  content: "";
+  position: absolute;
+  width: 40px;
+  height: 40px;
+}
+
+.helpExplanation {
+  display: flex;
+  padding: 8px;
+  border-radius: 2px;
+  background: var(--violet-70);
+  color: var(--vg-0);
+  border: 0.75px solid var(--border);
+
+  position: fixed;
+  margin: auto;
+  /* bottom: 24px; */
+  z-index: 100;
+}
+
+.helpExplanation::before {
+  content: "";
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+}
+
+.helpContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  /* position: relative; */
+  justify-items: center;
+
+  width: 300px;
+}
