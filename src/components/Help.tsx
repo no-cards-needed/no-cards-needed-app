@@ -3,8 +3,6 @@ import { useState } from "react";
 function Help({ explanation }: { explanation: string }) {
   const [display, setDisplay] = useState("none");
 
-  // useScroll => setDisplay(none)
-
   return (
     <div style={{ position: "relative" }}>
       <button
