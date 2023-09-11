@@ -3,8 +3,10 @@ import { useState } from "react";
 function Help({ explanation }: { explanation: string }) {
   const [display, setDisplay] = useState("none");
 
+  // useScroll => setDisplay(none)
+
   return (
-    <>
+    <div style={{ position: "relative" }}>
       <button
         className="help"
         onClick={() => {
@@ -25,7 +27,7 @@ function Help({ explanation }: { explanation: string }) {
       >
         <p>{explanation}</p>
       </div>
-    </>
+    </div>
   );
 }
 export default Help;

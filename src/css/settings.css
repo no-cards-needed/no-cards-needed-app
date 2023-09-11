@@ -163,29 +163,33 @@
 .help::before {
   content: "";
   position: absolute;
-  width: 40px;
+  width: 80px;
   height: 40px;
 }
 
 .helpExplanation {
   display: flex;
   padding: 8px;
-  border-radius: 2px;
-  background: var(--violet-70);
+  border-radius: 8px;
+  background: var(--violet-30);
   color: var(--vg-0);
   border: 0.75px solid var(--border);
 
-  position: fixed;
+  position: absolute;
+  width: max-content;
   margin: auto;
   /* bottom: 24px; */
-  z-index: 100;
+  /* z-index: 100; */
+  bottom: 24px;
 }
 
 .helpExplanation::before {
   content: "";
   position: fixed;
+  z-index: 10;
   width: 100vw;
   height: 100vh;
+  /* background-color: rgba(0, 0, 0, 0.5); */
   top: 0;
   left: 0;
 }
@@ -197,5 +201,5 @@
   /* position: relative; */
   justify-items: center;
 
-  width: 300px;
+  max-width: 300px;
 }
