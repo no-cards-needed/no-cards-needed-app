@@ -13,6 +13,12 @@ type GameStatus = {
 	timestamp: number | object,
 }
 
+type GameLog = {
+	message: string,
+	lastPlayerId: string,
+	lastPlayerCardsOnHand: number,
+}[]
+
 type Card = {
 	cardId: number,
 	symbol: string,

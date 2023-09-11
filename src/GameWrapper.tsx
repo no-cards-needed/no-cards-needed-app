@@ -24,6 +24,10 @@ import { miniCards } from "./helpers/Cards"
 import { Distributor } from "./helpers/distributor/distributor"
 import useStateRef from "./helpers/hooks/useStateRef"
 
+function translateCardName(symbol: string) {
+	return symbol
+}
+
 const convertStacksMapToObject = (stacks: Map<number | string, Stack>) => {
 	console.log("👁️ Convert Stacks Map to Object", stacks)
 	const _stacks: Map<number | string, any> = stacks
@@ -144,6 +148,9 @@ export const GameWrapper = ({ app }: { app: any }) => {
 		Map<number | string, Stack>
 	>(new Map([]))
 
+	const gameLogRef = useRef(null)
+	const [gameLogState, setGameLogState] = useState<GameLog>()
+
 	const [processCreate, setProcessCreate] = useState(true)
 	const [processJoin, setProcessJoin] = useState(false)
 
@@ -167,6 +174,12 @@ export const GameWrapper = ({ app }: { app: any }) => {
 		tableStacksRef.current = ref(
 			getDatabase(app.current),
 			`game/${gameId}/tableStacks/`
+		)
+
+		// Game Logging
+		gameLogRef.current = ref(
+			getDatabase(app.current),
+			`game/${gameId}/gameLog/`
 		)
 
 		// A new player connected to the game
@@ -272,6 +285,11 @@ export const GameWrapper = ({ app }: { app: any }) => {
 			handleStackChange(snapshot, "hand")
 		})
 
+		// Game Log Value Change in FireBase Realtime Database
+		onValue(gameLogRef.current, (snapshot) => {
+			setGameLogState(snapshot.val())
+		})
+
 		// Add the new player to the "allPlayers" state
 		// onChildAdded(allPlayersRef.current, (snapshot) => {
 		// 	const addedPlayer = snapshot.val();
@@ -337,6 +355,48 @@ export const GameWrapper = ({ app }: { app: any }) => {
 						e
 					)
 				)
+
+			// Add the card to the game log
+			// e.g. Mila played a card
+			// e.g. Mila took a card
+			// e.g. Mila played 9 of Hearts
+			// e.g. Mila took 9 of Hearts
+			// e.g. Mila shuffled a stack
+
+			const stack =
+				tableStacksState.get(card.onStack) ||
+				handStacksState.get(card.onStack)
+			const wasStackVisible =
+				stack.stackType === "front" || stack.stackType === "open"
+			const wasStackHand = stack.stackType === "hand"
+
+			const logMessage = `${allPlayers.get(userId).name} ${
+				wasStackHand ? "took" : "played"
+			} ${wasStackVisible ? translateCardName(card.symbol) : "a card"}`
+
+			const handStack = handStacksState.get(userId)
+			!wasStackHand
+				? handStack.cards.delete(card.cardId)
+				: handStack.cards.add(card.cardId)
+
+			const newGameLog: GameLog = gameLogState
+				? [
+						...gameLogState,
+						{
+							message: logMessage,
+							lastPlayerId: userId,
+							lastPlayerCardsOnHand: handStack.cards.size,
+						},
+				  ]
+				: [
+						{
+							message: logMessage,
+							lastPlayerId: userId,
+							lastPlayerCardsOnHand: handStack.cards.size,
+						},
+				  ]
+
+			set(gameLogRef.current, newGameLog)
 		} else {
 			updateGameStatusTimestamp()
 		}
@@ -593,6 +653,7 @@ export const GameWrapper = ({ app }: { app: any }) => {
 					gameStatus={gameStatusState}
 					setGameStatus={setGameStatus}
 					userId={userId}
+					gameLog={gameLogState}
 					syncedCards={cardsState}
 					setCard={setCard}
 					syncedTableStacks={tableStacksState}

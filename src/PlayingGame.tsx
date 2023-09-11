@@ -14,6 +14,7 @@ type PlayingGameProps = {
 	gameStatus: GameStatus
 	setGameStatus: (gameStatus: GameStatus) => void
 	userId: string
+	gameLog: GameLog
 
 	syncedCards: Map<number, Card>
 	setCard: (card: Card, cardId: number, timestamp: number) => void
@@ -42,6 +43,7 @@ function PlayingGame({
 	gameStatus,
 	setGameStatus,
 	userId,
+	gameLog,
 
 	syncedCards,
 	setCard,
@@ -92,14 +94,6 @@ function PlayingGame({
 		stackId: number | string,
 		userInitiated: boolean = false
 	) => {
-		console.log(
-			"Placing card",
-			usedCardsRef.current.get(cardId).symbol,
-			" with id ",
-			cardId,
-			"on stack",
-			stackId
-		)
 		const _usedCards = usedCardsRef.current
 		// If card is "owned" by user, place it in the hand stack, otherwise place it in the hidden stack
 
@@ -187,13 +181,13 @@ function PlayingGame({
 			recievedCards.forEach((card) => {
 				// Check if card is on hand or on table
 				let onStack
-				console.log(
-					"ONSTACK: ",
-					card.onStack,
-					typeof card.onStack,
-					"CardId",
-					card.cardId
-				)
+				// console.log(
+				// 	"ONSTACK: ",
+				// 	card.onStack,
+				// 	typeof card.onStack,
+				// 	"CardId",
+				// 	card.cardId
+				// )
 				if (typeof card.onStack === "string") {
 					onStack = card.onStack === userId ? userId : "hidden"
 					recievedCards.set(card.cardId, {
@@ -391,9 +385,9 @@ function PlayingGame({
 				</div>
 
 				<GameHeader
+					gameLog={gameLog}
 					players={players}
 					gameStatus={gameStatus}
-					avatars={avatars}
 				/>
 
 				<div className="hand criticalMaxWidth" id="basicDrop">
