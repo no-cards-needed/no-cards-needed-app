@@ -11,7 +11,7 @@ type GameStatus = {
 	created: object,
 	currentGameState: "lobby" | "game",
 	timestamp: number | object,
-} 
+}
 
 type Card = {
 	cardId: number,
@@ -24,7 +24,7 @@ type UsedCardsMap = Map<number, UsedCard>
 interface UsedCard extends Card {
 	onStackType: Stack["stackType"]
 
-	controlledPosition: {x: number, y: number},
+	controlledPosition: { x: number, y: number },
 	zIndex: number,
 	animation: string,
 	movedAside: "left" | "right" | "none",
@@ -60,6 +60,6 @@ type Stack = {
 	/**
 	 * Position of stack in Stack-Grid
 	 */
-	position: {x: number, y: number},
+	position: { x: number, y: number },
 	cards?: Set<number>,
 }
