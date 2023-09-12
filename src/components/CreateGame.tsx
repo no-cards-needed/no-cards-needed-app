@@ -18,6 +18,7 @@ import cardIcon from "../assets/iconsBlack/card.svg";
 import deckIcon from "../assets/iconsBlack/deck.svg";
 import handIcon from "../assets/iconsBlack/hand.svg";
 import share from "../assets/iconsWhite/share.svg";
+import copy from "../assets/iconsBlack/copy.svg";
 
 import { miniCards } from "../helpers/Cards";
 
@@ -103,12 +104,20 @@ function Menu({
       });
   };
 
+  const copyId = async () => {
+    navigator.clipboard.writeText(URL);
+  };
+
   useEffect(() => {
     setTotalCards((deckCards.count + joker) * decks);
 
     setCardsInDrawPile(totalCards - players.size * hand);
 
-    if (split) setHand(totalCards / players.size);
+    if (split) {
+      setHand(totalCards / players.size);
+    } else if (!split && hand > totalCards) {
+      setHand(totalCards / players.size);
+    }
 
     totalCards % players.size !== 0
       ? setMaxValue(totalCards / players.size - 1)
@@ -156,7 +165,7 @@ function Menu({
             alignItems: "flex-start",
             gap: "16px",
             width: "100%",
-            maxWidth: "394px",
+            maxWidth: "100%",
           }}
         >
           <div className="labelItemGroup">
@@ -164,21 +173,31 @@ function Menu({
               <label>access code</label>
               <Help explanation="Your friends will need this code to join the game." />
             </div>
-            <div className="infoTag">
-              <label>{gameId}</label>
+            <div className="infoTag" onClick={copyId}>
+              <label onClick={copyId}>{gameId}</label>
             </div>
           </div>
 
           <div className="labelItemGroup">
             <label>share access</label>
-            <Button
-              btn={"quadBtnSmall"}
-              iconLeading={share}
-              size={"small"}
-              type={"Primary"}
-              drop={"dropSmall"}
-              click={shareId}
-            />
+            <div className="labelIconCombo" style={{ gap: "8px" }}>
+              <Button
+                btn={"quadBtnSmall"}
+                iconLeading={share}
+                size={"small"}
+                type={"Primary"}
+                drop={"dropSmall"}
+                click={shareId}
+              />
+              <Button
+                btn={"quadBtnSmall"}
+                iconLeading={copy}
+                size={"small"}
+                type={"Secondary"}
+                drop={"dropSmall"}
+                click={copyId}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -217,7 +236,6 @@ function Menu({
               <div className="helpContainer">
                 <img src={cardIcon} className="iconContainer" alt=""></img>
                 <label>cards in deck</label>
-                <Help explanation="Here you can choose what kind of deck you want to use for your game." />
               </div>
               <div className="multiCardBox">
                 <div className="cardRow">
@@ -251,7 +269,6 @@ function Menu({
               <div className="labelIconCombo">
                 <img src={jokerIcon} className="iconContainer" alt=""></img>
                 <label>Jokers</label>
-                <Help explanation="Here you can choose what kind of deck you want to use for your game." />
               </div>
               <div className="cardRow">
                 <AnimatePresence>
@@ -448,6 +465,7 @@ function Menu({
               <div className="labelIconCombo">
                 <img src={jokerIcon} className="iconContainer" alt=""></img>
                 <label>jokers per deck</label>
+                <Help explanation="How many Jokers do you want?" />
               </div>
               <Counter
                 value={joker}
@@ -505,6 +523,7 @@ function Menu({
               <div className="labelIconCombo">
                 <img src={deckIcon} className="iconContainer" alt=""></img>
                 <label>number of decks</label>
+                <Help explanation="Do you need more than one deck to play your game?" />
               </div>
               <Counter
                 value={decks}
@@ -566,7 +585,8 @@ function Menu({
             >
               <div className="labelIconCombo">
                 <img src={handIcon} className="iconContainer" alt=""></img>
-                <label>Hand Cards</label>
+                <label>Cards on Hand</label>
+                <Help explanation="Amount of cards you will have at the beginning of the game." />
               </div>
               <div style={{ opacity: split ? "0.7" : "1" }}>
                 <Counter
@@ -610,14 +630,20 @@ function Menu({
           </div>
 
           <div className="labelItemGroupContainer">
-            <p>Split All Cards Equally</p>
+            <div className="helpContainer">
+              <p>Split All Cards Equally</p>
+              <Help explanation="You can turn this on, if everyone should get the same amount of cards." />
+            </div>
             <Toggle toggleOn={split} setToggleOn={setSplit} />
           </div>
 
           <div className="hairline"></div>
 
           <div className="labelItemGroupContainer">
-            <p>Show Draw Pile</p>
+            <div className="helpContainer">
+              <p>Show Draw Pile</p>
+              <Help explanation="Turn this on, if you want your game to have a drawing pile." />
+            </div>
             <Toggle toggleOn={pile} setToggleOn={setPile} />
           </div>
 
