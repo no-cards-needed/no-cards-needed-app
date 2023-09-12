@@ -80,6 +80,7 @@ function GameHeader({
               height: "32px",
               width: "32px",
               borderRadius: "9px",
+              alignItems: "center",
             }}
           >
             {lastPlayerState?.avatar === 1 ? (
@@ -100,11 +101,21 @@ function GameHeader({
             </label>
           )}
         </div>
-        <label>
-          {!gameLog || gameLog?.length === 0
-            ? "None"
-            : gameLog[gameLog.length - 1].message}
-        </label>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "0px",
+            transform: "translateY(-2px)",
+          }}
+        >
+          <label style={{ color: "var(--vg-100)" }}>Last Activity</label>
+          <label>
+            {!gameLog || gameLog?.length === 0
+              ? "No Activities"
+              : gameLog[gameLog.length - 1].message}
+          </label>
+        </div>
       </div>
       <Button
         iconLeading={hamburger}
