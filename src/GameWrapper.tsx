@@ -24,7 +24,7 @@ import { miniCards } from "./helpers/Cards";
 import { Distributor } from "./helpers/distributor/distributor";
 import useStateRef from "./helpers/hooks/useStateRef";
 
-♠var color = "";
+var color = "";
 var number = "";
 
 function translateCardName(symbol: string) {
@@ -39,34 +39,34 @@ function translateCardName(symbol: string) {
   }
 
   if (symbol.includes("2")) {
-    number = "Two";
+    number = "2";
   } else if (symbol.includes("3")) {
-    number = "Three";
+    number = "3";
   } else if (symbol.includes("4")) {
-    number = "Four";
+    number = "4";
   } else if (symbol.includes("5")) {
-    number = "Five";
+    number = "5";
   } else if (symbol.includes("6")) {
-    number = "Six";
+    number = "6";
   } else if (symbol.includes("7")) {
-    number = "Seven";
+    number = "7";
   } else if (symbol.includes("8")) {
-    number = "Eight";
+    number = "8";
   } else if (symbol.includes("9")) {
-    number = "Nine";
+    number = "9";
   } else if (symbol.includes("10")) {
-    number = "Ten";
+    number = "10";
   } else if (symbol.includes("J")) {
-    number = "Jack";
+    number = "Jack of ";
   } else if (symbol.includes("Q")) {
-    number = "Queen";
+    number = "Queen of ";
   } else if (symbol.includes("K")) {
-    number = "King";
+    number = "King of ";
   } else if (symbol.includes("A")) {
-    number = "Ace";
+    number = "Ace of ";
   }
 
-  return `${number} of ${color}`;
+  return `${number}${color}`;
 }
 
 const convertStacksMapToObject = (stacks: Map<number | string, Stack>) => {
