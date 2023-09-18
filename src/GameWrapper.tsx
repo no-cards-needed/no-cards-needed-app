@@ -54,7 +54,7 @@ function translateCardName(symbol: string) {
 		number = "8"
 	} else if (symbol.includes("9")) {
 		number = "9"
-	} else if (symbol.includes("10")) {
+	} else if (symbol.includes("T")) {
 		number = "10"
 	} else if (symbol.includes("J")) {
 		number = "Jack of "
@@ -571,7 +571,7 @@ export const GameWrapper = ({ app }: { app: any }) => {
 			deckCards.boundries,
 			joker,
 			decks,
-			0
+			3
 		)
 		distributor.shuffleCards()
 
