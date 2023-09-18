@@ -507,7 +507,7 @@ export const GameWrapper = ({ app }: { app: any }) => {
 			? [
 					...gameLogState,
 					{
-						message: "Mila shuffled a stack",
+						message: `${allPlayers.get(userId).name} shuffled a stack`,
 						lastPlayerId: userId,
 						lastPlayerCardsOnHand:
 							handStacksState.get(userId).cards.size,
@@ -516,7 +516,7 @@ export const GameWrapper = ({ app }: { app: any }) => {
 			  ]
 			: [
 					{
-						message: "Mila shuffled a stack",
+						message: `${allPlayers.get(userId).name} shuffled a stack`,
 						lastPlayerId: userId,
 						lastPlayerCardsOnHand:
 							handStacksState.get(userId).cards.size,

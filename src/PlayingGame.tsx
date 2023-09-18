@@ -295,7 +295,7 @@ function PlayingGame({
 						animation: "none",
 					})
 					setUsedCards(_usedCards)
-				}, 1000)
+				}, 500)
 			}
 		})
 		setUsedCards(_usedCards)
