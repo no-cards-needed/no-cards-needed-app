@@ -2,36 +2,86 @@ import { cards as cardsHelper } from "../Cards"
 
 export class Distributor {
 	public stacks: StackMap = new Map([
-		[0, {
-			id: 0,
-			stackType: "back",
-			cards: new Set([]),
-			position: { x: 0, y: 0 }
-		}],
-		[1, {
-			id: 1,
-			stackType: "front",
-			cards: new Set([]),
-			position: { x: 0, y: 0 }
-		}]
-	]);
-	public cards: Card[] = [];
+		[
+			0,
+			{
+				id: 0,
+				stackType: "front",
+				cards: new Set([]),
+				position: { x: 2, y: 1 },
+			},
+		],
+		[
+			1,
+			{
+				id: 1,
+				stackType: "front",
+				cards: new Set([]),
+				position: { x: 4, y: 1 },
+			},
+		],
+		[
+			2,
+			{
+				id: 2,
+				stackType: "front",
+				cards: new Set([]),
+				position: { x: 1, y: 2 },
+			},
+		],
+		[
+			3,
+			{
+				id: 3,
+				stackType: "back",
+				cards: new Set([]),
+				position: { x: 3, y: 2 },
+			},
+		],
+		[
+			4,
+			{
+				id: 4,
+				stackType: "front",
+				cards: new Set([]),
+				position: { x: 5, y: 2 },
+			},
+		],
+		[
+			5,
+			{
+				id: 5,
+				stackType: "front",
+				cards: new Set([]),
+				position: { x: 2, y: 3 },
+			},
+		],
+		[
+			6,
+			{
+				id: 6,
+				stackType: "front",
+				cards: new Set([]),
+				position: { x: 4, y: 3 },
+			},
+		],
+	])
+	public cards: Card[] = []
 	public handStacks: StackMap = new Map()
 
 	// default stack to place the cards
 	private defaultStack = 0
 
 	constructor(
-		cardsPerDeck: { from: number, to: number },
+		cardsPerDeck: { from: number; to: number },
 		jokersPerDeck: number,
 		numberOfDecks: number,
-		onStack: number
-		) {
-
+		onStack: number,
+	) {
 		// Adding the deck cards
 		let cardId = 0
 		for (let index = 0; index < cardsHelper.length; index++) {
-			const card = cardsHelper[index];
+			const card = cardsHelper[index]
 			if (card.value >= cardsPerDeck.from && card.value <= cardsPerDeck.to) {
 				for (let i = 0; i < numberOfDecks; i++) {
 					this.cards.push({
@@ -60,10 +110,10 @@ export class Distributor {
 	}
 
 	public shuffleCards: () => void = () => {
-		this.stacks.forEach(stack => {
+		this.stacks.forEach((stack) => {
 			let temp = Array.from(stack.cards)
 			let shuffled = temp
-				.map(value => ({ value, sort: Math.random() }))
+				.map((value) => ({ value, sort: Math.random() }))
 				.sort((a, b) => a.sort - b.sort)
 				.map(({ value }) => value)
 
@@ -71,16 +121,16 @@ export class Distributor {
 		})
 	}
 
-	public distributeCards: (handCards: number, players:{[name: string]: Player}) => void = (handCards, players) => {
+	public distributeCards: (handCards: number, players: { [name: string]: Player }) => void = (handCards, players) => {
 		const playerIds = Object.keys(players)
 		const totalCardAmount = this.cards.length
 		const handcardsForPlayers = handCards * playerIds.length
-		
+
 		// If there are not enough cards to distribute
-		if(totalCardAmount < handcardsForPlayers) {
+		if (totalCardAmount < handcardsForPlayers) {
 			throw new Error(`Not enough cards to distribute to players`)
 		}
-		
+
 		// Distribute the cards
 		let playerIndex = 0
 		let cardIndex = 1
@@ -94,8 +144,8 @@ export class Distributor {
 
 			const card = this.cards[randomIndex]
 			const player = players[playerIds[playerIndex]]
-			
-			if(cardIndex >= handCards) {
+
+			if (cardIndex >= handCards) {
 				cardIndex = 0
 				playerIndex++
 			}
@@ -114,9 +164,9 @@ export class Distributor {
 					stackType: "hand",
 					position: {
 						x: 0,
-						y: 0
+						y: 0,
 					},
-					cards: new Set([card.cardId])
+					cards: new Set([card.cardId]),
 				})
 			} else {
 				const _handStack = this.handStacks.get(player.id)
@@ -128,7 +178,7 @@ export class Distributor {
 	private addCardToStack: (cardId: number, stackId: number) => void = (cardId, stackId) => {
 		const stack = this.stacks.get(stackId)
 		if (stack === undefined) throw new Error(`Could not find stack with id ${stackId}`)
-		if(stack.cards) {
+		if (stack.cards) {
 			stack.cards.add(cardId)
 		} else {
 			stack.cards = new Set([cardId])

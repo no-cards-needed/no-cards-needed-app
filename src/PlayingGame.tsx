@@ -20,18 +20,10 @@ type PlayingGameProps = {
 	setCard: (card: Card, cardId: number, timestamp: number) => void
 
 	syncedTableStacks: Map<number | string, Stack>
-	setTableStack: (
-		stack: Stack,
-		stackId: number | string,
-		timestamp: number
-	) => void
+	setTableStack: (stack: Stack, stackId: number | string, timestamp: number) => void
 
 	syncedHandStacks: Map<number | string, Stack>
-	setHandStack: (
-		stack: Stack,
-		stackId: number | string,
-		timestamp: number
-	) => void
+	setHandStack: (stack: Stack, stackId: number | string, timestamp: number) => void
 
 	players: ListOfPlayers
 	avatars: {
@@ -60,40 +52,28 @@ function PlayingGame({
 	const firstCardSynced = useRef<boolean>(false)
 	const stackSyncDone = useRef<boolean>(false)
 
-	const [usedCards, setUsedCards, usedCardsRef] = useStateRef<
-		Map<number, UsedCard>
-	>(new Map([]))
+	const [usedCards, setUsedCards, usedCardsRef] = useStateRef<Map<number, UsedCard>>(new Map([]))
 	const cardsDomRef = useRef<Map<number, HTMLDivElement>>(new Map([]))
-	const [handStackState, setHandStackState, handStackRef] =
-		useStateRef<Stack>({
-			id: userId,
-			stackType: "hand",
-			cards: new Set(),
-			position: { x: 0, y: 0 },
-		})
-	const [hiddenStackState, setHiddenStackState, hiddenStackRef] =
-		useStateRef<Stack>({
-			id: "hidden",
-			stackType: "hidden",
-			cards: new Set(),
-			position: { x: 0, y: 0 },
-		})
-	const [tableStacks, setTableStacks, tableStacksRef] = useStateRef<
-		Map<number | string, Stack>
-	>(new Map())
-	const stacksDomRef = useRef<Map<number | string, HTMLDivElement>>(
-		new Map([])
-	)
+	const [handStackState, setHandStackState, handStackRef] = useStateRef<Stack>({
+		id: userId,
+		stackType: "hand",
+		cards: new Set(),
+		position: { x: 0, y: 0 },
+	})
+	const [hiddenStackState, setHiddenStackState, hiddenStackRef] = useStateRef<Stack>({
+		id: "hidden",
+		stackType: "hidden",
+		cards: new Set(),
+		position: { x: 0, y: 0 },
+	})
+	const [tableStacks, setTableStacks, tableStacksRef] = useStateRef<Map<number | string, Stack>>(new Map())
+	const stacksDomRef = useRef<Map<number | string, HTMLDivElement>>(new Map([]))
 
 	const [nearestStack, setNearestStack] = useState<NearestStack>(null)
 	const [isColliding, setIsColliding] = useState<boolean>(false)
 
 	// Function to handle card placement
-	const placeCard = (
-		cardId: number,
-		stackId: number | string,
-		userInitiated: boolean = false
-	) => {
+	const placeCard = (cardId: number, stackId: number | string, userInitiated: boolean = false) => {
 		const _usedCards = usedCardsRef.current
 		// If card is "owned" by user, place it in the hand stack, otherwise place it in the hidden stack
 
@@ -112,33 +92,18 @@ function PlayingGame({
 			cardPosition = {
 				x:
 					_stack.stackType === "hand" || _stack.stackType === "open"
-						? calculateCardPosition(
-								cardsDomRef,
-								stacksDomRef,
-								stackId,
-								_stack,
-								cardId
-						  )
-						: stacksDomRef.current
-								.get(stackId)
-								.getBoundingClientRect().x,
+						? calculateCardPosition(cardsDomRef, stacksDomRef, stackId, _stack, cardId)
+						: stacksDomRef.current.get(stackId).getBoundingClientRect().x,
 				y: stacksDomRef.current.get(stackId).getBoundingClientRect().y,
 			}
 		} catch (error) {
-			console.log(
-				"Error calculating card position for stack",
-				stackId,
-				"and card",
-				cardId
-			)
+			console.log("Error calculating card position for stack", stackId, "and card", cardId)
 			// console.error(error)
 		}
 
 		// Calculate shadow of the card
 		const hasShadow: boolean =
-			_stack.cards && _stack.cards.size > 0
-				? _stack.cards.size - [..._stack.cards].indexOf(cardId) < 10
-				: false
+			_stack.cards && _stack.cards.size > 0 ? _stack.cards.size - [..._stack.cards].indexOf(cardId) < 10 : false
 
 		_usedCards.set(cardId, {
 			..._usedCards.get(cardId),
@@ -252,20 +217,14 @@ function PlayingGame({
 		setCard(card, cardId, Date.now())
 	}
 
-	const recieveStacks = (
-		syncedStacks: Map<number | string, Stack>,
-		stackType: "table" | "hand"
-	) => {
+	const recieveStacks = (syncedStacks: Map<number | string, Stack>, stackType: "table" | "hand") => {
 		if (stackType === "hand") {
 			syncedStacks.forEach((stack) => {
 				if (stack.id === userId) {
 					setHandStackState(stack)
 				} else {
 					const _hiddenStack = hiddenStackRef.current
-					_hiddenStack.cards = new Set([
-						..._hiddenStack.cards,
-						...stack.cards,
-					])
+					_hiddenStack.cards = new Set([..._hiddenStack.cards, ...stack.cards])
 					setHiddenStackState(_hiddenStack)
 				}
 			})
@@ -317,20 +276,15 @@ function PlayingGame({
 				<div className="playingArea criticalMaxWidth">
 					<div className="stackArea">
 						{Array.from(tableStacks).map(([stackId, stack]) => {
-							if (
-								stack.stackType !== "hand" &&
-								stack.stackType !== "hidden"
-							) {
+							if (stack.stackType !== "hand" && stack.stackType !== "hidden") {
 								return (
 									<Stack
 										key={stackId}
 										stackType={stack.stackType}
-										stackRef={(el: HTMLDivElement) =>
-											stacksDomRef.current.set(
-												stackId,
-												el
-											)
-										}
+										stackRef={(el: HTMLDivElement) => stacksDomRef.current.set(stackId, el)}
+										positionX={stack.position.x}
+										positionY={stack.position.y}
+										cardCount={stack.cards.size}
 									/>
 								)
 							} else return null
@@ -344,9 +298,7 @@ function PlayingGame({
 						Array.from(usedCards).map(([cardId, card]) => {
 							return (
 								<Card
-									setRef={(cardRef: HTMLDivElement) =>
-										cardsDomRef.current.set(cardId, cardRef)
-									}
+									setRef={(cardRef: HTMLDivElement) => cardsDomRef.current.set(cardId, cardRef)}
 									card={card}
 									cardId={cardId}
 									key={cardId}
@@ -363,7 +315,7 @@ function PlayingGame({
 											tableStacksRef,
 											handStackRef,
 											stacksDomRef,
-											setIsColliding
+											setIsColliding,
 										)
 									}
 									handleCardDrop={(data, id) =>
@@ -373,7 +325,7 @@ function PlayingGame({
 											setUsedCards,
 											isColliding,
 											nearestStack,
-											placeCard
+											placeCard,
 										)
 									}
 								/>
@@ -384,28 +336,20 @@ function PlayingGame({
 					)}
 				</div>
 
-				<GameHeader
-					gameLog={gameLog}
-					players={players}
-					gameStatus={gameStatus}
-				/>
+				<GameHeader gameLog={gameLog} players={players} gameStatus={gameStatus} />
 
 				<div className="hand criticalMaxWidth" id="basicDrop">
 					<Stack
 						key={"handStack"}
 						stackType={handStackState.stackType}
-						stackRef={(el: HTMLDivElement) =>
-							stacksDomRef.current.set(userId, el)
-						}
+						stackRef={(el: HTMLDivElement) => stacksDomRef.current.set(userId, el)}
 					/>
 				</div>
 
 				<Stack
 					key={"hiddenStack"}
 					stackType={hiddenStackState.stackType}
-					stackRef={(el: HTMLDivElement) =>
-						stacksDomRef.current.set("hidden", el)
-					}
+					stackRef={(el: HTMLDivElement) => stacksDomRef.current.set("hidden", el)}
 				/>
 			</div>
 		</div>

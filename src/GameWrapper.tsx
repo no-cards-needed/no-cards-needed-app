@@ -420,7 +420,7 @@ export const GameWrapper = ({ app }: { app: any }) => {
 	}
 
 	const startGame = () => {
-		const distributor = new Distributor(deckCards.boundries, joker, decks, 0)
+		const distributor = new Distributor(deckCards.boundries, joker, decks, 3)
 		distributor.shuffleCards()
 
 		// Convert player map to object
