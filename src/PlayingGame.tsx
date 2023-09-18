@@ -23,11 +23,7 @@ type PlayingGameProps = {
 	setTableStack: (stack: Stack, stackId: number | string, timestamp: number) => void
 
 	syncedHandStacks: Map<number | string, Stack>
-	setHandStack: (
-		stack: Stack,
-		stackId: number | string,
-		timestamp: number
-	) => void
+	setHandStack: (stack: Stack, stackId: number | string, timestamp: number) => void
 	shuffleTableStack: (stackId: number | string, timestamp: number) => void
 
 	players: ListOfPlayers
@@ -272,7 +268,7 @@ function PlayingGame({
 
 	useEffect(() => {
 		// Check if newest card is a shuffle
-		if (!gameLog[gameLog.length - 1]?.message.includes("shuffled")) {
+		if (!gameLog || !gameLog[gameLog?.length - 1]?.message.includes("shuffled")) {
 			return
 		}
 
@@ -342,7 +338,7 @@ function PlayingGame({
 											isColliding,
 											nearestStack,
 											setNearestStack,
-											placeCard
+											placeCard,
 										)
 									}
 								/>
