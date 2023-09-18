@@ -167,7 +167,7 @@ function Card({
 
 	const maxRotationInDegrees = 10
 	const [rotation, setRotation] = useState(
-		Math.random() * maxRotationInDegrees * 2 - maxRotationInDegrees
+		onStackType === "front" ? (Math.random() * maxRotationInDegrees * 2 - maxRotationInDegrees) : 0
 	)
 
 	const [classList, setClassList] = useState("")
@@ -183,8 +183,7 @@ function Card({
 		}
 	}, [card.animation])
 
-	const transform =
-		onStackType === "front" ? `rotate(${rotation}deg)` : "rotate(0deg)"
+	const transform = `rotate(${rotation}deg)`
 
 	const [menuProps, toggleMenu] = useMenuState()
 	const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 })
@@ -227,12 +226,13 @@ function Card({
 						height: 112,
 						width: 80,
 					}}
-					className={`${transition ? "animation" : null} ${animation}`}
+					className={`${transition ? "animation" : null}`}
 					// onTouchStart={touchStart}
 					// onClick={touchStart}
 				>
 					<div
 						style={{
+							transition: "transform 0.5s ease",
 							transform,
 							boxShadow: card.hasShadow
 								? "var(--shadow-elevation-medium)"

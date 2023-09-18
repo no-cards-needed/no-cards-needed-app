@@ -9,6 +9,7 @@ import { handleCardDrag } from "./helpers/handle-card-drag"
 import { handleCardDrop } from "./helpers/handle-card-drop"
 import useStateRef from "./helpers/hooks/useStateRef"
 import { useWindowDimension } from "./helpers/hooks/useWindowDimensions"
+import { set } from "firebase/database"
 
 type PlayingGameProps = {
 	gameStatus: GameStatus
@@ -281,13 +282,23 @@ function PlayingGame({
 			placeCard(cardId, card.onStack, false)
 
 			if( topCards.includes(cardId) ){
+				console.log("🪢 Setting animation to shuffle", cardId)
 				_usedCards.set(cardId, {
 					...card,
-					animation: "shuffle"
+					animation: "shuffle",
 				})
+
+				// Timeout to reset animation
+				setTimeout(() => {
+					_usedCards.set(cardId, {
+						...card,
+						animation: "none",
+					})
+					setUsedCards(_usedCards)
+				}, 1000)
 			}
 		})
-
+		setUsedCards(_usedCards)
 	}, [gameLog])
 
 	return (

@@ -45,7 +45,7 @@ body {
   width: 80px;
   transition: .3s ease transform;
 }
-.card .shuffle{
+.shuffle{
   animation: shuffle .5s linear;
 }
 .card.regular {
