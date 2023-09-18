@@ -32,6 +32,7 @@ type PlayingGameProps = {
 		stackId: number | string,
 		timestamp: number
 	) => void
+	shuffleTableStack: (stackId: number | string, timestamp: number) => void
 
 	players: ListOfPlayers
 	avatars: {
@@ -53,6 +54,8 @@ function PlayingGame({
 
 	syncedHandStacks,
 	setHandStack,
+
+	shuffleTableStack,
 
 	players,
 	avatars,
@@ -85,7 +88,7 @@ function PlayingGame({
 		new Map([])
 	)
 
-	const [nearestStack, setNearestStack] = useState<NearestStack>(null)
+	const [nearestStack, setNearestStack] = useState<NearestStack | null>(null)
 	const [isColliding, setIsColliding] = useState<boolean>(false)
 
 	// Function to handle card placement
@@ -181,13 +184,7 @@ function PlayingGame({
 			recievedCards.forEach((card) => {
 				// Check if card is on hand or on table
 				let onStack
-				// console.log(
-				// 	"ONSTACK: ",
-				// 	card.onStack,
-				// 	typeof card.onStack,
-				// 	"CardId",
-				// 	card.cardId
-				// )
+
 				if (typeof card.onStack === "string") {
 					onStack = card.onStack === userId ? userId : "hidden"
 					recievedCards.set(card.cardId, {
@@ -310,6 +307,19 @@ function PlayingGame({
 		})
 	}, [windowHeight, windowWidth])
 
+	useEffect(() => {
+		// Check if newest card is a shuffle
+		if (!gameLog[gameLog.length - 1]?.message.includes("shuffled")) {
+			return
+		}
+
+		// recalculare z-indexes
+		const _usedCards = new Map(usedCardsRef.current)
+		_usedCards.forEach((card, cardId) => {
+			placeCard(cardId, card.onStack, false)
+		})
+	}, [gameLog])
+
 	return (
 		<div>
 			<div style={{ background: "#DEDBE5", position: "fixed" }}>
@@ -350,7 +360,9 @@ function PlayingGame({
 									card={card}
 									cardId={cardId}
 									key={cardId}
-									shuffle={() => {}}
+									shuffle={(stackId: number | string) => {
+										shuffleTableStack(stackId, Date.now())
+									}}
 									handleLongPress={() => {}}
 									handleCardDrag={(cardRef, cardId) =>
 										handleCardDrag(
@@ -373,6 +385,7 @@ function PlayingGame({
 											setUsedCards,
 											isColliding,
 											nearestStack,
+											setNearestStack,
 											placeCard
 										)
 									}
