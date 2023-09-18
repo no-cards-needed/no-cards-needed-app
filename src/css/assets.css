@@ -1,146 +1,146 @@
 *,
 *:before,
 *:after {
-  box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 :root {
-  --violet-30: #986df2;
-  --violet-30-30: rgba(152, 109, 242, 0.4);
-  --violet-prime-50: #7741ea;
-  --violet-70: #6528c9;
+	--violet-30: #986df2;
+	--violet-30-30: rgba(152, 109, 242, 0.4);
+	--violet-prime-50: #7741ea;
+	--violet-70: #6528c9;
 
-  --transp-20-60: rgba(223, 216, 240, 0.6);
-  --transp-40-60: rgba(180, 172, 197, 0.6);
+	--transp-20-60: rgba(223, 216, 240, 0.9);
+	--transp-40-60: rgba(180, 172, 197, 0.9);
 
-  --vg-0: #fff;
-  --vg-10: #dedbe5;
-  --vg-20: #cac7d1;
-  --vg-30: #b6b3bd;
-  --vg-40: #a09ca7;
-  --vg-50: #828282;
-  --vg-60: #77747e;
-  --vg-70: #6e6b75;
-  --vg-80: #524f59;
-  --vg-90: #4c4853;
-  --vg-100: #2c2833;
+	--vg-0: #fff;
+	--vg-10: #dedbe5;
+	--vg-20: #cac7d1;
+	--vg-30: #b6b3bd;
+	--vg-40: #a09ca7;
+	--vg-50: #828282;
+	--vg-60: #77747e;
+	--vg-70: #6e6b75;
+	--vg-80: #524f59;
+	--vg-90: #4c4853;
+	--vg-100: #2c2833;
 
-  --border: rgba(0, 0, 0, 0.2);
+	--border: rgba(0, 0, 0, 0.2);
 }
 
 .maxWidth {
-  margin: 0 auto;
-  max-width: 726px;
+	margin: 0 auto;
+	max-width: 726px;
 }
 
 .criticalMaxWidth {
-  margin-left: calc(min(726px, 100%) / 2 * -1);
-  left: 50%;
-  max-width: min(726px, 100%);
+	margin-left: calc(min(726px, 100%) / 2 * -1);
+	left: 50%;
+	max-width: min(726px, 100%);
 }
 
 .startScreen {
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  justify-content: center;
-  background-color: var(--vg-0);
-  padding: 0px 16px;
+	display: flex;
+	flex-direction: column;
+	text-align: center;
+	justify-content: center;
+	background-color: var(--vg-0);
+	padding: 0px 16px;
 }
 
 .infoTag {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 8px;
-  gap: 8px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: 8px;
+	gap: 8px;
 
-  position: relative;
-  width: fit-content;
-  height: 40px;
-  /* violet grey/20 */
+	position: relative;
+	width: fit-content;
+	height: 40px;
+	/* violet grey/20 */
 
-  background: var(--vg-20);
-  border-radius: 8px;
-  cursor: pointer;
+	background: var(--vg-20);
+	border-radius: 8px;
+	cursor: pointer;
 }
 
 .counter {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 4px;
-  gap: 8px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: 4px;
+	gap: 8px;
 
-  position: relative;
-  width: fit-content;
-  height: 48px;
+	position: relative;
+	width: fit-content;
+	height: 48px;
 
-  /* violet grey/30 */
+	/* violet grey/30 */
 
-  background: var(--vg-30);
-  border-radius: 16px;
+	background: var(--vg-30);
+	border-radius: 16px;
 }
 
 .noselect {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 .avatarContainer {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
 }
 
 .avatar {
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
-  background: var(--vg-0);
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+	width: 28px;
+	height: 28px;
+	border-radius: 6px;
+	background: var(--vg-0);
+	overflow: hidden;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .avatarHost {
-  border: 2px solid #7741ea;
+	border: 2px solid #7741ea;
 }
 
 .cardCount {
-  background-color: var(--vg-100);
-  color: var(--vg-0);
-  width: 16px;
-  height: 20px;
-  border-radius: 3px;
-  rotate: 8deg;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transform: translateX(-4px) translateY(14px);
+	background-color: var(--vg-100);
+	color: var(--vg-0);
+	width: 16px;
+	height: 20px;
+	border-radius: 3px;
+	rotate: 8deg;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	transform: translateX(-4px) translateY(14px);
 }
 
 .iconContainer {
-  width: 16px;
-  height: 16px;
-  border-radius: 3px;
-  /* background: #fff; */
+	width: 16px;
+	height: 16px;
+	border-radius: 3px;
+	/* background: #fff; */
 }
 
 .iconContainerBig {
-  width: 24px;
-  height: 24px;
-  /* background: #fff; */
+	width: 24px;
+	height: 24px;
+	/* background: #fff; */
 }
 
 .hitbox {
-  position: inherit;
-  height: 40px;
-  width: 40px;
-  background: var(--vg-0);
+	position: inherit;
+	height: 40px;
+	width: 40px;
+	background: var(--vg-0);
 }
