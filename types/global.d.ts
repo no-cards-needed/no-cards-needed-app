@@ -17,6 +17,7 @@ type GameLog = {
 	message: string,
 	lastPlayerId: string,
 	lastPlayerCardsOnHand: number,
+	stackId: number | string,
 }[]
 
 type Card = {

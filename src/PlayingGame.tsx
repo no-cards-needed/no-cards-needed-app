@@ -275,12 +275,23 @@ function PlayingGame({
 		if (!gameLog[gameLog.length - 1]?.message.includes("shuffled")) {
 			return
 		}
+		const stackId = gameLog[gameLog.length - 1].stackId
+		// get top 3 cards from stack
+		const topCards = [...tableStacksRef.current.get(stackId).cards].slice(-3)
 
 		// recalculare z-indexes
 		const _usedCards = new Map(usedCardsRef.current)
 		_usedCards.forEach((card, cardId) => {
 			placeCard(cardId, card.onStack, false)
+
+			if( topCards.includes(cardId) ){
+				_usedCards.set(cardId, {
+					...card,
+					animation: "shuffle"
+				})
+			}
 		})
+
 	}, [gameLog])
 
 	return (

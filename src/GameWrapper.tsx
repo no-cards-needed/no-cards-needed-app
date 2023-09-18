@@ -427,6 +427,7 @@ export const GameWrapper = ({ app }: { app: any }) => {
 							message: logMessage,
 							lastPlayerId: userId,
 							lastPlayerCardsOnHand: handStack.cards.size,
+							stackId: card.onStack,
 						},
 				  ]
 				: [
@@ -434,6 +435,7 @@ export const GameWrapper = ({ app }: { app: any }) => {
 							message: logMessage,
 							lastPlayerId: userId,
 							lastPlayerCardsOnHand: handStack.cards.size,
+							stackId: card.onStack,
 						},
 				  ]
 
@@ -509,6 +511,7 @@ export const GameWrapper = ({ app }: { app: any }) => {
 						lastPlayerId: userId,
 						lastPlayerCardsOnHand:
 							handStacksState.get(userId).cards.size,
+						stackId: stackId,
 					},
 			  ]
 			: [
@@ -517,6 +520,7 @@ export const GameWrapper = ({ app }: { app: any }) => {
 						lastPlayerId: userId,
 						lastPlayerCardsOnHand:
 							handStacksState.get(userId).cards.size,
+						stackId: stackId,
 					},
 			  ]
 

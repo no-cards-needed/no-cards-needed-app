@@ -30,7 +30,7 @@ function Card({
 	shuffle,
 	handleLongPress,
 }: CardProps) {
-	const { symbol, zIndex, controlledPosition, onStackType, onStack } = card
+	const { symbol, zIndex, controlledPosition, onStackType, onStack, animation } = card
 
 	const nodeRef = useRef(null)
 	const [transition, setTransition] = useState(false)
@@ -227,7 +227,7 @@ function Card({
 						height: 112,
 						width: 80,
 					}}
-					className={transition ? "animation" : null}
+					className={`${transition ? "animation" : null} ${animation}`}
 					// onTouchStart={touchStart}
 					// onClick={touchStart}
 				>
