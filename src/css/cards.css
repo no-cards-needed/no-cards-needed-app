@@ -19,7 +19,7 @@
 	position: fixed;
 	width: 100vw;
 	max-width: min(726px, 100%);
-	top: 10%;
+	top: 8vh;
 	height: calc(100vh - 224px);
 
 	display: flex;
