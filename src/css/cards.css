@@ -19,7 +19,7 @@
 	position: fixed;
 	width: 100vw;
 	max-width: min(726px, 100%);
-	top: 80px;
+	top: 64px;
 	height: calc(100vh - 224px);
 
 	display: flex;
@@ -34,7 +34,8 @@
 	display: grid;
 	grid-template-columns: repeat(6, auto);
 	grid-template-rows: repeat(3, auto);
-	gap: 40px;
+	column-gap: 40px;
+	row-gap: 16px;
 
 	justify-content: center;
 	width: 272px;
