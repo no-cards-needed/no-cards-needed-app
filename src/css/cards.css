@@ -36,6 +36,7 @@
 	grid-template-rows: repeat(3, auto);
 	column-gap: 40px;
 	row-gap: 16px;
+	padding-right: 16px;
 
 	justify-content: center;
 	width: 272px;
