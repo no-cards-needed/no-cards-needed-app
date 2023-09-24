@@ -22,7 +22,7 @@ export const Stack = ({
 				gridRowEnd: "span 1",
 			}}
 			ref={stackRef}>
-			<div className="pileSize">{cardCount}</div>
+			<div className="pileSize noselect">{cardCount}</div>
 		</div>
 	)
 }

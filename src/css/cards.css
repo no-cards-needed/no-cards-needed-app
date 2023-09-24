@@ -71,7 +71,7 @@
 
 	opacity: 0.5;
 
-	border: 3px dashed var(--vg-30);
+	border: 3px solid var(--vg-30);
 	background: none;
 }
 
@@ -82,7 +82,7 @@
 
 	opacity: 0.5;
 
-	border: 3px dashed var(--violet-30);
+	border: 3px solid var(--violet-30);
 	background: none;
 }
 
@@ -108,8 +108,12 @@
 
 	border-radius: 0px 8px 8px 0px;
 
-	background-color: var(--vg-40);
+	background-color: var(--vg-30);
 	color: var(--vg-0);
+}
+
+.cardDropZone:hover > .pileSize {
+	background-color: var(--violet-30);
 }
 
 .cardContainer:hover > .stackZone,

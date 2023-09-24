@@ -2,7 +2,7 @@ import close from "../assets/iconsBlack/chevron/left.svg"
 import { Link, useNavigate } from "react-router-dom"
 import Button from "./Button"
 
-function About() {
+function Privacy() {
 	const navigate = useNavigate()
 
 	return (
@@ -35,4 +35,4 @@ function About() {
 	)
 }
 
-export default About
+export default Privacy
