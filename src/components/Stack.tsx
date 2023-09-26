@@ -22,7 +22,9 @@ export const Stack = ({
 				gridRowEnd: "span 1",
 			}}
 			ref={stackRef}>
-			<div className="pileSize noselect">{cardCount}</div>
+			{stackType !== "hand" && stackType !== "hidden" ? (
+				<div className="pileSize noselect">{cardCount}</div>
+			) : null}
 		</div>
 	)
 }

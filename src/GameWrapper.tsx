@@ -242,7 +242,8 @@ export const GameWrapper = ({ app }: { app: any }) => {
 				// If the game is not started, then set up the game
 				if (
 					!gameStatusState ||
-					gameStatusState.timestamp < gameStatus.timestamp
+					gameStatusState.timestamp < gameStatus.timestamp ||
+					gameStatusState.currentGameState !== "game"
 				) {
 					// Setting the game status to the initial values
 					set(gameStatusRef.current, gameStatus)

@@ -1,15 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useRef, useState, useEffect } from "react"
-import Draggable, {
-	DraggableData,
-	DraggableEvent,
-	DraggableEventHandler,
-} from "react-draggable"
+import Draggable, { DraggableData, DraggableEvent, DraggableEventHandler } from "react-draggable"
 
 import { cards, back } from "../helpers/Cards"
 
 import { ControlledMenu, MenuItem, useMenuState } from "@szhsin/react-menu"
 import "@szhsin/react-menu/dist/index.css"
+import { set } from "firebase/database"
 
 type CardProps = {
 	handleCardDrag: (nodeRef: any, cardId: number) => void
@@ -21,15 +18,7 @@ type CardProps = {
 	handleLongPress: (cardId: number) => void
 }
 
-function Card({
-	handleCardDrag,
-	handleCardDrop,
-	card,
-	cardId,
-	setRef,
-	shuffle,
-	handleLongPress,
-}: CardProps) {
+function Card({ handleCardDrag, handleCardDrop, card, cardId, setRef, shuffle, handleLongPress }: CardProps) {
 	const { symbol, zIndex, controlledPosition, onStackType, onStack, animation } = card
 
 	const nodeRef = useRef(null)
@@ -60,10 +49,7 @@ function Card({
 
 	const handleStart: DraggableEventHandler = () => {}
 
-	const handleDrag: DraggableEventHandler = (
-		e: DraggableEvent,
-		ui: DraggableData
-	) => {
+	const handleDrag: DraggableEventHandler = (e: DraggableEvent, ui: DraggableData) => {
 		const { x, y } = deltaPosition
 		setDeltaPosition({
 			x: x + ui.deltaX,
@@ -98,10 +84,7 @@ function Card({
 
 	const setDroppedTimer = () => {
 		setTransition(true)
-		timerRef.current = setTimeout(
-			() => setTransition(false),
-			transitionTime
-		)
+		timerRef.current = setTimeout(() => setTransition(false), transitionTime)
 	}
 
 	const getCardBySymbol = () => {
@@ -167,8 +150,18 @@ function Card({
 
 	const maxRotationInDegrees = 10
 	const [rotation, setRotation] = useState(
-		onStackType === "front" ? (Math.random() * maxRotationInDegrees * 2 - maxRotationInDegrees) : 0
+		onStackType === "front" ? Math.random() * maxRotationInDegrees * 2 - maxRotationInDegrees : 0,
 	)
+	useEffect(() => {
+		if (onStackType === "front") {
+			const rotation = Math.random() * maxRotationInDegrees * 2 - maxRotationInDegrees
+			console.log("setting rotation", onStackType, rotation)
+			setRotation(rotation)
+		} else {
+			console.log("setting rotation-", onStackType)
+			setRotation(0)
+		}
+	}, [onStackType])
 
 	const [classList, setClassList] = useState("")
 	useEffect(() => {
@@ -182,8 +175,6 @@ function Card({
 			setClassList("regular")
 		}
 	}, [card.animation])
-
-	const transform = `rotate(${rotation}deg)`
 
 	const [menuProps, toggleMenu] = useMenuState()
 	const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 })
@@ -233,17 +224,13 @@ function Card({
 					<div
 						style={{
 							transition: "transform 0.5s ease",
-							transform,
-							boxShadow: card.hasShadow
-								? "var(--shadow-elevation-medium)"
-								: "none",
+							transform: `rotate(${rotation}deg)`,
+							boxShadow: card.hasShadow ? "var(--shadow-elevation-medium)" : "none",
 						}}
 						className={`cardContainer ${classList}`}
 						// {...longPressEvent}
 					>
-						{card.onStackType === "front" ||
-						card.onStackType === "open" ||
-						card.onStackType === "hand"
+						{card.onStackType === "front" || card.onStackType === "open" || card.onStackType === "hand"
 							? cardToDisplay
 							: back}
 					</div>
@@ -251,17 +238,12 @@ function Card({
 			</Draggable>
 
 			<div>
-				<ControlledMenu
-					{...menuProps}
-					anchorPoint={anchorPoint}
-					onClose={() => toggleMenu(false)}>
+				<ControlledMenu {...menuProps} anchorPoint={anchorPoint} onClose={() => toggleMenu(false)}>
 					{/* <MenuItem>Pick Up</MenuItem>
 					<MenuItem>Remove Pile from Game</MenuItem>
 					<MenuItem>Take a Trick</MenuItem> */}
 
-					<MenuItem onClick={() => shuffle(onStack)}>
-						Shuffle Pile
-					</MenuItem>
+					<MenuItem onClick={() => shuffle(onStack)}>Shuffle Pile</MenuItem>
 
 					{/* <MenuItem>Deal all Cards Again</MenuItem> */}
 				</ControlledMenu>
