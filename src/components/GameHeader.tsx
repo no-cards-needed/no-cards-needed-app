@@ -33,7 +33,7 @@ function GameHeader({
 
 	const [leaveModalOpen, setLeaveModalOpen] = useState(false)
 	const [displayModal, setDisplayModal] = useState("none")
-	const [displayTutorial, setDisplayTutorial] = useState(getItem("wasSkipped") === "true" ? "none" : "flex")
+	const [displayTutorial, setDisplayTutorial] = useState(getItem("wasSkippedTutorial") === "true" ? "none" : "flex")
 
 	function toggleDisplay() {
 		if (display === "none") {
@@ -57,7 +57,7 @@ function GameHeader({
 
 	const skipTutorial = () => {
 		setDisplayTutorial("none")
-		setItem("wasSkipped", "true")
+		setItem("wasSkippedTutorial", "true")
 	}
 
 	const shareId = async () => {
