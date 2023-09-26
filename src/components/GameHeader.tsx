@@ -5,6 +5,7 @@ import leave from "../assets/iconsWhite/leave.svg"
 import share from "../assets/iconsWhite/share.svg"
 import doubleTab from "../assets/illustration/doubleTab.png"
 import dragDrop from "../assets/illustration/dragDrop.png"
+import Modal from "react-modal"
 
 import Button from "./Button"
 
@@ -30,6 +31,7 @@ function GameHeader({
 }) {
 	const [display, setDisplay] = useState("none")
 
+	const [leaveModalOpen, setLeaveModalOpen] = useState(false)
 	const [displayModal, setDisplayModal] = useState("none")
 	const [displayTutorial, setDisplayTutorial] = useState(getItem("wasSkipped") === "true" ? "none" : "flex")
 
@@ -42,11 +44,7 @@ function GameHeader({
 	}
 
 	function toggleModal() {
-		if (displayModal === "none") {
-			setDisplayModal("flex")
-		} else {
-			setDisplayModal("none")
-		}
+		setLeaveModalOpen(!leaveModalOpen)
 	}
 
 	function toggleTutorial() {
@@ -81,6 +79,16 @@ function GameHeader({
 	const [lastPlayerState, setLastPlayerState] = useState<Player>(null)
 
 	const navigate = useNavigate()
+	const customStyles = {
+		content: {
+			top: "50%",
+			left: "50%",
+			right: "auto",
+			bottom: "auto",
+			marginRight: "-50%",
+			transform: "translate(-50%, -50%)",
+		},
+	}
 
 	return (
 		<div className="gameHeader criticalMaxWidth" id="basicDrop">
@@ -168,42 +176,34 @@ function GameHeader({
 				</div>
 			</motion.div>
 
-			<div
-				className="modalBackground"
-				style={{
-					display: displayModal,
-					position: "absolute",
-					zIndex: "9999",
-				}}>
-				<div className="modal" id="basicDrop">
-					<p style={{ textAlign: "center", letterSpacing: "0.01em" }}>
-						{" "}
-						Do You Really Want to <br /> Leave This Game?{" "}
-					</p>
-					<div className="buttonContainer">
-						<Button
-							label={"No"}
-							btn={"btn"}
-							size={"medium"}
-							type={"Secondary"}
-							drop={"dropSmall"}
-							style={{ width: "100%" }}
-							click={toggleModal}
-						/>
-						<Button
-							label={"Yes"}
-							btn={"btn"}
-							size={"medium"}
-							type={"Primary"}
-							drop={"dropSmall"}
-							style={{ width: "100%" }}
-							click={() => {
-								navigate("/")
-							}}
-						/>
-					</div>
+			<Modal isOpen={leaveModalOpen} style={customStyles} onRequestClose={() => setLeaveModalOpen(false)}>
+				<p style={{ textAlign: "center", letterSpacing: "0.01em" }}>
+					{" "}
+					Do You Really Want to <br /> Leave This Game?{" "}
+				</p>
+				<div className="buttonContainer">
+					<Button
+						label={"No"}
+						btn={"btn"}
+						size={"medium"}
+						type={"Secondary"}
+						drop={"dropSmall"}
+						style={{ width: "100%" }}
+						click={toggleModal}
+					/>
+					<Button
+						label={"Yes"}
+						btn={"btn"}
+						size={"medium"}
+						type={"Primary"}
+						drop={"dropSmall"}
+						style={{ width: "100%" }}
+						click={() => {
+							navigate("/")
+						}}
+					/>
 				</div>
-			</div>
+			</Modal>
 			<div
 				className="modalBackground"
 				style={{

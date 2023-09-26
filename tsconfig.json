@@ -13,21 +13,12 @@
 		"noImplicitReturns": false,
 		"noImplicitThis": true,
 		"noImplicitAny": true,
-		"strictNullChecks": false
+		"strictNullChecks": false,
+		"esModuleInterop": true
 	},
-	"exclude": [
-		"node_modules",
-		"build",
-		"scripts",
-		"acceptance-tests",
-		"webpack",
-		"jest",
-		"src/setupTests.js"
-	],
-	"types": [
-		"typePatches"
-	],
+	"exclude": ["node_modules", "build", "scripts", "acceptance-tests", "webpack", "jest", "src/setupTests.js"],
+	"types": ["typePatches"],
 	"paths": {
 		"*": ["types/*.d.ts"]
-	},
+	}
 }
