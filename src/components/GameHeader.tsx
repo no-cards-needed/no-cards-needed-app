@@ -176,7 +176,11 @@ function GameHeader({
 				</div>
 			</motion.div>
 
-			<Modal isOpen={leaveModalOpen} style={customStyles} onRequestClose={() => setLeaveModalOpen(false)}>
+			<Modal
+				className="modal"
+				isOpen={leaveModalOpen}
+				style={customStyles}
+				onRequestClose={() => setLeaveModalOpen(false)}>
 				<p style={{ textAlign: "center", letterSpacing: "0.01em" }}>
 					{" "}
 					Do You Really Want to <br /> Leave This Game?{" "}
