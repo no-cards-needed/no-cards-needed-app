@@ -33,7 +33,7 @@ function GameHeader({
 
 	const [leaveModalOpen, setLeaveModalOpen] = useState(false)
 	const [displayModal, setDisplayModal] = useState("none")
-	const [displayTutorial, setDisplayTutorial] = useState(getItem("wasSkippedTutorial") === "true" ? "none" : "flex")
+	const [displayTutorial, setDisplayTutorial] = useState(getItem("wasSkippedTutorial") === "true" ? false : true)
 
 	function toggleDisplay() {
 		if (display === "none") {
@@ -48,15 +48,11 @@ function GameHeader({
 	}
 
 	function toggleTutorial() {
-		if (displayTutorial === "none") {
-			setDisplayTutorial("flex")
-		} else {
-			setDisplayTutorial("none")
-		}
+		setDisplayTutorial(!displayTutorial)
 	}
 
 	const skipTutorial = () => {
-		setDisplayTutorial("none")
+		setDisplayTutorial(false)
 		setItem("wasSkippedTutorial", "true")
 	}
 
@@ -87,6 +83,7 @@ function GameHeader({
 			bottom: "auto",
 			marginRight: "-50%",
 			transform: "translate(-50%, -50%)",
+			outline: 0,
 		},
 	}
 
@@ -208,14 +205,19 @@ function GameHeader({
 					/>
 				</div>
 			</Modal>
-			<div
-				className="modalBackground"
-				style={{
-					display: displayTutorial,
-					position: "absolute",
-					zIndex: "9999",
-				}}>
-				<div className="modal" id="basicDrop">
+			<Modal
+				className="modal"
+				style={customStyles}
+				isOpen={displayTutorial}
+				onRequestClose={() => setDisplayTutorial(false)}>
+				<div
+					style={{
+						display: "flex",
+						flexDirection: "column",
+						alignItems: "center",
+						gap: "32px",
+						width: "100%",
+					}}>
 					<div
 						style={{
 							display: "flex",
@@ -254,7 +256,7 @@ function GameHeader({
 						/>
 					</div>
 				</div>
-			</div>
+			</Modal>
 		</div>
 	)
 }
